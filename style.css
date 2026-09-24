@@ -99,3 +99,7 @@ section{display:flex;flex-direction:column;gap:18px;scroll-margin-top:68px}
 .stay small{font-size:13px;font-weight:800;color:#E9D4B8}.stay b{font-size:22px}.stay p{margin:0;font-size:14px;color:#F1E3D0}
 .stay a{align-self:flex-start;margin-top:4px;font-size:14px;font-weight:800;padding:8px 16px;border-radius:999px;background:#D8B98F;color:var(--ink)}
 footer{text-align:center;font-size:13px;line-height:1.8;color:var(--muted)}
+
+button.chip{cursor:pointer;border:1px solid var(--line);min-height:36px}
+[hidden]{display:none!important}
+.form label{display:flex;flex-direction:column;gap:8px;font-size:14px}
