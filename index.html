@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高屏・南迴・花蓮 3日懶人包</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <section class="hero" id="top">
+    <div class="hero-top">
+      <div class="badge" id="badge"></div>
+      <h1 id="title"></h1>
+      <nav class="quicknav">
+        <a href="#map">🗺️ 路線地圖</a><a href="#plan">🗓️ 三天行程</a><a href="#plan">🍱 美食安排</a>
+        <a href="#transit">🚆 交通攻略</a><a href="#stay">🏨 住宿</a><a href="#transit">🛵 租車</a>
+      </nav>
+    </div>
+    <div class="stats" id="stats"></div>
+  </section>
+
+  <section id="map">
+    <div class="sec-head"><span>🗺️</span><h2>路線地圖</h2><i></i></div>
+    <div class="card overview"><div id="overview"></div><div class="overview-cap">🗺️ 高屏・南迴・花蓮 3日完整路線地圖</div></div>
+  </section>
+
+  <section id="plan">
+    <div class="sec-head"><span>🗓️</span><h2>三天行程</h2><i></i></div>
+    <div class="tabs" id="tabs"></div>
+    <div class="route-line"><span id="route"></span><span class="sync" id="sync"></span></div>
+    <a class="day-route" id="dayRoute" target="_blank" rel="noopener noreferrer"></a>
+    <div id="hints"></div>
+    <div class="timeline" id="timeline"></div>
+  </section>
+
+  <section id="transit">
+    <div class="sec-head"><span>🚆</span><h2>交通攻略</h2><i></i></div>
+    <div class="tip"><span>🎯</span><p id="transitTip"></p></div>
+    <div class="table" id="transitTable"></div>
+    <div class="note" id="transitNote"></div>
+  </section>
+
+  <section id="stay">
+    <div class="sec-head"><span>🏨</span><h2>住宿</h2><i></i></div>
+    <div id="stays" style="display:flex;flex-direction:column;gap:18px"></div>
+  </section>
+
+  <footer id="footer"></footer>
+</div>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
