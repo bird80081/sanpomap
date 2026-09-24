@@ -84,6 +84,12 @@
       (w.length ? "&waypoints=" + w.map(encodeURIComponent).join("%7C") : "") + "&travelmode=" + mode;
   }
 
+  // 單段路線依畫面排序取上一站；交通方式交由 Google Maps 選擇，避免混合交通日被固定成開車。
+  function previousRouteUrl(previous, current) {
+    return "https://www.google.com/maps/dir/?api=1&origin=" + encodeURIComponent(previous.q || previous.title) +
+      "&destination=" + encodeURIComponent(current.q || current.title);
+  }
+
   // ---------- 畫面 ----------
   function renderStatic() {
     $("badge").textContent = T.badge;
@@ -112,14 +118,14 @@
     const miss = missingMeals(items);
     $("hints").innerHTML = miss.length ? `<div class="hints"><span>🍽️ 還沒安排：</span>${miss.map(([n, , , t]) => `<button data-meal="${t}">＋ ${n}</button>`).join("")}</div>` : "";
 
-    $("timeline").innerHTML = items.map(s => `
+    $("timeline").innerHTML = items.map((s, index) => `
       <div class="item${next && next.item === s ? " next" : ""}"><div class="item-card${s.custom ? " mine" : ""}">
         <div class="icon" style="background:${ty(s.type).bg}">${esc(s.icon)}</div>
         <div class="body">
           <div class="row"><span class="time">⏰ ${esc(s.time)}${next && next.item === s ? `<em class="now">${next.label}</em>` : ""}</span>${s.custom ? `<button class="del" data-del="${s.id}" title="刪除">×</button>` : ""}</div>
           <div class="title">${esc(s.title)}</div>
           <p class="desc">${esc(s.desc)}</p>
-          <div class="chips">${s.chips.map(([t, c]) => `<span class="chip ${c}">${esc(t)}</span>`).join("")}<a class="chip nav" href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">📍 開啟導航</a></div>
+          <div class="chips">${s.chips.map(([t, c]) => `<span class="chip ${c}">${esc(t)}</span>`).join("")}<a class="chip nav" href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">📍 查看地點</a>${index > 0 ? `<a class="chip nav" href="${esc(previousRouteUrl(items[index - 1], s))}" title="${esc(items[index - 1].title)} → ${esc(s.title)}" target="_blank" rel="noopener noreferrer">↗ 從上一站前往</a>` : ""}</div>
         </div>
       </div></div>`).join("") + (f ? formHtml(day, f) : `<button class="add-btn" data-open>＋ 新增行程（午餐、下午茶、景點…）</button>`);
   }
