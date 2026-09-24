@@ -78,7 +78,7 @@
   }
   function routeUrl(items, mode) {
     // Google 最多 9 個中途點；大眾運輸模式不支援中途點，只給起訖
-    const q = items.map(s => s.q), w = mode === "transit" ? [] : q.slice(1, -1).slice(0, 9);
+    const q = items.filter(s => s.inDayRoute !== false).map(s => s.q), w = mode === "transit" ? [] : q.slice(1, -1).slice(0, 9);
     return "https://www.google.com/maps/dir/?api=1&origin=" + encodeURIComponent(q[0]) +
       "&destination=" + encodeURIComponent(q[q.length - 1]) +
       (w.length ? "&waypoints=" + w.map(encodeURIComponent).join("%7C") : "") + "&travelmode=" + mode;
@@ -106,8 +106,8 @@
     $("route").textContent = d.route;
     $("sync").textContent = { local: "📱 只存在這台裝置", connecting: "", cloud: "", error: "⚠️ 同步失敗，請檢查網路或 Firebase 權限" }[state.sync];
     $("dayRoute").href = routeUrl(items, d.travelmode);
-    $("dayRoute").textContent = d.travelmode === "transit"
-      ? `🗺️ Google Maps 開啟 Day ${day} 起訖路線` : `🗺️ 用 Google Maps 開啟 Day ${day} 完整路線`;
+    $("dayRoute").textContent = d.routeLabel || (d.travelmode === "transit"
+      ? `🗺️ Google Maps 開啟 Day ${day} 起訖路線` : `🗺️ 用 Google Maps 開啟 Day ${day} 完整路線`);
 
     const miss = missingMeals(items);
     $("hints").innerHTML = miss.length ? `<div class="hints"><span>🍽️ 還沒安排：</span>${miss.map(([n, , , t]) => `<button data-meal="${t}">＋ ${n}</button>`).join("")}</div>` : "";
