@@ -6,6 +6,7 @@ window.TRIP = {
   dbUrl: "https://taiwan-trival-default-rtdb.firebaseio.com",
   title: "高屏・南迴・花蓮<br>3天這樣玩！",
   badge: "🚆 雙人山海慢步・2026/10/8 – 10/10",
+  start: "2026-10-08",                  // Day 1 的日期；旅行當天打開網站會自動跳到當日行程
   stats: [
     ["📅", "3天2夜", "天數"], ["👫", "雙人", "旅伴"],
     ["🚆", "臺鐵＋租車", "交通"], ["🏨", "高雄・花蓮", "住宿"]

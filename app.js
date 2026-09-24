@@ -10,7 +10,24 @@
   const LOCAL_KEY = T.id + "-extra";
   const DB = T.dbUrl ? T.dbUrl.replace(/\/+$/, "") + "/" + T.id + "/extra" : "";
 
-  const state = { day: 1, form: null, extra: { 1: [], 2: [], 3: [] }, sync: DB ? "connecting" : "local" };
+  // ---------- 今天模式 ----------
+  // 網址加 ?now=2026-10-09T15:00 可模擬旅途中的某個時間（測試用）
+  const nowParam = new URLSearchParams(location.search).get("now");
+  const now = () => (nowParam && !isNaN(new Date(nowParam)) ? new Date(nowParam) : new Date());
+  function todayDay() {
+    if (!T.start) return 0;
+    const [y, m, dd] = T.start.split("-").map(Number), n = now();
+    const diff = Math.round((new Date(n.getFullYear(), n.getMonth(), n.getDate()) - new Date(y, m - 1, dd)) / 864e5) + 1;
+    return T.days[diff] ? diff : 0;
+  }
+  // 當天第一個還沒結束的項目：已開始＝進行中，未開始＝下一站
+  function nextItem(items) {
+    const n = now(), h = n.getHours() + n.getMinutes() / 60;
+    const s = items.find(x => hr(x.time) < 99 && span(x.time)[1] >= h);
+    return s ? { item: s, label: hr(s.time) <= h ? "⏳ 進行中" : "👉 下一站" } : null;
+  }
+
+  const state = { day: todayDay() || 1, form: null, extra: { 1: [], 2: [], 3: [] }, sync: DB ? "connecting" : "local" };
 
   // ---------- 資料同步 ----------
   function normalize(v) {
@@ -84,7 +101,8 @@
 
   function render() {
     const day = state.day, d = T.days[day], items = dayItems(day), f = state.form;
-    $("tabs").innerHTML = Object.keys(T.days).map(n => `<button class="tab${+n === day ? " on" : ""}" data-day="${n}">Day ${n}</button>`).join("");
+    const today = todayDay(), next = day === today ? nextItem(items) : null;
+    $("tabs").innerHTML = Object.keys(T.days).map(n => `<button class="tab${+n === day ? " on" : ""}" data-day="${n}">Day ${n}${+n === today ? "・今天" : ""}</button>`).join("");
     $("route").textContent = d.route;
     $("sync").textContent = { local: "📱 只存在這台裝置", connecting: "", cloud: "", error: "⚠️ 同步失敗，請檢查網路或 Firebase 權限" }[state.sync];
     $("dayRoute").href = routeUrl(items, d.travelmode);
@@ -95,10 +113,10 @@
     $("hints").innerHTML = miss.length ? `<div class="hints"><span>🍽️ 還沒安排：</span>${miss.map(([n, , , t]) => `<button data-meal="${t}">＋ ${n}</button>`).join("")}</div>` : "";
 
     $("timeline").innerHTML = items.map(s => `
-      <div class="item"><div class="item-card${s.custom ? " mine" : ""}">
+      <div class="item${next && next.item === s ? " next" : ""}"><div class="item-card${s.custom ? " mine" : ""}">
         <div class="icon" style="background:${ty(s.type).bg}">${esc(s.icon)}</div>
         <div class="body">
-          <div class="row"><span class="time">⏰ ${esc(s.time)}</span>${s.custom ? `<button class="del" data-del="${s.id}" title="刪除">×</button>` : ""}</div>
+          <div class="row"><span class="time">⏰ ${esc(s.time)}${next && next.item === s ? `<em class="now">${next.label}</em>` : ""}</span>${s.custom ? `<button class="del" data-del="${s.id}" title="刪除">×</button>` : ""}</div>
           <div class="title">${esc(s.title)}</div>
           <p class="desc">${esc(s.desc)}</p>
           <div class="chips">${s.chips.map(([t, c]) => `<span class="chip ${c}">${esc(t)}</span>`).join("")}<a class="chip nav" href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">📍 開啟導航</a></div>
@@ -146,7 +164,26 @@
     render();
   });
 
+  // ---------- 捲動後固定在上方的導覽列 ----------
+  function initNav() {
+    const bar = $("stickynav"), links = $("stickylinks");
+    links.innerHTML = $("quicknav").innerHTML;
+    const secs = [...links.querySelectorAll("a")].map(a => [a, document.querySelector(a.getAttribute("href"))]);
+    new IntersectionObserver(([e]) => bar.classList.toggle("show", !e.isIntersecting)).observe($("quicknav"));
+    const mark = () => {
+      let cur = null;
+      for (const [a, sec] of secs) if (sec.getBoundingClientRect().top <= 90) cur = a;
+      secs.forEach(([a]) => a.classList.toggle("on", a === cur));
+    };
+    addEventListener("scroll", mark, { passive: true }); mark();
+  }
+
   renderStatic();
   connect();
   render();
+  initNav();
+  // 旅行當天：一打開就捲到行程（網址帶 #錨點 時尊重使用者指定的位置）
+  if (todayDay() && !location.hash) addEventListener("load", () => scrollTo({ top: $("plan").getBoundingClientRect().top + scrollY - 68, behavior: "instant" }));
+  // 每分鐘更新「下一站」；正在填表單時不重畫，避免打到一半的字被清掉
+  setInterval(() => { if (!state.form && state.day === todayDay()) render(); }, 60000);
 })();
