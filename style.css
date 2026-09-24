@@ -11,7 +11,8 @@ section{display:flex;flex-direction:column;gap:18px}
 .badge{font-size:14px;font-weight:700;color:#6B4E33;background:#EBD9C2;border:1.5px dashed var(--dash);border-radius:999px;padding:8px 18px}
 .hero h1{margin:0;font-weight:900;font-size:clamp(34px,9vw,52px);line-height:1.2;color:#4A3322;letter-spacing:.02em;text-shadow:0 3px 0 #fff}
 .quicknav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%}
-.quicknav a{display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 6px;border-radius:999px;background:#FBF6EF;border:1.5px dashed #D9C2A5;font-size:15px;font-weight:700;color:#4A3322}
+.quicknav a{display:flex;align-items:center;justify-content:center;gap:4px;padding:12px 4px;border-radius:999px;background:#FBF6EF;border:1.5px dashed #D9C2A5;font-size:14px;font-weight:700;color:#4A3322;white-space:nowrap}
+@media (max-width:359px){.quicknav{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .stats{margin-top:22px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:#E2CCB0}
 .stats div{padding:16px 4px;text-align:center;display:flex;flex-direction:column;gap:2px;border-right:1px solid #D4BA99}
 .stats div:last-child{border-right:0}
