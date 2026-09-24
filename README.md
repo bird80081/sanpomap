@@ -20,11 +20,11 @@
 3. 網址：`https://<帳號>.github.io/<repo>/`
 
 ## 功能說明
-- **固定行程**：寫在 `data.js` 的 `TRIP.days[n].spots`。欄位：`time`、`title`、`tag`、`icon`、`type`、`desc`、`q`（Google Maps 搜尋字）。
+- **固定行程**：寫在 `data.js` 的 `TRIP.days[n].spots`。欄位：`time`、`title`、`tag`、`icon`、`type`、`desc`、`q`（Google Maps 搜尋字），選填 `meals`（例如 `["早餐", "午餐"]`，標明這段行程已涵蓋哪幾餐）。
 - **新增行程**：使用者在網頁上新增，存到 Firebase `/{TRIP.id}/extra/{day}/{id}`，依 `time` 中第一個 `HH:MM` 自動排序；時間無法解析的排最後。
 - **即時同步**：使用 Firebase Realtime Database 的 REST API + `EventSource` 串流，不需要 Firebase SDK 或 apiKey。`TRIP.dbUrl` 留空則改存 localStorage（僅本機）。
-- **用餐提醒**：`MEALS` 定義早／午／晚餐時段；若當天行程涵蓋該時段、但沒有 `type: "food"` 的項目，就顯示「還沒安排」。
-- **Google Maps 整日路線**：`/maps/dir/?api=1`，起點＝當天第一站、終點＝最後一站、中途點最多 9 個（Google 限制）。`travelmode` 由每日的 `travelmode` 設定。
+- **用餐提醒**：`MEALS` 定義早／午／晚餐時段；若當天行程涵蓋該時段，但沒有時間區間重疊的 `type: "food"` 項目、也沒有項目以 `meals` 標明涵蓋，就顯示「還沒安排」。
+- **Google Maps 整日路線**：`/maps/dir/?api=1`，起點＝當天第一站、終點＝最後一站、中途點最多 9 個（Google 限制）。`travelmode` 由每日的 `travelmode` 設定；`transit`（大眾運輸）不支援中途點，只開起訖。
 
 ## Firebase
 - 資料庫：`https://taiwan-trival-default-rtdb.firebaseio.com`

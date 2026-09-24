@@ -3,6 +3,9 @@
   const $ = id => document.getElementById(id);
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const hr = t => { const m = String(t).match(/(\d{1,2}):(\d{2})/); return m ? +m[1] + m[2] / 60 : 99; };
+  // 時間區間：取第一個與最後一個 HH:MM，例如 "10:30–14:20" → [10.5, 14.33]
+  const span = t => { const m = [...String(t).matchAll(/(\d{1,2}):(\d{2})/g)].map(x => +x[1] + x[2] / 60); return m.length ? [m[0], m[m.length - 1]] : [99, 99]; };
+  const ty = t => TYPES[t] || TYPES.sight; // 雲端資料若出現未知類型，不讓畫面壞掉
   const gmap = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
   const LOCAL_KEY = T.id + "-extra";
   const DB = T.dbUrl ? T.dbUrl.replace(/\/+$/, "") + "/" + T.id + "/extra" : "";
@@ -42,19 +45,23 @@
   function dayItems(day) {
     const base = T.days[day].spots.map(s => ({ ...s, custom: false, chips: [[s.tag, ""]] }));
     const mine = (state.extra[day] || []).map(c => ({
-      ...c, icon: TYPES[c.type].icon, q: c.title, desc: c.desc || "自己加的行程", custom: true,
+      ...c, icon: ty(c.type).icon, q: c.title, desc: c.desc || "自己加的行程", custom: true,
       chips: [["我加的", "mine"], ...c.tags.map(t => [t, "hot"])]
     }));
     return [...base, ...mine].sort((a, b) => hr(a.time) - hr(b.time));
   }
   function missingMeals(items) {
     const times = items.map(s => hr(s.time)).filter(h => h < 99);
+    if (!times.length) return [];
     const lo = Math.min(...times), hi = Math.max(...times);
-    return MEALS.filter(([, a, b]) => lo <= b && hi >= a &&
-      !items.some(s => s.type === "food" && hr(s.time) >= a && hr(s.time) <= b));
+    // 已安排＝該項目用 meals 標明涵蓋這餐，或是美食類且時間區間與用餐時段重疊
+    const covers = (s, n, a, b) => (s.meals || []).includes(n) ||
+      (s.type === "food" && (([x, y]) => x <= b && y >= a)(span(s.time)));
+    return MEALS.filter(([n, a, b]) => lo <= b && hi >= a && !items.some(s => covers(s, n, a, b)));
   }
   function routeUrl(items, mode) {
-    const q = items.map(s => s.q), w = q.slice(1, -1).slice(0, 9); // Google 最多 9 個中途點
+    // Google 最多 9 個中途點；大眾運輸模式不支援中途點，只給起訖
+    const q = items.map(s => s.q), w = mode === "transit" ? [] : q.slice(1, -1).slice(0, 9);
     return "https://www.google.com/maps/dir/?api=1&origin=" + encodeURIComponent(q[0]) +
       "&destination=" + encodeURIComponent(q[q.length - 1]) +
       (w.length ? "&waypoints=" + w.map(encodeURIComponent).join("%7C") : "") + "&travelmode=" + mode;
@@ -81,14 +88,15 @@
     $("route").textContent = d.route;
     $("sync").textContent = { local: "📱 只存在這台裝置", connecting: "⏳ 連線中…", cloud: "☁️ 已與 Firebase 即時同步", error: "⚠️ 同步失敗，請檢查網路或 Firebase 權限" }[state.sync];
     $("dayRoute").href = routeUrl(items, d.travelmode);
-    $("dayRoute").textContent = `🗺️ 用 Google Maps 開啟 Day ${day} 完整路線`;
+    $("dayRoute").textContent = d.travelmode === "transit"
+      ? `🗺️ Google Maps 開啟 Day ${day} 起訖路線` : `🗺️ 用 Google Maps 開啟 Day ${day} 完整路線`;
 
     const miss = missingMeals(items);
     $("hints").innerHTML = miss.length ? `<div class="hints"><span>🍽️ 還沒安排：</span>${miss.map(([n, , , t]) => `<button data-meal="${t}">＋ ${n}</button>`).join("")}</div>` : "";
 
     $("timeline").innerHTML = items.map(s => `
       <div class="item"><div class="item-card${s.custom ? " mine" : ""}">
-        <div class="icon" style="background:${TYPES[s.type].bg}">${esc(s.icon)}</div>
+        <div class="icon" style="background:${ty(s.type).bg}">${esc(s.icon)}</div>
         <div class="body">
           <div class="row"><span class="time">⏰ ${esc(s.time)}</span>${s.custom ? `<button class="del" data-del="${s.id}" title="刪除">×</button>` : ""}</div>
           <div class="title">${esc(s.title)}</div>
