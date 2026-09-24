@@ -86,7 +86,7 @@
     const day = state.day, d = T.days[day], items = dayItems(day), f = state.form;
     $("tabs").innerHTML = Object.keys(T.days).map(n => `<button class="tab${+n === day ? " on" : ""}" data-day="${n}">Day ${n}</button>`).join("");
     $("route").textContent = d.route;
-    $("sync").textContent = { local: "📱 只存在這台裝置", connecting: "⏳ 連線中…", cloud: "☁️ 已與 Firebase 即時同步", error: "⚠️ 同步失敗，請檢查網路或 Firebase 權限" }[state.sync];
+    $("sync").textContent = { local: "📱 只存在這台裝置", connecting: "", cloud: "", error: "⚠️ 同步失敗，請檢查網路或 Firebase 權限" }[state.sync];
     $("dayRoute").href = routeUrl(items, d.travelmode);
     $("dayRoute").textContent = d.travelmode === "transit"
       ? `🗺️ Google Maps 開啟 Day ${day} 起訖路線` : `🗺️ 用 Google Maps 開啟 Day ${day} 完整路線`;
