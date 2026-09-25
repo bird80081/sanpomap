@@ -118,11 +118,15 @@
     $("badge").textContent = T.badge;
     $("title").innerHTML = T.title;
     $("stats").innerHTML = T.stats.map(([i, b, s]) => `<div><span>${i}</span><b>${b}</b><small>${s}</small></div>`).join("");
-    $("overview").innerHTML = Object.entries(T.days).map(([n, d]) =>
-      `<div class="ov-row" style="background:${d.soft};margin-bottom:10px"><b style="background:${d.color}">Day ${n}</b><span>${d.overview}</span></div>`).join("");
     $("transitTip").innerHTML = T.transitTip;
-    $("transitTable").innerHTML = `<div class="tr th"><span>路段</span><span>交通</span><span>時間</span></div>` +
-      T.transit.map(([l, m, t]) => `<div class="tr"><span class="leg">${l}</span><span class="mode">${m}</span><span class="t">${t}</span></div>`).join("");
+    $("transitTable").innerHTML = Object.keys(T.days).map(day => {
+      const rows = T.transit.filter(([leg]) => leg.startsWith(`Day${day} `));
+      return `<section class="transit-day"><h3>Day ${day}<span>${esc(["10/8", "10/9", "10/10"][day - 1])}</span></h3>${rows.map(([leg, mode, time]) => {
+        const note = time.match(/（([^）]+)）/);
+        const clock = time.replace(/（[^）]+）/g, "");
+        return `<article class="transit-card"><div class="transit-leg">${esc(leg.replace(/^Day\d+\s*/, ""))}</div><div class="transit-meta"><span>${esc(mode)}</span><strong>${esc(clock)}</strong></div>${note ? `<small>${esc(note[1])}</small>` : ""}</article>`;
+      }).join("")}</section>`;
+    }).join("");
     $("transitNote").innerHTML = T.transitNote;
     $("stays").innerHTML = T.stays.map(s => `<div class="stay"><span>${s.icon}</span><div><small>${s.day}</small><b>${s.name}</b><p>${s.info}</p><a href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">📍 查看地圖</a></div></div>`).join("");
     $("footer").innerHTML = T.footer.map(f => `<div>${f}</div>`).join("");
@@ -132,8 +136,12 @@
     const day = state.day, d = T.days[day], items = dayItems(day), f = state.form;
     const today = todayDay(), next = day === today ? nextItem(items) : null;
     $("tabs").innerHTML = Object.keys(T.days).map(n => `<button class="tab${+n === day ? " on" : ""}" data-day="${n}">Day ${n}${+n === today ? "・今天" : ""}</button>`).join("");
-    $("overview").innerHTML = Object.entries(T.days).map(([n, info]) => `<div class="ov-row" style="background:${info.soft};margin-bottom:10px"><b style="background:${info.color}">Day ${n}</b><span>${esc(dayItems(n).map(s => s.title).join(" → ") || "尚無行程")}</span></div>`).join("");
-    $("route").textContent = items.map(s => s.title).join(" → ") || "今天還沒有行程";
+    $("overview").innerHTML = Object.entries(T.days).map(([n, info]) => {
+      const list = dayItems(n);
+      const labels = list.map(s => s.kind === "override" || s.custom ? s.title : (s.shortLabel || s.title)).filter((name, i, all) => i === 0 || name !== all[i - 1]);
+      return `<div class="ov-day" style="--day-soft:${info.soft};--day-color:${info.color}"><div class="ov-heading"><b>Day ${n}</b><span>${esc(["10/8", "10/9", "10/10"][n - 1])} · ${list.length} 段行程</span></div><div class="ov-stops">${labels.map(name => `<span>${esc(name)}</span>`).join("") || "尚無行程"}</div><details><summary>展開時間與行程</summary><ol>${list.map(s => `<li><time>${esc(s.time)}</time><span>${esc(s.title)}</span></li>`).join("")}</ol></details></div>`;
+    }).join("");
+    $("route").textContent = `${["10/8", "10/9", "10/10"][day - 1]} · ${items.length} 段行程`;
     $("dayRoute").hidden = !items.length;
     $("sync").textContent = { local: "📱 只存在這台裝置", connecting: "", cloud: "", error: "⚠️ 同步失敗，請檢查網路或 Firebase 權限" }[state.sync];
     $("dayRoute").href = routeUrl(items, d.travelmode);

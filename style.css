@@ -31,11 +31,22 @@ section{display:flex;flex-direction:column;gap:18px;scroll-margin-top:68px}
 .sec-head i{flex:1;height:2px;background:linear-gradient(90deg,#C9A57C,transparent)}
 
 .card{background:var(--card);border-radius:28px;box-shadow:var(--shadow)}
-.overview{padding:20px;display:flex;flex-direction:column;gap:10px}
-.ov-row{display:flex;gap:12px;align-items:center;border-radius:18px;padding:14px 16px}
-.ov-row b{font-size:14px;color:#fff;border-radius:999px;padding:4px 12px;white-space:nowrap}
-.ov-row span{font-size:15px;font-weight:700;color:#4A3322}
-.overview-cap{text-align:center;font-size:16px;color:#7A6552;padding-top:6px}
+/* 每日路線：短站名與展開明細 */
+.overview{padding:0;background:transparent;box-shadow:none;gap:12px}
+#overview{display:grid;gap:14px}
+.ov-day{background:var(--day-soft);padding:20px;border-radius:24px}
+.ov-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.ov-heading b{font-size:15px;background:var(--day-color);color:#fff;border-radius:999px;padding:5px 14px;white-space:nowrap}
+.ov-heading>span{font-size:13px;color:var(--ink2)}
+.ov-stops{display:flex;flex-wrap:wrap;gap:8px 0;line-height:1.7}
+.ov-stops>span{font-size:16px;font-weight:700;overflow-wrap:anywhere}
+.ov-stops>span:not(:last-child)::after{content:"›";padding:0 9px;color:var(--ink2);font-weight:400}
+.ov-day details{margin-top:16px;border-top:1px solid #ffffff99;padding-top:12px}
+.ov-day summary{cursor:pointer;color:var(--ink2);font-size:13px;min-height:28px}
+.ov-day ol{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:12px}
+.ov-day li{display:grid;gap:3px;font-size:14px;line-height:1.6}
+.ov-day time{color:var(--ink2);font-size:12px;font-weight:700}
+.overview-cap{text-align:center;font-size:13px;color:var(--ink2)}
 
 .tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .tab{border:0;cursor:pointer;padding:12px 6px;border-radius:999px;font-weight:900;font-size:16px;white-space:nowrap;background:var(--card);color:var(--tan-d)}
@@ -85,13 +96,18 @@ section{display:flex;flex-direction:column;gap:18px;scroll-margin-top:68px}
 
 .tip{border:2px dashed var(--dash);border-radius:24px;padding:18px 20px;display:flex;gap:14px;align-items:flex-start;background:var(--card)}
 .tip span{font-size:28px}.tip p{margin:0;font-size:16px;line-height:1.75;color:var(--ink2)}.tip b{color:var(--ink)}
-.table{border-radius:24px;overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
-.tr{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) 92px;gap:10px;align-items:center;padding:14px 18px;border-top:2px solid #F0E6DA}
-.tr.th{background:var(--brown);color:#fff;font-size:16px;font-weight:900;border:0;padding:16px 18px}
-.tr .leg{font-size:15px;font-weight:800}.tr .mode{font-size:14px;color:var(--ink2)}
-.tr .t{font-size:13px;font-weight:800;color:#7A5A38;background:#EFE3D3;border-radius:12px;padding:6px 8px;text-align:center}
-.note{border-left:5px solid var(--tan);background:#EFE3D3;border-radius:0 20px 20px 0;padding:16px 18px;font-size:15px;line-height:1.75;color:var(--ink2)}
-.note b{color:var(--ink)}
+/* 交通按天分組，時間與備註各自一行 */
+.table{display:grid;gap:24px}
+.transit-day{gap:10px}
+.transit-day h3{margin:0 2px 2px;font-size:18px;display:flex;align-items:baseline;gap:10px}
+.transit-day h3 span{font-size:13px;font-weight:400;color:var(--ink2)}
+.transit-card{padding:18px;background:var(--card);border:1px solid #E8DCCB;border-radius:18px}
+.transit-leg{font-size:17px;font-weight:800;line-height:1.6;overflow-wrap:anywhere}
+.transit-meta{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 14px;margin-top:10px;font-size:14px;color:var(--ink2)}
+.transit-meta strong{font-size:16px;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.transit-card small{display:block;margin-top:8px;font-size:12px;color:var(--ink2)}
+.note{font-size:13px;color:var(--ink2);line-height:1.7;margin:0}
+:focus-visible{outline:2px solid var(--brown);outline-offset:4px}
 
 .stay{background:linear-gradient(120deg,#6A4E37,#8E6C4C);border-radius:28px;padding:22px;display:flex;gap:16px;align-items:center;color:#fff}
 .stay>span{font-size:44px}
