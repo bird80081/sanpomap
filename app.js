@@ -139,7 +139,7 @@
     $("overview").innerHTML = Object.entries(T.days).map(([n, info]) => {
       const list = dayItems(n);
       const labels = list.map(s => s.kind === "override" || s.custom ? s.title : (s.shortLabel || s.title)).filter((name, i, all) => i === 0 || name !== all[i - 1]);
-      return `<div class="ov-day" style="--day-soft:${info.soft};--day-color:${info.color}"><div class="ov-heading"><b>Day ${n}</b><span>${esc(["10/8", "10/9", "10/10"][n - 1])} · ${list.length} 段行程</span></div><div class="ov-stops">${labels.map(name => `<span>${esc(name)}</span>`).join("") || "尚無行程"}</div><details><summary>展開時間與行程</summary><ol>${list.map(s => `<li><time>${esc(s.time)}</time><span>${esc(s.title)}</span></li>`).join("")}</ol></details></div>`;
+      return `<div class="ov-day" style="--day-soft:${info.soft};--day-color:${info.color}"><div class="ov-heading"><b>Day ${n}</b><span>${esc(["10/8", "10/9", "10/10"][n - 1])} · ${list.length} 段行程</span></div><div class="ov-stops">${labels.map(name => `<span>${esc(name)}</span>`).join("") || "尚無行程"}</div></div>`;
     }).join("");
     $("route").textContent = `${["10/8", "10/9", "10/10"][day - 1]} · ${items.length} 段行程`;
     $("dayRoute").hidden = !items.length;
