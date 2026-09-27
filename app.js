@@ -16,6 +16,11 @@
   // 網址加 ?now=2026-10-09T15:00 可模擬旅途中的某個時間（測試用）
   const nowParam = new URLSearchParams(location.search).get("now");
   const now = () => (nowParam && !isNaN(new Date(nowParam)) ? new Date(nowParam) : new Date());
+  // 第 n 天的日期（M/D），由 T.start 推算
+  function dayDate(n) {
+    const [y, m, dd] = T.start.split("-").map(Number), d = new Date(y, m - 1, dd + (+n - 1));
+    return `${d.getMonth() + 1}/${d.getDate()}`;
+  }
   function todayDay() {
     if (!T.start) return 0;
     const [y, m, dd] = T.start.split("-").map(Number), n = now();
@@ -130,7 +135,7 @@
     $("ticketTip").innerHTML = T.ticketTip;
     $("ticketTable").innerHTML = Object.keys(T.days).map(day => {
       const rows = T.tickets.filter(t => t.day === +day);
-      return `<section class="transit-day"><h3>Day ${day}<span>${esc(["10/8", "10/9", "10/10"][day - 1])}</span></h3>${rows.map(t => {
+      return `<section class="transit-day"><h3>Day ${day}<span>${esc(dayDate(day))}</span></h3>${rows.map(t => {
         const [label, cls] = STATUS[t.status] || STATUS.pending;
         return `<article class="transit-card"><div class="ticket-top"><div class="transit-leg">${esc(t.leg)}</div><span class="status ${cls}">${label}</span></div><div class="transit-meta"><span>${esc(t.mode)}</span><strong>${esc(t.time)}</strong></div>${t.seat ? `<div class="seat">💺 ${esc(t.seat)}</div>` : ""}${t.note ? `<small>${esc(t.note)}</small>` : ""}${t.spot ? `<button class="chip goto" data-goto="${day}:${esc(t.spot)}">↑ 看行程這一站</button>` : ""}</article>`;
       }).join("")}</section>`;
@@ -148,9 +153,9 @@
     $("overview").innerHTML = Object.entries(T.days).map(([n, info]) => {
       const list = dayItems(n);
       const labels = list.map(s => s.kind === "override" || s.custom ? s.title : (s.shortLabel || s.title)).filter((name, i, all) => i === 0 || name !== all[i - 1]);
-      return `<div class="ov-day" style="--day-soft:${info.soft};--day-color:${info.color}"><div class="ov-heading"><b>Day ${n}</b><span>${esc(["10/8", "10/9", "10/10"][n - 1])} · ${list.length} 段行程</span></div><div class="ov-stops">${labels.map(name => `<span>${esc(name)}</span>`).join("") || "尚無行程"}</div></div>`;
+      return `<div class="ov-day" style="--day-soft:${info.soft};--day-color:${info.color}"><div class="ov-heading"><b>Day ${n}</b><span>${esc(dayDate(n))} · ${list.length} 段行程</span></div><div class="ov-stops">${labels.map(name => `<span>${esc(name)}</span>`).join("") || "尚無行程"}</div></div>`;
     }).join("");
-    $("route").textContent = `${["10/8", "10/9", "10/10"][day - 1]} · ${items.length} 段行程`;
+    $("route").textContent = `${dayDate(day)} · ${items.length} 段行程`;
     $("dayRoute").hidden = !items.length;
     $("sync").textContent = !navigator.onLine && DB ? "📴 離線中，顯示上次同步的內容"
       : { local: "📱 只存在這台裝置", connecting: "", cloud: "", error: "⚠️ 同步失敗，請檢查網路或 Firebase 權限" }[state.sync];
@@ -262,7 +267,7 @@
   // ---------- 離線備份 ----------
   // 列印版：三天行程＋票券＋住宿一次攤開，手機可「列印 → 存成 PDF」
   function renderPrint() {
-    const days = Object.keys(T.days).map(n => `<h2>Day ${n}・${esc(["10/8", "10/9", "10/10"][n - 1])}</h2>${dayItems(n).map(s =>
+    const days = Object.keys(T.days).map(n => `<h2>Day ${n}・${esc(dayDate(n))}</h2>${dayItems(n).map(s =>
       `<div class="p-item"><b>${esc(s.time)}</b><div><strong>${esc(s.title)}</strong><p>${esc(s.desc)}</p><small>📍 ${esc(s.q || s.title)}</small></div></div>`).join("")}`).join("");
     const tickets = T.tickets.map(t => `<tr><td>Day ${t.day}</td><td>${esc(t.leg)}</td><td>${esc(t.mode)}</td><td>${esc(t.time)}</td><td>${(STATUS[t.status] || STATUS.pending)[0]}${t.seat ? `・${esc(t.seat)}` : ""}</td></tr>`).join("");
     const stays = T.stays.map(s => `<p><b>${esc(s.day)}</b> ${esc(s.name)}・${esc(s.info)}</p>`).join("");
