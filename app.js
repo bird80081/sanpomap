@@ -7,7 +7,8 @@
   const span = t => { const m = [...String(t).matchAll(/(\d{1,2}):(\d{2})/g)].map(x => +x[1] + x[2] / 60); return m.length ? [m[0], m[m.length - 1]] : [99, 99]; };
   const ty = t => TYPES[t] || TYPES.sight; // 雲端資料若出現未知類型，不讓畫面壞掉
   const gmap = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
-  const STATUS = { reserved: ["✅ 已劃位", "ok"], booked: ["✅ 已預約", "ok"], open: ["🎫 無對號", "open"], pending: ["⏳ 待預約", "wait"] };
+  // 票券狀態：[文字, 樣式, 線條圖示]
+  const STATUS = { reserved: ["已劃位", "ok", "check"], booked: ["已預約", "ok", "check"], open: ["無對號", "open", "ticket"], pending: ["待預約", "wait", "hourglass"] };
   // 通用線條圖示（index.html 的 <symbol id="i-xxx">）
   const ico = n => `<svg class="ico" aria-hidden="true"><use href="#i-${n}"/></svg>`;
   // 交通與住宿卡片改用線條圖示；美食、咖啡、景點維持原本的專屬圖示
@@ -44,7 +45,7 @@
   function nextItem(items) {
     const n = now(), h = n.getHours() + n.getMinutes() / 60;
     const s = items.find(x => hr(x.time) < 99 && span(x.time)[1] >= h);
-    return s ? { item: s, label: hr(s.time) <= h ? "⏳ 進行中" : "👉 下一站" } : null;
+    return s ? { item: s, label: hr(s.time) <= h ? ico("hourglass") + "進行中" : ico("next") + "下一站" } : null;
   }
 
   const state = { day: todayDay() || 1, form: null, tform: null, adjust: null, extra: { 1: [], 2: [], 3: [] }, busy: false, error: "", sync: DB ? "connecting" : "local" };
@@ -133,9 +134,9 @@
   function renderTickets() {
     const all = tickets(), f = state.tform;
     $("ticketTable").innerHTML = Object.keys(T.days).map(day => `<section class="transit-day"><h3>Day ${day}<span>${esc(dayDate(day))}</span></h3>${all.filter(t => t.day === +day).map(t => {
-      const [label, cls] = STATUS[t.status] || STATUS.pending;
-      if (f && f.id === t.id) return `<article class="transit-card"><div class="transit-leg">${esc(t.leg)}</div><div class="transit-meta"><span>${esc(t.mode)}</span><strong>${esc(t.time)}</strong></div>
-        <div class="form tform"><div class="types">${Object.entries(STATUS).map(([k, [l]]) => `<button class="${f.status === k ? "on" : ""}" data-tstatus="${k}">${l}</button>`).join("")}</div>
+      const [text, cls, icn] = STATUS[t.status] || STATUS.pending, label = ico(icn) + text;
+      if (f && f.id === t.id) return `<article class="transit-card"><div class="transit-leg">${esc(t.leg)}</div><div class="transit-meta"><span>${ico(passParts(t).car ? "car" : "train")}${esc(passParts(t).name)}</span><strong>${esc(t.time)}</strong></div>
+        <div class="form tform"><div class="types">${Object.entries(STATUS).map(([k, [l, , n]]) => `<button class="${f.status === k ? "on" : ""}" data-tstatus="${k}">${ico(n)}${l}</button>`).join("")}</div>
         <label>座位<input id="tSeat" value="${esc(f.seat)}" placeholder="例如 5 車 12 號"></label>
         <label>備註<input id="tNote" value="${esc(f.note)}" placeholder="預約編號、取車站點…"></label>
         <div class="actions">${t.edited ? `<button class="btn" data-treset>恢復原訂</button>` : ""}<button class="btn" data-tcancel>取消</button><button class="btn primary" data-tsave>儲存</button></div></div></article>`;
@@ -144,7 +145,7 @@
         <div class="pass-head"><b>${esc(p.name)}</b><span class="status ${cls}">${label}</span></div>
         <div class="pass-route"><div><strong>${esc(p.dep)}</strong><span>${esc(p.from)}</span></div><div class="pass-line"><i>${ico(p.car ? "car" : "train")}</i>${p.via ? `<small>經 ${esc(p.via)}</small>` : ""}</div><div class="to">${p.arr ? `<strong>${esc(p.arr)}</strong>` : `<em>以票面為準</em>`}<span>${esc(p.to)}</span></div></div>
         ${t.seat || t.note ? `<div class="pass-foot">${t.seat ? `<div class="seat">💺 ${esc(t.seat)}</div>` : ""}${t.note ? `<small>${esc(t.note)}</small>` : ""}</div>` : ""}
-        <div class="chips">${t.spot ? `<button class="chip goto" data-goto="${day}:${esc(t.spot)}">↑ 看行程這一站</button>` : ""}<button class="adjust" data-tadjust="${esc(t.id)}">✏️ 調整</button>${t.edited ? `<span class="chip">已調整</span>` : ""}</div>
+        <div class="chips">${t.spot ? `<button class="chip goto" data-goto="${day}:${esc(t.spot)}">↑ 看行程這一站</button>` : ""}<button class="adjust" data-tadjust="${esc(t.id)}">${ico("pencil")}調整</button>${t.edited ? `<span class="chip">已調整</span>` : ""}</div>
       </div></article>`;
     }).join("")}</section>`).join("");
   }
@@ -204,13 +205,13 @@
 
   // ---------- 畫面 ----------
   function renderStatic() {
-    $("badge").textContent = T.badge;
+    $("badge").innerHTML = ico("train") + esc(T.badge);
     $("title").innerHTML = T.title;
     $("stats").innerHTML = T.stats.map(([i, b, s]) => `<div><span>${ico(i)}</span><b>${b}</b><small>${s}</small></div>`).join("");
     $("ticketTip").innerHTML = T.ticketTip;
     $("ticketNote").innerHTML = T.ticketNote;
     $("prep").hidden = !T.prep.length;
-    $("prep").innerHTML = `<summary>📝 行前待確認（${T.prep.length}）<small>出發前處理</small></summary><ol>${T.prep.map(p => `<li>${esc(p)}</li>`).join("")}</ol>`;
+    $("prep").innerHTML = `<summary>${ico("list")}行前待確認（${T.prep.length}）<small>出發前處理</small></summary><ol>${T.prep.map(p => `<li>${esc(p)}</li>`).join("")}</ol>`;
     $("prep").open = beforeTrip();
     $("stays").innerHTML = T.stays.map(s => `<div class="stay"><span>${ico("bed")}</span><div><small>${s.day}</small><b>${s.name}</b><p>${s.info}</p><a href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">${ico("pin")}查看地圖</a></div></div>`).join("");
     $("footer").innerHTML = T.footer.map(f => `<div>${f}</div>`).join("");
@@ -227,20 +228,20 @@
     }).join("");
     $("route").textContent = `${dayDate(day)} · ${items.length} 段行程`;
     $("dayRoute").hidden = !items.length;
-    $("sync").textContent = !navigator.onLine && DB ? "📴 離線中，顯示上次同步的內容"
+    $("sync").innerHTML = !navigator.onLine && DB ? ico("offline") + "離線中，顯示上次同步的內容"
       : { local: "📱 只存在這台裝置", connecting: "", cloud: "", error: "⚠️ 同步失敗，請檢查網路或 Firebase 權限" }[state.sync];
     $("dayRoute").href = routeUrl(items, d.travelmode);
     $("dayRoute").textContent = d.routeLabel || (d.travelmode === "transit"
       ? `🗺️ Google Maps 開啟 Day ${day} 起訖路線` : `🗺️ 用 Google Maps 開啟 Day ${day} 完整路線`);
 
     const miss = missingMeals(items);
-    $("hints").innerHTML = miss.length ? `<div class="hints"><span>🍽️ 還沒安排：</span>${miss.map(([n, , , t]) => `<button data-meal="${t}">＋ ${n}</button>`).join("")}</div>` : "";
+    $("hints").innerHTML = miss.length ? `<div class="hints"><span>${ico("food")}還沒安排：</span>${miss.map(([n, , , t]) => `<button data-meal="${t}">＋ ${n}</button>`).join("")}</div>` : "";
 
     $("timeline").innerHTML = items.map((s, index) => `
       <div class="item${next && next.item === s ? " next" : ""}" data-id="${esc(s.id)}"><div class="item-card${s.custom ? " mine" : ""}">
         <div class="icon" style="background:${ty(s.type).bg}">${cardIcon(s)}</div>
         <div class="body">
-          <div class="row"><span class="time">${ico("clock")}${esc(s.time)}${next && next.item === s ? `<em class="now">${next.label}</em>` : ""}</span><button class="adjust${state.adjust === String(s.id) ? " on" : ""}" data-adjust="${esc(s.id)}" aria-expanded="${state.adjust === String(s.id)}">✏️ 調整</button></div>
+          <div class="row"><span class="time">${ico("clock")}${esc(s.time)}${next && next.item === s ? `<em class="now">${next.label}</em>` : ""}</span><button class="adjust${state.adjust === String(s.id) ? " on" : ""}" data-adjust="${esc(s.id)}" aria-expanded="${state.adjust === String(s.id)}">${ico("pencil")}調整</button></div>
           <div class="title">${esc(s.title)}</div>
           <p class="desc">${esc(s.desc)}</p>
           ${state.adjust === String(s.id) ? `<div class="chips"><button class="chip" data-edit="${esc(s.id)}">編輯</button><button class="chip" data-stop="${esc(s.id)}">取消行程</button></div>` : ""}

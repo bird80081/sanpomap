@@ -6,7 +6,7 @@
 <title>高屏・南迴・花蓮 3日懶人包</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=icons-20260927">
+<link rel="stylesheet" href="style.css?v=icons2-20260927">
 </head>
 <body>
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
@@ -21,6 +21,15 @@
   <symbol id="i-map" viewBox="0 0 24 24"><path d="M3.5 6.5 9 4.5l6 2 5.5-2v13l-5.5 2-6-2-5.5 2z"/><path d="M9 4.5v13M15 6.5v13"/></symbol>
   <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
   <symbol id="i-people" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 19.5a6 6 0 0 1 12 0"/><circle cx="16.8" cy="9" r="2.6"/><path d="M15.5 14.1a4.8 4.8 0 0 1 5.5 4.9"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4.5 19.5h4L19 9a2.1 2.1 0 0 0-3-3L5.5 16.5z"/><path d="m14.5 7.5 3 3"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="m8.5 12.2 2.4 2.3 4.6-4.8"/></symbol>
+  <symbol id="i-hourglass" viewBox="0 0 24 24"><path d="M7 3.5h10M7 20.5h10M8 3.5V6a4 4 0 0 0 1.6 3.2L12 11l2.4-1.8A4 4 0 0 0 16 6V3.5M8 20.5V18a4 4 0 0 1 1.6-3.2L12 13l2.4 1.8A4 4 0 0 1 16 18v2.5"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><rect x="5" y="4.5" width="14" height="16" rx="2.5"/><path d="M9 3v3M15 3v3M9 11h6M9 15h6"/></symbol>
+  <symbol id="i-food" viewBox="0 0 24 24"><path d="M6.5 3v6a2 2 0 0 0 4 0V3M8.5 3v18M17.5 21V3c-2 1.2-3.3 3.6-3.3 6.6V13h3.3"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3.5H7a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-10z"/><path d="M14 3.5v5h5M12 11.5v6M9.5 15l2.5 2.5 2.5-2.5"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2v.2h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></symbol>
+  <symbol id="i-offline" viewBox="0 0 24 24"><path d="m3 3 18 18M8.5 16a5 5 0 0 1 7 0M5 12.3a10 10 0 0 1 4.6-2.5M14.6 9.9A10 10 0 0 1 19 12.3M2 8.6a15 15 0 0 1 4.2-2.6M10.8 5a15 15 0 0 1 11.2 3.6"/><circle class="dot" cx="12" cy="19.5" r="1.1"/></symbol>
+  <symbol id="i-next" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
 </svg>
 <nav class="stickynav" id="stickynav" aria-label="快速導覽"><div id="stickylinks"></div></nav>
 <div class="wrap">
@@ -53,7 +62,7 @@
 
   <section id="tickets">
     <div class="sec-head"><span><svg class="ico"><use href="#i-ticket"/></svg></span><h2>票券</h2><i></i></div>
-    <div class="tip"><span>🎯</span><p id="ticketTip"></p></div>
+    <div class="tip"><span><svg class="ico"><use href="#i-bulb"/></svg></span><p id="ticketTip"></p></div>
     <div class="table" id="ticketTable"></div>
     <p class="note" id="ticketNote"></p>
   </section>
@@ -64,10 +73,10 @@
   </section>
 
   <footer id="footer"></footer>
-  <button class="backup-btn" id="printBtn">📄 存成 PDF（離線備份）</button>
+  <button class="backup-btn" id="printBtn"><svg class="ico"><use href="#i-file"/></svg>存成 PDF（離線備份）</button>
 </div>
 <div id="printAll" class="print-only"></div>
-<script src="data.js?v=icons-20260927"></script>
-<script src="app.js?v=icons-20260927"></script>
+<script src="data.js?v=icons2-20260927"></script>
+<script src="app.js?v=icons2-20260927"></script>
 </body>
 </html>
