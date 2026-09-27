@@ -131,8 +131,25 @@
         <label>座位<input id="tSeat" value="${esc(f.seat)}" placeholder="例如 5 車 12 號"></label>
         <label>備註<input id="tNote" value="${esc(f.note)}" placeholder="預約編號、取車站點…"></label>
         <div class="actions">${t.edited ? `<button class="btn" data-treset>恢復原訂</button>` : ""}<button class="btn" data-tcancel>取消</button><button class="btn primary" data-tsave>儲存</button></div></div></article>`;
-      return `<article class="transit-card"><div class="ticket-top"><div class="transit-leg">${esc(t.leg)}</div><span class="status ${cls}">${label}</span></div><div class="transit-meta"><span>${esc(t.mode)}</span><strong>${esc(t.time)}</strong></div>${t.seat ? `<div class="seat">💺 ${esc(t.seat)}</div>` : ""}${t.note ? `<small>${esc(t.note)}</small>` : ""}<div class="chips">${t.spot ? `<button class="chip goto" data-goto="${day}:${esc(t.spot)}">↑ 看行程這一站</button>` : ""}<button class="adjust" data-tadjust="${esc(t.id)}">✏️ 調整</button>${t.edited ? `<span class="chip">已調整</span>` : ""}</div></article>`;
+      const p = passParts(t);
+      return `<article class="pass ${p.car ? "car" : "train"}"><div class="pass-strip"><span>${p.car ? "租車" : "臺鐵"}</span></div><div class="pass-body">
+        <div class="pass-head"><b>${esc(p.name)}</b><span class="status ${cls}">${label}</span></div>
+        <div class="pass-route"><div><strong>${esc(p.dep)}</strong><span>${esc(p.from)}</span></div><div class="pass-line"><i>${p.car ? "🚗" : "🚆"}</i>${p.via ? `<small>經 ${esc(p.via)}</small>` : ""}</div><div class="to">${p.arr ? `<strong>${esc(p.arr)}</strong>` : `<em>以票面為準</em>`}<span>${esc(p.to)}</span></div></div>
+        ${t.seat || t.note ? `<div class="pass-foot">${t.seat ? `<div class="seat">💺 ${esc(t.seat)}</div>` : ""}${t.note ? `<small>${esc(t.note)}</small>` : ""}</div>` : ""}
+        <div class="chips">${t.spot ? `<button class="chip goto" data-goto="${day}:${esc(t.spot)}">↑ 看行程這一站</button>` : ""}<button class="adjust" data-tadjust="${esc(t.id)}">✏️ 調整</button>${t.edited ? `<span class="chip">已調整</span>` : ""}</div>
+      </div></article>`;
     }).join("")}</section>`).join("");
+  }
+  // 登機證版面：從 leg「A → B → C」拆出起訖與經過站，從 time 拆出出發／抵達時間
+  function passParts(t) {
+    const round = t.leg.includes("↔"), stops = t.leg.split(/\s*[→↔]\s*/);
+    const times = String(t.time).match(/\d{1,2}:\d{2}/g) || [];
+    return {
+      car: t.mode.includes("🚗"), name: t.mode.replace(/^\S+\s*/, ""),
+      // 「A ↔ B」是從 A 出發繞 B 再回 A
+      from: stops[0], to: round ? stops[0] : stops[stops.length - 1],
+      via: (round ? stops.slice(1) : stops.slice(1, -1)).join("・"), dep: times[0] || t.time, arr: times[1] || ""
+    };
   }
   function readTicketForm() {
     if (state.tform && $("tSeat")) state.tform = { ...state.tform, seat: $("tSeat").value, note: $("tNote").value };
