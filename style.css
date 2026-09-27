@@ -177,3 +177,17 @@ button.chip{cursor:pointer;border:1px solid var(--line);min-height:36px}
 .pass-foot .seat{margin:0}.pass-foot small{font-size:12px;color:var(--ink2);line-height:1.6}
 .pass .chips{margin-top:0}
 .pass-route em{font-style:normal;font-size:12px;font-weight:700;color:var(--muted);line-height:2}
+
+/* 通用線條圖示（index.html 內的 symbol） */
+.ico{width:1em;height:1em;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.14em}
+.ico .dot{fill:currentColor;stroke:none}
+.quicknav a .ico,.stickynav a .ico{width:17px;height:17px;margin-right:2px}
+.stickynav a{display:flex;align-items:center;justify-content:center;gap:4px}
+.sec-head span{display:flex;color:var(--tan-d)}
+.stats span:first-child{display:flex;justify-content:center;color:#6B4E33;font-size:24px}
+.icon{color:var(--brown)}.icon .ico{width:28px;height:28px}
+.time{display:inline-flex;align-items:center;gap:5px}.time .ico{width:15px;height:15px}
+.chip.nav{display:inline-flex;align-items:center;gap:4px}.chip .ico{width:14px;height:14px}
+.pass-line i{color:#9C3B32}.pass.car .pass-line i{color:#4E7A73}.pass-line .ico{width:17px;height:17px}
+.stay>span{display:flex;color:#F1E3D0}.stay>span .ico{width:44px;height:44px;stroke-width:1.6}
+.stay a{display:inline-flex;align-items:center;gap:4px}
