@@ -6,7 +6,7 @@
 <title>高屏・南迴・花蓮 3日懶人包</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=itinerary-20260926">
+<link rel="stylesheet" href="style.css?v=tickets-20260927">
 </head>
 <body>
 <nav class="stickynav" id="stickynav" aria-label="快速導覽"><div id="stickylinks"></div></nav>
@@ -16,7 +16,7 @@
       <div class="badge" id="badge"></div>
       <h1 id="title"></h1>
       <nav class="quicknav" id="quicknav">
-        <a href="#map">🗺️ 路線</a><a href="#plan">🗓️ 行程</a><a href="#transit">🚆 交通</a><a href="#stay">🏨 住宿</a>
+        <a href="#map">🗺️ 路線</a><a href="#plan">🗓️ 行程</a><a href="#tickets">🎫 票券</a><a href="#stay">🏨 住宿</a>
       </nav>
     </div>
     <div class="stats" id="stats"></div>
@@ -36,12 +36,12 @@
     <div class="timeline" id="timeline"></div>
   </section>
 
-  <section id="transit">
-    <div class="sec-head"><span>🚆</span><h2>交通攻略</h2><i></i></div>
-    <p class="note">以下為原訂交通備忘；臨時調整請以「三天行程」為準。</p>
-    <div class="tip"><span>🎯</span><p id="transitTip"></p></div>
-    <div class="table" id="transitTable"></div>
-    <div class="note" id="transitNote"></div>
+  <section id="tickets">
+    <div class="sec-head"><span>🎫</span><h2>票券</h2><i></i></div>
+    <div class="tip"><span>🎯</span><p id="ticketTip"></p></div>
+    <div class="table" id="ticketTable"></div>
+    <p class="note" id="ticketNote"></p>
+    <details class="prep" id="prep"></details>
   </section>
 
   <section id="stay">
@@ -50,8 +50,10 @@
   </section>
 
   <footer id="footer"></footer>
+  <button class="backup-btn" id="printBtn">📄 存成 PDF（離線備份）</button>
 </div>
-<script src="data.js?v=supper-20260926"></script>
-<script src="app.js?v=itinerary-20260926"></script>
+<div id="printAll" class="print-only"></div>
+<script src="data.js?v=tickets-20260927"></script>
+<script src="app.js?v=tickets-20260927"></script>
 </body>
 </html>

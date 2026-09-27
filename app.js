@@ -7,7 +7,9 @@
   const span = t => { const m = [...String(t).matchAll(/(\d{1,2}):(\d{2})/g)].map(x => +x[1] + x[2] / 60); return m.length ? [m[0], m[m.length - 1]] : [99, 99]; };
   const ty = t => TYPES[t] || TYPES.sight; // 雲端資料若出現未知類型，不讓畫面壞掉
   const gmap = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
+  const STATUS = { reserved: ["✅ 已劃位", "ok"], open: ["🎫 無對號", "open"], pending: ["⏳ 待預約", "wait"] };
   const LOCAL_KEY = T.id + "-extra";
+  const CACHE_KEY = T.id + "-extra-cache"; // 上次雲端同步的副本，離線時顯示
   const DB = T.dbUrl ? T.dbUrl.replace(/\/+$/, "") + "/" + T.id + "/extra" : "";
 
   // ---------- 今天模式 ----------
@@ -27,7 +29,7 @@
     return s ? { item: s, label: hr(s.time) <= h ? "⏳ 進行中" : "👉 下一站" } : null;
   }
 
-  const state = { day: todayDay() || 1, form: null, extra: { 1: [], 2: [], 3: [] }, busy: false, error: "", sync: DB ? "connecting" : "local" };
+  const state = { day: todayDay() || 1, form: null, adjust: null, extra: { 1: [], 2: [], 3: [] }, busy: false, error: "", sync: DB ? "connecting" : "local" };
 
   // ---------- 資料同步 ----------
   function normalize(v) {
@@ -39,7 +41,12 @@
   function pull() {
     const revision = ++syncRevision;
     return fetch(DB + ".json").then(r => { if (!r.ok) throw Error(); return r.json(); })
-      .then(v => { if (state.busy || revision !== syncRevision) return; state.extra = normalize(v); state.sync = "cloud"; if (!state.form) render(); })
+      .then(v => {
+        if (state.busy || revision !== syncRevision) return;
+        state.extra = normalize(v); state.sync = "cloud";
+        try { localStorage.setItem(CACHE_KEY, JSON.stringify(v)); } catch (e) {}
+        if (!state.form) render();
+      })
       .catch(() => { state.sync = "error"; if (!state.form) render(); });
   }
   function connect() {
@@ -47,6 +54,8 @@
       try { const v = JSON.parse(localStorage.getItem(LOCAL_KEY)); if (v) state.extra = { 1: [], 2: [], 3: [], ...v }; } catch (e) {}
       return;
     }
+    // 先顯示上次同步的副本，沒網路時新增／取消的行程也還看得到
+    try { const v = JSON.parse(localStorage.getItem(CACHE_KEY)); if (v) state.extra = normalize(v); } catch (e) {}
     try {
       const es = new EventSource(DB + ".json"); // Firebase REST streaming
       es.addEventListener("put", pull);
@@ -118,16 +127,16 @@
     $("badge").textContent = T.badge;
     $("title").innerHTML = T.title;
     $("stats").innerHTML = T.stats.map(([i, b, s]) => `<div><span>${i}</span><b>${b}</b><small>${s}</small></div>`).join("");
-    $("transitTip").innerHTML = T.transitTip;
-    $("transitTable").innerHTML = Object.keys(T.days).map(day => {
-      const rows = T.transit.filter(([leg]) => leg.startsWith(`Day${day} `));
-      return `<section class="transit-day"><h3>Day ${day}<span>${esc(["10/8", "10/9", "10/10"][day - 1])}</span></h3>${rows.map(([leg, mode, time]) => {
-        const note = time.match(/（([^）]+)）/);
-        const clock = time.replace(/（[^）]+）/g, "");
-        return `<article class="transit-card"><div class="transit-leg">${esc(leg.replace(/^Day\d+\s*/, ""))}</div><div class="transit-meta"><span>${esc(mode)}</span><strong>${esc(clock)}</strong></div>${note ? `<small>${esc(note[1])}</small>` : ""}</article>`;
+    $("ticketTip").innerHTML = T.ticketTip;
+    $("ticketTable").innerHTML = Object.keys(T.days).map(day => {
+      const rows = T.tickets.filter(t => t.day === +day);
+      return `<section class="transit-day"><h3>Day ${day}<span>${esc(["10/8", "10/9", "10/10"][day - 1])}</span></h3>${rows.map(t => {
+        const [label, cls] = STATUS[t.status] || STATUS.pending;
+        return `<article class="transit-card"><div class="ticket-top"><div class="transit-leg">${esc(t.leg)}</div><span class="status ${cls}">${label}</span></div><div class="transit-meta"><span>${esc(t.mode)}</span><strong>${esc(t.time)}</strong></div>${t.seat ? `<div class="seat">💺 ${esc(t.seat)}</div>` : ""}${t.note ? `<small>${esc(t.note)}</small>` : ""}${t.spot ? `<button class="chip goto" data-goto="${day}:${esc(t.spot)}">↑ 看行程這一站</button>` : ""}</article>`;
       }).join("")}</section>`;
     }).join("");
-    $("transitNote").innerHTML = T.transitNote;
+    $("ticketNote").innerHTML = T.ticketNote;
+    $("prep").innerHTML = `<summary>📝 行前待確認（${T.prep.length}）<small>出發前處理</small></summary><ol>${T.prep.map(p => `<li>${esc(p)}</li>`).join("")}</ol>`;
     $("stays").innerHTML = T.stays.map(s => `<div class="stay"><span>${s.icon}</span><div><small>${s.day}</small><b>${s.name}</b><p>${s.info}</p><a href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">📍 查看地圖</a></div></div>`).join("");
     $("footer").innerHTML = T.footer.map(f => `<div>${f}</div>`).join("");
   }
@@ -143,7 +152,8 @@
     }).join("");
     $("route").textContent = `${["10/8", "10/9", "10/10"][day - 1]} · ${items.length} 段行程`;
     $("dayRoute").hidden = !items.length;
-    $("sync").textContent = { local: "📱 只存在這台裝置", connecting: "", cloud: "", error: "⚠️ 同步失敗，請檢查網路或 Firebase 權限" }[state.sync];
+    $("sync").textContent = !navigator.onLine && DB ? "📴 離線中，顯示上次同步的內容"
+      : { local: "📱 只存在這台裝置", connecting: "", cloud: "", error: "⚠️ 同步失敗，請檢查網路或 Firebase 權限" }[state.sync];
     $("dayRoute").href = routeUrl(items, d.travelmode);
     $("dayRoute").textContent = d.routeLabel || (d.travelmode === "transit"
       ? `🗺️ Google Maps 開啟 Day ${day} 起訖路線` : `🗺️ 用 Google Maps 開啟 Day ${day} 完整路線`);
@@ -152,14 +162,14 @@
     $("hints").innerHTML = miss.length ? `<div class="hints"><span>🍽️ 還沒安排：</span>${miss.map(([n, , , t]) => `<button data-meal="${t}">＋ ${n}</button>`).join("")}</div>` : "";
 
     $("timeline").innerHTML = items.map((s, index) => `
-      <div class="item${next && next.item === s ? " next" : ""}"><div class="item-card${s.custom ? " mine" : ""}">
+      <div class="item${next && next.item === s ? " next" : ""}" data-id="${esc(s.id)}"><div class="item-card${s.custom ? " mine" : ""}">
         <div class="icon" style="background:${ty(s.type).bg}">${esc(s.icon)}</div>
         <div class="body">
-          <div class="row"><span class="time">⏰ ${esc(s.time)}${next && next.item === s ? `<em class="now">${next.label}</em>` : ""}</span></div>
+          <div class="row"><span class="time">⏰ ${esc(s.time)}${next && next.item === s ? `<em class="now">${next.label}</em>` : ""}</span><button class="adjust${state.adjust === String(s.id) ? " on" : ""}" data-adjust="${esc(s.id)}" aria-expanded="${state.adjust === String(s.id)}">✏️ 調整</button></div>
           <div class="title">${esc(s.title)}</div>
           <p class="desc">${esc(s.desc)}</p>
-          <div class="chips"><button class="chip" data-edit="${esc(s.id)}">編輯</button><button class="chip" data-stop="${esc(s.id)}">取消行程</button></div>
-          <div class="chips">${s.chips.map(([t, c]) => `<span class="chip ${c}">${esc(t)}</span>`).join("")}<a class="chip nav" href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">📍 查看地點</a>${index > 0 ? `<a class="chip nav" href="${esc(previousRouteUrl(items[index - 1], s))}" title="${esc(items[index - 1].title)} → ${esc(s.title)}" target="_blank" rel="noopener noreferrer">↗ 從上一站前往</a>` : ""}</div>
+          ${state.adjust === String(s.id) ? `<div class="chips"><button class="chip" data-edit="${esc(s.id)}">編輯</button><button class="chip" data-stop="${esc(s.id)}">取消行程</button></div>` : ""}
+          <div class="chips"><a class="chip nav" href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">📍 查看地點</a>${index > 0 ? `<a class="chip nav" href="${esc(previousRouteUrl(items[index - 1], s))}" title="${esc(items[index - 1].title)} → ${esc(s.title)}" target="_blank" rel="noopener noreferrer">↗ 從上一站前往</a>` : ""}${s.chips.map(([t, c]) => `<span class="chip ${c}">${esc(t)}</span>`).join("")}</div>
         </div>
       </div></div>`).join("") + cancelledHtml(day) + (state.error ? `<p role="alert">${esc(state.error)}</p>` : "") + (f ? formHtml(day, f) : `<button class="add-btn" data-open>＋ 新增行程（午餐、下午茶、景點…）</button>`);
   }
@@ -189,10 +199,17 @@
 
   // ---------- 事件 ----------
   document.addEventListener("click", async e => {
-    const el = e.target.closest("[data-day],[data-meal],[data-open],[data-cancel],[data-add],[data-type],[data-edit],[data-stop],[data-restore]");
+    const el = e.target.closest("[data-day],[data-meal],[data-open],[data-cancel],[data-add],[data-type],[data-edit],[data-stop],[data-restore],[data-adjust],[data-goto]");
     if (!el || state.busy) return;
     const day = state.day;
-    if (el.dataset.day) { state.day = +el.dataset.day; state.form = null; }
+    if (el.dataset.goto) {
+      const [d, id] = el.dataset.goto.split(":");
+      state.day = +d; state.form = null; state.adjust = null; render();
+      document.querySelector(`.item[data-id="${CSS.escape(id)}"]`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    if (el.dataset.adjust) state.adjust = state.adjust === el.dataset.adjust ? null : el.dataset.adjust;
+    else if (el.dataset.day) { state.day = +el.dataset.day; state.form = null; state.adjust = null; }
     else if (el.dataset.meal) state.form = blank(el.dataset.meal);
     else if ("open" in el.dataset) state.form = blank();
     else if ("cancel" in el.dataset) state.form = null;
@@ -221,6 +238,7 @@
       item.cancelled = !!el.dataset.stop;
       if (await saveItem(day, item)) {
         if (state.form && String(state.form.id) === id) state.form = null;
+        state.adjust = null;
       }
     }
     render();
@@ -240,6 +258,22 @@
     };
     addEventListener("scroll", mark, { passive: true }); mark();
   }
+
+  // ---------- 離線備份 ----------
+  // 列印版：三天行程＋票券＋住宿一次攤開，手機可「列印 → 存成 PDF」
+  function renderPrint() {
+    const days = Object.keys(T.days).map(n => `<h2>Day ${n}・${esc(["10/8", "10/9", "10/10"][n - 1])}</h2>${dayItems(n).map(s =>
+      `<div class="p-item"><b>${esc(s.time)}</b><div><strong>${esc(s.title)}</strong><p>${esc(s.desc)}</p><small>📍 ${esc(s.q || s.title)}</small></div></div>`).join("")}`).join("");
+    const tickets = T.tickets.map(t => `<tr><td>Day ${t.day}</td><td>${esc(t.leg)}</td><td>${esc(t.mode)}</td><td>${esc(t.time)}</td><td>${(STATUS[t.status] || STATUS.pending)[0]}${t.seat ? `・${esc(t.seat)}` : ""}</td></tr>`).join("");
+    const stays = T.stays.map(s => `<p><b>${esc(s.day)}</b> ${esc(s.name)}・${esc(s.info)}</p>`).join("");
+    $("printAll").innerHTML = `<h1>${T.title.replace(/<br>/g, " ")}</h1><p>${esc(T.badge)}</p>${days}<h2>票券</h2><table>${tickets}</table><h2>住宿</h2>${stays}`;
+  }
+  addEventListener("beforeprint", renderPrint);
+  $("printBtn").addEventListener("click", () => { renderPrint(); print(); });
+  addEventListener("online", () => { if (!state.form) render(); if (DB) pull(); });
+  addEventListener("offline", () => { if (!state.form) render(); });
+  // Service Worker：開過一次後，沒網路也能打開網頁
+  if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
 
   renderStatic();
   connect();

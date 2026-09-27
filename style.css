@@ -112,5 +112,35 @@ section{display:flex;flex-direction:column;gap:18px;scroll-margin-top:68px}
 footer{text-align:center;font-size:13px;line-height:1.8;color:var(--muted)}
 
 button.chip{cursor:pointer;border:1px solid var(--line);min-height:36px}
+
+/* 卡片的編輯／取消收進「調整」 */
+.adjust{cursor:pointer;flex-shrink:0;border:0;background:transparent;color:var(--muted);font-size:13px;font-weight:800;padding:6px 4px;border-radius:999px}
+.adjust.on{background:#EFE3D3;color:var(--tan-d);padding:6px 10px}
+
+/* 票券 */
+.ticket-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.status{flex-shrink:0;font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.status.ok{background:#DDEFD8;color:#3F7A34}.status.open{background:#EFE3D3;color:#7A4E2A}.status.wait{background:#FBEFEA;color:#9C3B32}
+.seat{margin-top:8px;font-size:15px;font-weight:800;color:var(--ink)}
+.chip.goto{margin-top:10px;background:transparent;color:var(--tan-d)}
+.prep{background:var(--card);border:2px dashed var(--dash);border-radius:24px;padding:16px 20px}
+.prep summary{cursor:pointer;font-size:16px;font-weight:800;color:var(--ink)}
+.prep summary small{margin-left:8px;font-size:12px;font-weight:700;color:var(--muted)}
+.prep ol{margin:12px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:10px;font-size:14px;line-height:1.7;color:var(--ink2)}
+
+/* 離線備份 */
+.backup-btn{cursor:pointer;align-self:center;border:1.5px dashed var(--dash);background:transparent;border-radius:999px;padding:10px 20px;font-size:14px;font-weight:800;color:var(--tan-d)}
+.print-only{display:none}
+@media print{
+  body{background:#fff}
+  .wrap,.stickynav{display:none!important}
+  .print-only{display:block;font-size:11pt;line-height:1.5;color:#000}
+  .print-only h1{font-size:18pt;margin:0 0 4pt}
+  .print-only h2{font-size:13pt;margin:14pt 0 6pt;border-bottom:1px solid #999;break-after:avoid}
+  .p-item{display:grid;grid-template-columns:80pt 1fr;gap:8pt;padding:4pt 0;break-inside:avoid}
+  .p-item p{margin:2pt 0;color:#333}.p-item small{color:#666}
+  .print-only table{width:100%;border-collapse:collapse}
+  .print-only td{border-bottom:1px solid #ddd;padding:3pt 4pt;vertical-align:top}
+}
 [hidden]{display:none!important}
 .form label{display:flex;flex-direction:column;gap:8px;font-size:14px}
