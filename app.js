@@ -210,9 +210,11 @@
     $("stats").innerHTML = T.stats.map(([i, b, s]) => `<div><span>${ico(i)}</span><b>${b}</b><small>${s}</small></div>`).join("");
     $("ticketTip").innerHTML = T.ticketTip;
     $("ticketNote").innerHTML = T.ticketNote;
-    $("prep").hidden = !T.prep.length;
-    $("prep").innerHTML = `<summary>${ico("list")}行前待確認（${T.prep.length}）<small>出發前處理</small></summary><ol>${T.prep.map(p => `<li>${esc(p)}</li>`).join("")}</ol>`;
-    $("prep").open = beforeTrip();
+    if (!T.prep.length) $("prep").remove();
+    else {
+      $("prep").innerHTML = `<summary>${ico("list")}行前待確認（${T.prep.length}）<small>出發前處理</small></summary><ol>${T.prep.map(p => `<li>${esc(p)}</li>`).join("")}</ol>`;
+      $("prep").open = beforeTrip();
+    }
     $("stays").innerHTML = T.stays.map(s => `<div class="stay"><span>${ico("bed")}</span><div><small>${s.day}</small><b>${s.name}</b><p>${s.info}</p><a href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">${ico("pin")}查看地圖</a></div></div>`).join("");
     $("footer").innerHTML = T.footer.map(f => `<div>${f}</div>`).join("");
   }
@@ -276,12 +278,14 @@
 
   // ---------- 事件 ----------
   document.addEventListener("click", async e => {
+    const tabBtn = e.target.closest("[data-tab]");
+    if (tabBtn) return showTab(tabBtn.dataset.tab, true);
     const el = e.target.closest("[data-day],[data-meal],[data-open],[data-cancel],[data-add],[data-type],[data-edit],[data-stop],[data-restore],[data-adjust],[data-goto],[data-tadjust],[data-tstatus],[data-tsave],[data-tcancel],[data-treset]");
     if (!el || state.busy) return;
     const day = state.day;
     if (el.dataset.goto) {
       const [d, id] = el.dataset.goto.split(":");
-      state.day = +d; state.form = null; state.adjust = null; render();
+      state.day = +d; state.form = null; state.adjust = null; render(); showTab("plan", true);
       document.querySelector(`.item[data-id="${CSS.escape(id)}"]`)?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
@@ -336,19 +340,18 @@
     if (state.form) document.querySelector(".form:last-child")?.scrollIntoView({ behavior: "smooth", block: "center" });
   });
 
-  // ---------- 捲動後固定在上方的導覽列 ----------
-  function initNav() {
-    const bar = $("stickynav"), links = $("stickylinks");
-    links.innerHTML = $("quicknav").innerHTML;
-    const secs = [...links.querySelectorAll("a")].map(a => [a, document.querySelector(a.getAttribute("href"))]);
-    new IntersectionObserver(([e]) => bar.classList.toggle("show", !e.isIntersecting)).observe($("quicknav"));
-    const mark = () => {
-      let cur = null;
-      for (const [a, sec] of secs) if (sec.getBoundingClientRect().top <= 90) cur = a;
-      secs.forEach(([a]) => a.classList.toggle("on", a === cur));
-    };
-    addEventListener("scroll", mark, { passive: true }); mark();
+  // ---------- 底部分頁 ----------
+  // 一次只顯示一個分頁；網址帶 #分頁，返回鍵可回上一頁。出發前預設「總覽」，旅途中預設「行程」
+  const TABS = ["map", "plan", "tickets", "stay"];
+  function showTab(tab, push = false) {
+    if (!TABS.includes(tab)) tab = todayDay() ? "plan" : "map";
+    document.querySelectorAll("[data-panel]").forEach(el => { el.hidden = el.dataset.panel !== tab; });
+    document.querySelectorAll("[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
+    const url = location.pathname + location.search + "#" + tab;
+    if (push) history.pushState(null, "", url); else history.replaceState(null, "", url);
+    scrollTo({ top: 0, behavior: "instant" });
   }
+  addEventListener("popstate", () => showTab(location.hash.slice(1)));
 
   // ---------- 離線備份 ----------
   // 列印版：三天行程＋票券＋住宿一次攤開，手機可「列印 → 存成 PDF」
@@ -377,9 +380,7 @@
   renderStatic();
   connect();
   render();
-  initNav();
-  // 旅行當天：一打開就捲到行程（網址帶 #錨點 時尊重使用者指定的位置）
-  if (todayDay() && !location.hash) addEventListener("load", () => scrollTo({ top: $("plan").getBoundingClientRect().top + scrollY - 68, behavior: "instant" }));
+  showTab(location.hash.slice(1));
   // 每分鐘更新「下一站」；正在填表單時不重畫，避免打到一半的字被清掉
   setInterval(() => { if (!editing() && state.day === todayDay()) render(); }, 60000);
 })();

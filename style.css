@@ -11,15 +11,7 @@ section{display:flex;flex-direction:column;gap:18px;scroll-margin-top:68px}
 .hero-top{padding:28px 22px 0;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
 .badge{font-size:14px;font-weight:700;color:#6B4E33;background:#EBD9C2;border:1.5px dashed var(--dash);border-radius:999px;padding:8px 18px}
 .hero h1{margin:0;font-weight:900;font-size:clamp(34px,9vw,52px);line-height:1.2;color:#4A3322;letter-spacing:.02em;text-shadow:0 3px 0 #fff}
-.quicknav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;width:100%}
-.quicknav a{display:flex;align-items:center;justify-content:center;gap:4px;padding:12px 4px;border-radius:999px;background:#FBF6EF;border:1.5px dashed #D9C2A5;font-size:14px;font-weight:700;color:#4A3322;white-space:nowrap}
-@media (max-width:319px){.quicknav{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
-.stickynav{position:fixed;top:0;left:0;right:0;z-index:10;background:rgba(246,243,238,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 6px 16px -12px rgba(90,60,30,.5);transform:translateY(-110%);transition:transform .2s}
-.stickynav.show{transform:none}
-.stickynav div{max-width:600px;margin:0 auto;padding:8px 16px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
-.stickynav a{text-align:center;white-space:nowrap;padding:8px 2px;border-radius:999px;font-size:14px;font-weight:800;color:var(--tan-d)}
-.stickynav a.on{background:var(--tan);color:#fff}
 .stats{margin-top:22px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:#E2CCB0}
 .stats div{padding:16px 4px;text-align:center;display:flex;flex-direction:column;gap:2px;border-right:1px solid #D4BA99}
 .stats div:last-child{border-right:0}
@@ -151,7 +143,7 @@ button.chip{cursor:pointer;border:1px solid var(--line);min-height:36px}
 .chip.goto{margin-top:0}
 
 /* 網址帶 ?now= 時的測試模式提示 */
-.testbar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:20;display:flex;align-items:center;gap:12px;max-width:calc(100% - 32px);padding:10px 16px;border-radius:999px;background:#9C3B32;color:#fff;font-size:13px;font-weight:800;box-shadow:0 8px 20px -8px rgba(0,0,0,.4);white-space:nowrap}
+.testbar{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:20;display:flex;align-items:center;gap:12px;max-width:calc(100% - 32px);padding:10px 16px;border-radius:999px;background:#9C3B32;color:#fff;font-size:13px;font-weight:800;box-shadow:0 8px 20px -8px rgba(0,0,0,.4);white-space:nowrap}
 .testbar a{color:#fff;text-decoration:underline}
 @media print{.testbar{display:none}}
 
@@ -181,8 +173,6 @@ button.chip{cursor:pointer;border:1px solid var(--line);min-height:36px}
 /* 通用線條圖示（index.html 內的 symbol） */
 .ico{width:1em;height:1em;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.14em}
 .ico .dot{fill:currentColor;stroke:none}
-.quicknav a .ico,.stickynav a .ico{width:17px;height:17px;margin-right:2px}
-.stickynav a{display:flex;align-items:center;justify-content:center;gap:4px}
 .sec-head span{display:flex;color:var(--tan-d)}
 .stats span:first-child{display:flex;justify-content:center;color:#6B4E33;font-size:24px}
 .icon{color:var(--brown)}.icon .ico{width:28px;height:28px}
@@ -202,3 +192,12 @@ button.chip{cursor:pointer;border:1px solid var(--line);min-height:36px}
 .backup-btn .ico{width:16px;height:16px}
 .time{flex-wrap:wrap;row-gap:4px}.time .now{white-space:nowrap}
 .transit-meta span{display:inline-flex;align-items:center;gap:5px}.transit-meta .ico{width:16px;height:16px}
+
+/* 底部分頁列 */
+body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:15;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));max-width:600px;margin:0 auto;padding:8px 12px calc(8px + env(safe-area-inset-bottom));background:rgba(252,250,246,.96);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 -8px 20px -14px rgba(90,60,30,.45);border-radius:24px 24px 0 0}
+.tabbar button{cursor:pointer;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;border-radius:16px;font-family:inherit;font-size:12px;font-weight:800;color:var(--muted)}
+.tabbar button .ico{width:22px;height:22px}
+.tabbar button.on{color:var(--brown);background:#EFE3D3}
+.hero-top{padding-bottom:4px}
+@media print{.tabbar{display:none}body{padding-bottom:0}}

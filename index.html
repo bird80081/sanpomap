@@ -2,11 +2,11 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>高屏・南迴・花蓮 3日懶人包</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=icons2-20260927">
+<link rel="stylesheet" href="style.css?v=tabs-20260927">
 </head>
 <body>
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
@@ -31,27 +31,23 @@
   <symbol id="i-offline" viewBox="0 0 24 24"><path d="m3 3 18 18M8.5 16a5 5 0 0 1 7 0M5 12.3a10 10 0 0 1 4.6-2.5M14.6 9.9A10 10 0 0 1 19 12.3M2 8.6a15 15 0 0 1 4.2-2.6M10.8 5a15 15 0 0 1 11.2 3.6"/><circle class="dot" cx="12" cy="19.5" r="1.1"/></symbol>
   <symbol id="i-next" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
 </svg>
-<nav class="stickynav" id="stickynav" aria-label="快速導覽"><div id="stickylinks"></div></nav>
 <div class="wrap">
-  <section class="hero" id="top">
+  <section class="hero" id="top" data-panel="map">
     <div class="hero-top">
       <div class="badge" id="badge"></div>
       <h1 id="title"></h1>
-      <nav class="quicknav" id="quicknav">
-        <a href="#map"><svg class="ico"><use href="#i-map"/></svg>路線</a><a href="#plan"><svg class="ico"><use href="#i-cal"/></svg>行程</a><a href="#tickets"><svg class="ico"><use href="#i-ticket"/></svg>票券</a><a href="#stay"><svg class="ico"><use href="#i-bed"/></svg>住宿</a>
-      </nav>
     </div>
     <div class="stats" id="stats"></div>
   </section>
 
-  <details class="prep" id="prep"></details>
+  <details class="prep" id="prep" data-panel="map"></details>
 
-  <section id="map">
+  <section id="map" data-panel="map">
     <div class="sec-head"><span><svg class="ico"><use href="#i-map"/></svg></span><h2>每日路線</h2><i></i></div>
     <div class="card overview"><div id="overview"></div><div class="overview-cap">每天去哪裡，一眼看懂</div></div>
   </section>
 
-  <section id="plan">
+  <section id="plan" data-panel="plan">
     <div class="sec-head"><span><svg class="ico"><use href="#i-cal"/></svg></span><h2>三天行程</h2><i></i></div>
     <div class="tabs" id="tabs"></div>
     <div class="route-line"><span id="route"></span><span class="sync" id="sync"></span></div>
@@ -60,14 +56,14 @@
     <div class="timeline" id="timeline"></div>
   </section>
 
-  <section id="tickets">
+  <section id="tickets" data-panel="tickets">
     <div class="sec-head"><span><svg class="ico"><use href="#i-ticket"/></svg></span><h2>票券</h2><i></i></div>
     <div class="tip"><span><svg class="ico"><use href="#i-bulb"/></svg></span><p id="ticketTip"></p></div>
     <div class="table" id="ticketTable"></div>
     <p class="note" id="ticketNote"></p>
   </section>
 
-  <section id="stay">
+  <section id="stay" data-panel="stay">
     <div class="sec-head"><span><svg class="ico"><use href="#i-bed"/></svg></span><h2>住宿</h2><i></i></div>
     <div id="stays" style="display:flex;flex-direction:column;gap:18px"></div>
   </section>
@@ -75,8 +71,14 @@
   <footer id="footer"></footer>
   <button class="backup-btn" id="printBtn"><svg class="ico"><use href="#i-file"/></svg>存成 PDF（離線備份）</button>
 </div>
+<nav class="tabbar" id="tabbar" aria-label="分頁">
+  <button data-tab="map"><svg class="ico"><use href="#i-map"/></svg>總覽</button>
+  <button data-tab="plan"><svg class="ico"><use href="#i-cal"/></svg>行程</button>
+  <button data-tab="tickets"><svg class="ico"><use href="#i-ticket"/></svg>票券</button>
+  <button data-tab="stay"><svg class="ico"><use href="#i-bed"/></svg>住宿</button>
+</nav>
 <div id="printAll" class="print-only"></div>
-<script src="data.js?v=icons2-20260927"></script>
-<script src="app.js?v=icons2-20260927"></script>
+<script src="data.js?v=tabs-20260927"></script>
+<script src="app.js?v=tabs-20260927"></script>
 </body>
 </html>
