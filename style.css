@@ -144,3 +144,13 @@ button.chip{cursor:pointer;border:1px solid var(--line);min-height:36px}
 }
 [hidden]{display:none!important}
 .form label{display:flex;flex-direction:column;gap:8px;font-size:14px}
+
+/* 票券調整表單 */
+.tform{margin-top:12px;padding:16px;border-width:1.5px}
+.transit-card .chips .adjust{margin-left:auto}
+.chip.goto{margin-top:0}
+
+/* 網址帶 ?now= 時的測試模式提示 */
+.testbar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:20;display:flex;align-items:center;gap:12px;max-width:calc(100% - 32px);padding:10px 16px;border-radius:999px;background:#9C3B32;color:#fff;font-size:13px;font-weight:800;box-shadow:0 8px 20px -8px rgba(0,0,0,.4);white-space:nowrap}
+.testbar a{color:#fff;text-decoration:underline}
+@media print{.testbar{display:none}}

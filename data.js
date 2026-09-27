@@ -53,17 +53,17 @@ window.TRIP = {
     ]}
   },
   ticketTip: "<b>連假車流多</b>，自駕段預留車程與停車緩衝。",
-  // 票券：status = reserved（已劃位）| open（無對號）| pending（待預約）
+  // 票券：id 固定不可改（網頁上的調整以 id 對應）；status = reserved（已劃位）| booked（已預約）| open（無對號）| pending（待預約）
   // spot 對應行程卡片 id，點票券可跳到那一站；seat 選填，填了就會顯示（例如 "5 車 12 號"）
   tickets: [
-    { day: 1, leg: "臺北 → 高雄", mode: "🚆 自強 111 次", time: "08:00–12:04", status: "reserved", note: "發車以車票為準", spot: "fixed-01", seat: "" },
-    { day: 1, leg: "高雄 → 屏東 → 東港 → 高雄", mode: "🚗 iRent 汽車", time: "12:15–21:40", status: "pending", note: "取還車站點與預約待確認；使用第 1 張 90 分鐘折抵券", spot: "fixed-03" },
-    { day: 2, leg: "鳳山 → 枋寮", mode: "🚆 3005 次 區間快", time: "09:12–10:10", status: "open", note: "無對號座，當日確認班表", spot: "fixed-09" },
-    { day: 2, leg: "枋寮 → 金崙（南迴）", mode: "🚆 莒光 727 次", time: "12:29–13:44", status: "reserved", note: "時間待對照票面", spot: "fixed-22", seat: "" },
-    { day: 2, leg: "金崙 → 臺東", mode: "🚆 EMU3000 441 次", time: "16:56–17:29", status: "reserved", note: "以車票為準", spot: "fixed-12", seat: "" },
-    { day: 2, leg: "臺東 → 花蓮", mode: "🚆 自強 445 次", time: "18:35–20:33", status: "reserved", note: "臺東轉乘 66 分，18:20 回月台；便當售完改買站內其他餐食", spot: "fixed-31", seat: "" },
-    { day: 3, leg: "花蓮 ↔ 崇德・新城", mode: "🚗 iRent 汽車", time: "09:00–16:20", status: "pending", note: "待預約；使用第 2 張 90 分鐘折抵券", spot: "fixed-16" },
-    { day: 3, leg: "花蓮 → 臺北", mode: "🚆 285 次", time: "18:15 發車", status: "reserved", note: "發車時間以票面為準", spot: "fixed-21", seat: "" }
+    { id: "ticket-01", day: 1, leg: "臺北 → 高雄", mode: "🚆 自強 111 次", time: "08:00–12:04", status: "reserved", note: "發車以車票為準", spot: "fixed-01", seat: "" },
+    { id: "ticket-02", day: 1, leg: "高雄 → 屏東 → 東港 → 高雄", mode: "🚗 iRent 汽車", time: "12:15–21:40", status: "pending", note: "取還車站點與預約待確認；使用第 1 張 90 分鐘折抵券", spot: "fixed-03" },
+    { id: "ticket-03", day: 2, leg: "鳳山 → 枋寮", mode: "🚆 3005 次 區間快", time: "09:12–10:10", status: "open", note: "無對號座，當日確認班表", spot: "fixed-09" },
+    { id: "ticket-04", day: 2, leg: "枋寮 → 金崙（南迴）", mode: "🚆 莒光 727 次", time: "12:29–13:44", status: "reserved", note: "時間待對照票面", spot: "fixed-22", seat: "" },
+    { id: "ticket-05", day: 2, leg: "金崙 → 臺東", mode: "🚆 EMU3000 441 次", time: "16:56–17:29", status: "reserved", note: "以車票為準", spot: "fixed-12", seat: "" },
+    { id: "ticket-06", day: 2, leg: "臺東 → 花蓮", mode: "🚆 自強 445 次", time: "18:35–20:33", status: "reserved", note: "臺東轉乘 66 分，18:20 回月台；便當售完改買站內其他餐食", spot: "fixed-31", seat: "" },
+    { id: "ticket-07", day: 3, leg: "花蓮 ↔ 崇德・新城", mode: "🚗 iRent 汽車", time: "09:00–16:20", status: "pending", note: "待預約；使用第 2 張 90 分鐘折抵券", spot: "fixed-16" },
+    { id: "ticket-08", day: 3, leg: "花蓮 → 臺北", mode: "🚆 285 次", time: "18:15 發車", status: "reserved", note: "發車時間以票面為準", spot: "fixed-21", seat: "" }
   ],
   ticketNote: "<b>iRent 折抵券操作：</b>還車流程選券 → 核對租金折抵 → 還車付款；每筆訂單一張，里程及其他費用另計。",
   // 行前待確認：只放還沒確認的事，確認完就刪掉；出發前預設展開、旅途開始後自動收合

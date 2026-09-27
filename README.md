@@ -24,9 +24,9 @@
 - **固定行程**：寫在 `data.js` 的 `TRIP.days[n].spots`。欄位：`time`、`title`、`tag`、`icon`、`type`、`desc`、`q`（Google Maps 搜尋字），選填 `meals`（例如 `["早餐", "午餐"]`，標明這段行程已涵蓋哪幾餐）。
 - **新增行程**：使用者在網頁上新增，存到 Firebase `/{TRIP.id}/extra/{day}/{id}`，依 `time` 中第一個 `HH:MM` 自動排序；時間無法解析的排最後。
 - **即時同步**：使用 Firebase Realtime Database 的 REST API + `EventSource` 串流，不需要 Firebase SDK 或 apiKey。`TRIP.dbUrl` 留空則改存 localStorage（僅本機）。
-- **今天模式**：`TRIP.start` 是 Day 1 日期，各天日期（10/8…）也由它推算，換旅程只要改這裡。旅行期間打開網站會自動切到當天、捲到行程，並標出「進行中／下一站」（每分鐘更新）。測試可在網址加 `?now=2026-10-09T15:00` 模擬時間。
+- **今天模式**：`TRIP.start` 是 Day 1 日期，各天日期（10/8…）也由它推算，換旅程只要改這裡。旅行期間打開網站會自動切到當天、捲到行程，並標出「進行中／下一站」（每分鐘更新）。測試可在網址加 `?now=2026-10-09T15:00` 模擬時間；此時畫面下方會出現紅色「🧪 測試模式」提示條，點「回到現在」恢復。
 - **調整收合**：每張卡片的「編輯／取消行程」收在「✏️ 調整」裡，點了才出現，避免旅途中誤觸。
-- **票券**：`TRIP.tickets`，欄位 `day`、`leg`、`mode`、`time`、`status`（`reserved` 已劃位／`open` 無對號／`pending` 待預約）、`note`、`spot`（對應行程卡 id，點「看行程這一站」會跳過去）、選填 `seat`（填了就顯示座位）。
+- **票券**：`TRIP.tickets`，欄位 `id`（固定，網頁調整以它對應）、`day`、`leg`、`mode`、`time`、`status`（`reserved` 已劃位／`booked` 已預約／`open` 無對號／`pending` 待預約）、`note`、`spot`（對應行程卡 id，點「看行程這一站」會跳過去）、選填 `seat`（填了就顯示座位）。網頁上每張票券可按「✏️ 調整」改狀態、座位、備註，存到 Firebase `/{TRIP.id}/extra/{day}/{票券 id}`（`kind: "ticket"`，沿用既有路徑格式），「恢復原訂」會刪掉這筆調整。
 - **行前待確認**：`TRIP.prep`，放在封面下方；只列還沒確認的事，確認完就從 data.js 刪掉。出發前預設展開，旅途開始後自動收合，清空時整塊隱藏。
 - **離線**：`sw.js` 快取網頁檔案與字型；Firebase 最後一次同步的內容存在 localStorage（`{TRIP.id}-extra-cache`），離線時顯示並標示「離線中」。離線時無法新增或修改行程。
 - **PDF 備份**：頁尾「📄 存成 PDF」會把三天行程、票券、住宿攤開成列印版，手機選「列印 → 存成 PDF」即可。

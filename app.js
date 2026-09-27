@@ -7,7 +7,7 @@
   const span = t => { const m = [...String(t).matchAll(/(\d{1,2}):(\d{2})/g)].map(x => +x[1] + x[2] / 60); return m.length ? [m[0], m[m.length - 1]] : [99, 99]; };
   const ty = t => TYPES[t] || TYPES.sight; // 雲端資料若出現未知類型，不讓畫面壞掉
   const gmap = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
-  const STATUS = { reserved: ["✅ 已劃位", "ok"], open: ["🎫 無對號", "open"], pending: ["⏳ 待預約", "wait"] };
+  const STATUS = { reserved: ["✅ 已劃位", "ok"], booked: ["✅ 已預約", "ok"], open: ["🎫 無對號", "open"], pending: ["⏳ 待預約", "wait"] };
   const LOCAL_KEY = T.id + "-extra";
   const CACHE_KEY = T.id + "-extra-cache"; // 上次雲端同步的副本，離線時顯示
   const DB = T.dbUrl ? T.dbUrl.replace(/\/+$/, "") + "/" + T.id + "/extra" : "";
@@ -39,7 +39,10 @@
     return s ? { item: s, label: hr(s.time) <= h ? "⏳ 進行中" : "👉 下一站" } : null;
   }
 
-  const state = { day: todayDay() || 1, form: null, adjust: null, extra: { 1: [], 2: [], 3: [] }, busy: false, error: "", sync: DB ? "connecting" : "local" };
+  const state = { day: todayDay() || 1, form: null, tform: null, adjust: null, extra: { 1: [], 2: [], 3: [] }, busy: false, error: "", sync: DB ? "connecting" : "local" };
+
+  // 正在填行程或票券表單時，雲端同步與定時更新都不重畫，避免打到一半的字被清掉
+  const editing = () => state.form || state.tform;
 
   // ---------- 資料同步 ----------
   function normalize(v) {
@@ -55,9 +58,9 @@
         if (state.busy || revision !== syncRevision) return;
         state.extra = normalize(v); state.sync = "cloud";
         try { localStorage.setItem(CACHE_KEY, JSON.stringify(v)); } catch (e) {}
-        if (!state.form) render();
+        if (!editing()) render();
       })
-      .catch(() => { state.sync = "error"; if (!state.form) render(); });
+      .catch(() => { state.sync = "error"; if (!editing()) render(); });
   }
   function connect() {
     if (!DB) {
@@ -70,7 +73,7 @@
       const es = new EventSource(DB + ".json"); // Firebase REST streaming
       es.addEventListener("put", pull);
       es.addEventListener("patch", pull);
-      es.onerror = () => { state.sync = "error"; if (!state.form) render(); };
+      es.onerror = () => { state.sync = "error"; if (!editing()) render(); };
     } catch (e) { pull(); }
   }
   async function saveItem(day, item) {
@@ -93,6 +96,48 @@
     } finally { state.busy = false; }
   }
 
+  async function removeItem(day, id) {
+    if (state.busy) return false;
+    state.busy = true; ++syncRevision; state.error = "";
+    try {
+      const updated = state.extra[day].filter(x => String(x.id) !== String(id));
+      if (DB) {
+        const r = await fetch(`${DB}/${day}/${encodeURIComponent(id)}.json`, { method: "DELETE" });
+        if (!r.ok) throw Error("delete failed");
+      } else {
+        localStorage.setItem(LOCAL_KEY, JSON.stringify({ ...state.extra, [day]: updated }));
+      }
+      state.extra[day] = updated;
+      return true;
+    } catch (e) {
+      state.error = "儲存失敗，修改尚未同步。請檢查網路後再試。";
+      return false;
+    } finally { state.busy = false; }
+  }
+
+  // 票券：data.js 為原訂內容，網頁上的調整以 kind: "ticket" 存在同一條 extra 路徑（以票券 id 為 key）
+  function tickets() {
+    return T.tickets.map(t => {
+      const edit = (state.extra[t.day] || []).find(x => x.kind === "ticket" && String(x.id) === t.id);
+      return edit ? { ...t, status: edit.status, seat: edit.seat, note: edit.note, edited: true } : t;
+    });
+  }
+  function renderTickets() {
+    const all = tickets(), f = state.tform;
+    $("ticketTable").innerHTML = Object.keys(T.days).map(day => `<section class="transit-day"><h3>Day ${day}<span>${esc(dayDate(day))}</span></h3>${all.filter(t => t.day === +day).map(t => {
+      const [label, cls] = STATUS[t.status] || STATUS.pending;
+      if (f && f.id === t.id) return `<article class="transit-card"><div class="transit-leg">${esc(t.leg)}</div><div class="transit-meta"><span>${esc(t.mode)}</span><strong>${esc(t.time)}</strong></div>
+        <div class="form tform"><div class="types">${Object.entries(STATUS).map(([k, [l]]) => `<button class="${f.status === k ? "on" : ""}" data-tstatus="${k}">${l}</button>`).join("")}</div>
+        <label>座位<input id="tSeat" value="${esc(f.seat)}" placeholder="例如 5 車 12 號"></label>
+        <label>備註<input id="tNote" value="${esc(f.note)}" placeholder="預約編號、取車站點…"></label>
+        <div class="actions">${t.edited ? `<button class="btn" data-treset>恢復原訂</button>` : ""}<button class="btn" data-tcancel>取消</button><button class="btn primary" data-tsave>儲存</button></div></div></article>`;
+      return `<article class="transit-card"><div class="ticket-top"><div class="transit-leg">${esc(t.leg)}</div><span class="status ${cls}">${label}</span></div><div class="transit-meta"><span>${esc(t.mode)}</span><strong>${esc(t.time)}</strong></div>${t.seat ? `<div class="seat">💺 ${esc(t.seat)}</div>` : ""}${t.note ? `<small>${esc(t.note)}</small>` : ""}<div class="chips">${t.spot ? `<button class="chip goto" data-goto="${day}:${esc(t.spot)}">↑ 看行程這一站</button>` : ""}<button class="adjust" data-tadjust="${esc(t.id)}">✏️ 調整</button>${t.edited ? `<span class="chip">已調整</span>` : ""}</div></article>`;
+    }).join("")}</section>`).join("");
+  }
+  function readTicketForm() {
+    if (state.tform && $("tSeat")) state.tform = { ...state.tform, seat: $("tSeat").value, note: $("tNote").value };
+  }
+
   // 固定行程覆寫與新增行程共用既有 extra 路徑；不改動原始行程。
   function dayItems(day, includeCancelled = false) {
     const extra = state.extra[day] || [];
@@ -101,7 +146,7 @@
       const item = { ...s, ...edit, id: s.id, custom: false };
       return { ...item, icon: item.type === s.type ? s.icon : ty(item.type).icon, chips: [[edit ? "已調整" : s.tag, ""], ...(item.tags || []).map(t => [t, "hot"])] };
     });
-    const mine = extra.filter(c => c.kind !== "override").map(c => ({
+    const mine = extra.filter(c => c.kind !== "override" && c.kind !== "ticket").map(c => ({
       ...c, icon: ty(c.type).icon, q: c.q || c.title, desc: c.desc || "", custom: true,
       chips: [["我加的", "mine"], ...(c.tags || []).map(t => [t, "hot"])]
     }));
@@ -138,13 +183,6 @@
     $("title").innerHTML = T.title;
     $("stats").innerHTML = T.stats.map(([i, b, s]) => `<div><span>${i}</span><b>${b}</b><small>${s}</small></div>`).join("");
     $("ticketTip").innerHTML = T.ticketTip;
-    $("ticketTable").innerHTML = Object.keys(T.days).map(day => {
-      const rows = T.tickets.filter(t => t.day === +day);
-      return `<section class="transit-day"><h3>Day ${day}<span>${esc(dayDate(day))}</span></h3>${rows.map(t => {
-        const [label, cls] = STATUS[t.status] || STATUS.pending;
-        return `<article class="transit-card"><div class="ticket-top"><div class="transit-leg">${esc(t.leg)}</div><span class="status ${cls}">${label}</span></div><div class="transit-meta"><span>${esc(t.mode)}</span><strong>${esc(t.time)}</strong></div>${t.seat ? `<div class="seat">💺 ${esc(t.seat)}</div>` : ""}${t.note ? `<small>${esc(t.note)}</small>` : ""}${t.spot ? `<button class="chip goto" data-goto="${day}:${esc(t.spot)}">↑ 看行程這一站</button>` : ""}</article>`;
-      }).join("")}</section>`;
-    }).join("");
     $("ticketNote").innerHTML = T.ticketNote;
     $("prep").hidden = !T.prep.length;
     $("prep").innerHTML = `<summary>📝 行前待確認（${T.prep.length}）<small>出發前處理</small></summary><ol>${T.prep.map(p => `<li>${esc(p)}</li>`).join("")}</ol>`;
@@ -184,6 +222,7 @@
           <div class="chips"><a class="chip nav" href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">📍 查看地點</a>${index > 0 ? `<a class="chip nav" href="${esc(previousRouteUrl(items[index - 1], s))}" title="${esc(items[index - 1].title)} → ${esc(s.title)}" target="_blank" rel="noopener noreferrer">↗ 從上一站前往</a>` : ""}${s.chips.map(([t, c]) => `<span class="chip ${c}">${esc(t)}</span>`).join("")}</div>
         </div>
       </div></div>`).join("") + cancelledHtml(day) + (state.error ? `<p role="alert">${esc(state.error)}</p>` : "") + (f ? formHtml(day, f) : `<button class="add-btn" data-open>＋ 新增行程（午餐、下午茶、景點…）</button>`);
+    renderTickets();
   }
 
   function cancelledHtml(day) {
@@ -211,7 +250,7 @@
 
   // ---------- 事件 ----------
   document.addEventListener("click", async e => {
-    const el = e.target.closest("[data-day],[data-meal],[data-open],[data-cancel],[data-add],[data-type],[data-edit],[data-stop],[data-restore],[data-adjust],[data-goto]");
+    const el = e.target.closest("[data-day],[data-meal],[data-open],[data-cancel],[data-add],[data-type],[data-edit],[data-stop],[data-restore],[data-adjust],[data-goto],[data-tadjust],[data-tstatus],[data-tsave],[data-tcancel],[data-treset]");
     if (!el || state.busy) return;
     const day = state.day;
     if (el.dataset.goto) {
@@ -219,6 +258,20 @@
       state.day = +d; state.form = null; state.adjust = null; render();
       document.querySelector(`.item[data-id="${CSS.escape(id)}"]`)?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
+    }
+    if (el.dataset.tadjust) {
+      const t = tickets().find(x => x.id === el.dataset.tadjust);
+      state.tform = { id: t.id, day: t.day, status: t.status, seat: t.seat || "", note: t.note || "" }; state.error = "";
+      render(); return;
+    }
+    if (el.dataset.tstatus) { readTicketForm(); state.tform.status = el.dataset.tstatus; render(); return; }
+    if ("tcancel" in el.dataset) { state.tform = null; render(); return; }
+    if ("tsave" in el.dataset || "treset" in el.dataset) {
+      readTicketForm(); const f = state.tform;
+      const ok = "treset" in el.dataset ? await removeItem(f.day, f.id)
+        : await saveItem(f.day, { id: f.id, kind: "ticket", status: f.status, seat: f.seat.trim(), note: f.note.trim() });
+      if (ok) state.tform = null;
+      render(); if (!ok) alert(state.error); return;
     }
     if (el.dataset.adjust) state.adjust = state.adjust === el.dataset.adjust ? null : el.dataset.adjust;
     else if (el.dataset.day) { state.day = +el.dataset.day; state.form = null; state.adjust = null; }
@@ -276,16 +329,24 @@
   function renderPrint() {
     const days = Object.keys(T.days).map(n => `<h2>Day ${n}・${esc(dayDate(n))}</h2>${dayItems(n).map(s =>
       `<div class="p-item"><b>${esc(s.time)}</b><div><strong>${esc(s.title)}</strong><p>${esc(s.desc)}</p><small>📍 ${esc(s.q || s.title)}</small></div></div>`).join("")}`).join("");
-    const tickets = T.tickets.map(t => `<tr><td>Day ${t.day}</td><td>${esc(t.leg)}</td><td>${esc(t.mode)}</td><td>${esc(t.time)}</td><td>${(STATUS[t.status] || STATUS.pending)[0]}${t.seat ? `・${esc(t.seat)}` : ""}</td></tr>`).join("");
+    const ticketRows = tickets().map(t => `<tr><td>Day ${t.day}</td><td>${esc(t.leg)}</td><td>${esc(t.mode)}</td><td>${esc(t.time)}</td><td>${(STATUS[t.status] || STATUS.pending)[0]}${t.seat ? `・${esc(t.seat)}` : ""}</td></tr>`).join("");
     const stays = T.stays.map(s => `<p><b>${esc(s.day)}</b> ${esc(s.name)}・${esc(s.info)}</p>`).join("");
-    $("printAll").innerHTML = `<h1>${T.title.replace(/<br>/g, " ")}</h1><p>${esc(T.badge)}</p>${days}<h2>票券</h2><table>${tickets}</table><h2>住宿</h2>${stays}`;
+    $("printAll").innerHTML = `<h1>${T.title.replace(/<br>/g, " ")}</h1><p>${esc(T.badge)}</p>${days}<h2>票券</h2><table>${ticketRows}</table><h2>住宿</h2>${stays}`;
   }
   addEventListener("beforeprint", renderPrint);
   $("printBtn").addEventListener("click", () => { renderPrint(); print(); });
-  addEventListener("online", () => { if (!state.form) render(); if (DB) pull(); });
-  addEventListener("offline", () => { if (!state.form) render(); });
+  addEventListener("online", () => { if (!editing()) render(); if (DB) pull(); });
+  addEventListener("offline", () => { if (!editing()) render(); });
   // Service Worker：開過一次後，沒網路也能打開網頁
   if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+
+  // 網址帶 ?now= 時顯示測試模式提示，避免誤以為是真的日期
+  if (nowParam && !isNaN(new Date(nowParam))) {
+    const d = new Date(nowParam), bar = document.createElement("div");
+    bar.className = "testbar";
+    bar.innerHTML = `🧪 測試模式：目前模擬 ${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}<a href="${esc(location.pathname)}">回到現在</a>`;
+    document.body.appendChild(bar);
+  }
 
   renderStatic();
   connect();
@@ -294,5 +355,5 @@
   // 旅行當天：一打開就捲到行程（網址帶 #錨點 時尊重使用者指定的位置）
   if (todayDay() && !location.hash) addEventListener("load", () => scrollTo({ top: $("plan").getBoundingClientRect().top + scrollY - 68, behavior: "instant" }));
   // 每分鐘更新「下一站」；正在填表單時不重畫，避免打到一半的字被清掉
-  setInterval(() => { if (!state.form && state.day === todayDay()) render(); }, 60000);
+  setInterval(() => { if (!editing() && state.day === todayDay()) render(); }, 60000);
 })();
