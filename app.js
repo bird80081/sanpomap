@@ -27,6 +27,11 @@
     const diff = Math.round((new Date(n.getFullYear(), n.getMonth(), n.getDate()) - new Date(y, m - 1, dd)) / 864e5) + 1;
     return T.days[diff] ? diff : 0;
   }
+  // 還沒出發（今天早於 Day 1）
+  function beforeTrip() {
+    const [y, m, dd] = T.start.split("-").map(Number), n = now();
+    return new Date(n.getFullYear(), n.getMonth(), n.getDate()) < new Date(y, m - 1, dd);
+  }
   // 當天第一個還沒結束的項目：已開始＝進行中，未開始＝下一站
   function nextItem(items) {
     const n = now(), h = n.getHours() + n.getMinutes() / 60;
@@ -141,7 +146,9 @@
       }).join("")}</section>`;
     }).join("");
     $("ticketNote").innerHTML = T.ticketNote;
+    $("prep").hidden = !T.prep.length;
     $("prep").innerHTML = `<summary>📝 行前待確認（${T.prep.length}）<small>出發前處理</small></summary><ol>${T.prep.map(p => `<li>${esc(p)}</li>`).join("")}</ol>`;
+    $("prep").open = beforeTrip();
     $("stays").innerHTML = T.stays.map(s => `<div class="stay"><span>${s.icon}</span><div><small>${s.day}</small><b>${s.name}</b><p>${s.info}</p><a href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">📍 查看地圖</a></div></div>`).join("");
     $("footer").innerHTML = T.footer.map(f => `<div>${f}</div>`).join("");
   }
