@@ -48,7 +48,7 @@
     return s ? { item: s, label: hr(s.time) <= h ? ico("hourglass") + "進行中" : ico("next") + "下一站" } : null;
   }
 
-  const state = { day: todayDay() || 1, form: null, tform: null, adjust: null, extra: { 1: [], 2: [], 3: [] }, busy: false, error: "", sync: DB ? "connecting" : "local" };
+  const state = { day: todayDay() || 1, form: null, tform: null, adjust: null, expanded: new Set(), extra: { 1: [], 2: [], 3: [] }, busy: false, error: "", sync: DB ? "connecting" : "local" };
 
   // 正在填行程或票券表單時，雲端同步與定時更新都不重畫，避免打到一半的字被清掉
   const editing = () => state.form || state.tform;
@@ -245,11 +245,15 @@
         <div class="body">
           <div class="row"><span class="time">${ico("clock")}${esc(s.time)}${next && next.item === s ? `<em class="now">${next.label}</em>` : ""}</span><button class="adjust${state.adjust === String(s.id) ? " on" : ""}" data-adjust="${esc(s.id)}" aria-expanded="${state.adjust === String(s.id)}">${ico("pencil")}調整</button></div>
           <div class="title">${esc(s.title)}</div>
-          <p class="desc">${esc(s.desc)}</p>
+          ${s.desc ? `<p class="desc${state.expanded.has(String(s.id)) ? " open" : ""}" data-desc="${esc(s.id)}">${esc(s.desc)}</p>` : ""}
+        </div>
+        <div class="card-foot">
           ${state.adjust === String(s.id) ? `<div class="chips"><button class="chip" data-edit="${esc(s.id)}">編輯</button><button class="chip" data-stop="${esc(s.id)}">取消行程</button></div>` : ""}
-          <div class="chips"><a class="chip nav" href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">${ico("pin")}查看地點</a>${index > 0 ? `<a class="chip nav" href="${esc(previousRouteUrl(items[index - 1], s))}" title="${esc(items[index - 1].title)} → ${esc(s.title)}" target="_blank" rel="noopener noreferrer">↗ 從上一站前往</a>` : ""}${s.chips.map(([t, c]) => `<span class="chip ${c}">${esc(t)}</span>`).join("")}</div>
+          <div class="chips"><a class="chip nav" href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">${ico("pin")}地點</a>${index > 0 ? `<a class="chip nav" href="${esc(previousRouteUrl(items[index - 1], s))}" title="${esc(items[index - 1].title)} → ${esc(s.title)}" target="_blank" rel="noopener noreferrer">↗ 怎麼去</a>` : ""}${s.chips.map(([t, c]) => `<span class="chip ${c}">${esc(t)}</span>`).join("")}</div>
         </div>
       </div></div>`).join("") + cancelledHtml(day) + (state.error ? `<p role="alert">${esc(state.error)}</p>` : "") + (f ? formHtml(day, f) : `<button class="add-btn" data-open>＋ 新增行程（午餐、下午茶、景點…）</button>`);
+    // 說明預設只顯示 2 行；被截斷的才加「展開」提示
+    document.querySelectorAll(".desc:not(.open)").forEach(p => p.classList.toggle("more", p.scrollHeight > p.clientHeight + 2));
     renderTickets();
   }
 
@@ -278,6 +282,13 @@
 
   // ---------- 事件 ----------
   document.addEventListener("click", async e => {
+    const descEl = e.target.closest("[data-desc]");
+    if (descEl) {
+      const id = descEl.dataset.desc;
+      state.expanded.has(id) ? state.expanded.delete(id) : state.expanded.add(id);
+      descEl.classList.toggle("open"); descEl.classList.toggle("more", !descEl.classList.contains("open") && descEl.scrollHeight > descEl.clientHeight + 2);
+      return;
+    }
     const tabBtn = e.target.closest("[data-tab]");
     if (tabBtn) return showTab(tabBtn.dataset.tab, true);
     const el = e.target.closest("[data-day],[data-meal],[data-open],[data-cancel],[data-add],[data-type],[data-edit],[data-stop],[data-restore],[data-adjust],[data-goto],[data-tadjust],[data-tstatus],[data-tsave],[data-tcancel],[data-treset]");
