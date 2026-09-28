@@ -13,7 +13,7 @@ window.TRIP = {
     ["train", "臺鐵＋租車", "交通"], ["bed", "高雄・花蓮", "住宿"]
   ],
   days: {
-    1: { route: "臺北 ・ 高雄車站 ・ 勝利星村 ・ 大鵬灣 ・ 東港", overview: "臺北 → 高雄 → 勝利星村 → 大鵬灣 → 東港 → 高雄", color: "#C4A073", soft: "#F4EBE0", travelmode: "driving", routeLabel: "🗺️ Google Maps 開啟 Day 1 高雄起訖自駕路線", spots: [
+    1: { route: "臺北 ・ 高雄車站 ・ 勝利星村 ・ 大鵬灣 ・ 東港", overview: "臺北 → 高雄 → 勝利星村 → 大鵬灣 → 東港 → 高雄", color: "#C4A073", soft: "#F4EBE0", travelmode: "driving", routeLabel: "Google Maps 開啟 Day 1 高雄起訖自駕路線", spots: [
       { id: "fixed-01", shortLabel: "臺北", time: "08:00", title: "臺北車站出發｜111 次", tag: "🚆 已購票・已劃位", icon: "🚉", type: "transport", desc: "111 次已購票並完成劃位，搭乘前往高雄，12:04 抵達；發車時間請以車票為準，提早到站候車。", q: "臺北車站", inDayRoute: false },
       { id: "fixed-02", shortLabel: "高雄", time: "12:04", title: "高雄車站（抵達）", tag: "🚆 臺鐵抵達", icon: "🚉", type: "transport", desc: "搭乘自強 111 次 12:04 準時抵達高雄，出站準備前往取車展開南部旅程。", q: "高雄車站" },
       { id: "fixed-03", shortLabel: "取汽車", time: "12:15–13:00", title: "高雄車站附近取 iRent", tag: "🚗 租車取件", icon: "🚘", type: "transport", desc: "以 App 實際可預約站點為準，行李放置後車廂，出發前確認 90 分鐘折抵券效期、車款與用車門檻；還車結帳時選券並確認折抵後再付款。取還車站點及預約尚待確認。", q: "高雄火車站 iRent" },
@@ -78,7 +78,7 @@ window.TRIP = {
     { icon: "🛏️", day: "Day 1・高雄", name: "喜迎旅店 Greet Inn", info: "高雄市前金區六合二路161號・捷運前金站O4旁", q: "喜迎旅店 Greet Inn" },
     { icon: "🌙", day: "Day 2・花蓮", name: "Have Fun 225", info: "花蓮縣花蓮市國盛二街225號・Day 3 退房後行李隨車帶走", q: "花蓮市國盛二街225號" }
   ],
-  footer: ["🌿 祝你們擁有最溫柔愜意的山海時光・記得隨身攜帶水壺與防曬乳", "111、727、441、445、285 次已購票並完成劃位；列車時間以票面為準，3005 次班表待核對・各景點營業依現場公告為準", "部分圖示依 CNS 16282 台灣公共圖標（經濟部標準檢驗局，CC BY 4.0）改繪"]
+  footer: ["祝你們擁有最溫柔愜意的山海時光・記得隨身攜帶水壺與防曬乳", "111、727、441、445、285 次已購票並完成劃位；列車時間以票面為準，3005 次班表待核對・各景點營業依現場公告為準", "部分圖示依 CNS 16282 台灣公共圖標（經濟部標準檢驗局，CC BY 4.0）改繪"]
 };
 
 window.TYPES = {

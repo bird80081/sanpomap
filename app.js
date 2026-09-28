@@ -28,6 +28,8 @@
     const m = String(t).match(/^(\S+)\s+(.+)$/), key = m && m[1].replace(/\uFE0F/g, "");
     return m && TAG_ICON[key] ? ico(TAG_ICON[key]) + esc(m[2]) : esc(t);
   }
+  // 新增行程表單的類別按鈕圖示
+  const TYPE_ICON = { food: "food", cafe: "cafe", sight: "pin", transport: "train", stay: "bed-s" };
   const LOCAL_KEY = T.id + "-extra";
   const CACHE_KEY = T.id + "-extra-cache"; // 上次雲端同步的副本，離線時顯示
   const DB = T.dbUrl ? T.dbUrl.replace(/\/+$/, "") + "/" + T.id + "/extra" : "";
@@ -156,7 +158,7 @@
         <div class="pass-head"><b>${esc(p.name)}</b><span class="status ${cls}">${label}</span></div>
         <div class="pass-route"><div><strong>${esc(p.dep)}</strong><span>${esc(p.from)}</span></div><div class="pass-line"><i>${ico(p.car ? "car" : "train")}</i>${p.via ? `<small>經 ${esc(p.via)}</small>` : ""}</div><div class="to">${p.arr ? `<strong>${esc(p.arr)}</strong>` : `<em>以票面為準</em>`}<span>${esc(p.to)}</span></div></div>
         ${t.seat || t.note ? `<div class="pass-foot">${t.seat ? `<div class="seat">💺 ${esc(t.seat)}</div>` : ""}${t.note ? `<small>${esc(t.note)}</small>` : ""}</div>` : ""}
-        <div class="chips">${t.spot ? `<button class="chip goto" data-goto="${day}:${esc(t.spot)}">↑ 看行程這一站</button>` : ""}<button class="adjust" data-tadjust="${esc(t.id)}">${ico("pencil")}調整</button>${t.edited ? `<span class="chip">已調整</span>` : ""}</div>
+        <div class="chips">${t.spot ? `<button class="chip goto" data-goto="${day}:${esc(t.spot)}">${ico("up")}看行程這一站</button>` : ""}<button class="adjust" data-tadjust="${esc(t.id)}">${ico("pencil")}調整</button>${t.edited ? `<span class="chip">已調整</span>` : ""}</div>
       </div></article>`;
     }).join("")}</section>`).join("");
   }
@@ -242,10 +244,10 @@
     $("route").textContent = `${dayDate(day)} · ${items.length} 段行程`;
     $("dayRoute").hidden = !items.length;
     $("sync").innerHTML = !navigator.onLine && DB ? ico("offline") + "離線中，顯示上次同步的內容"
-      : { local: "📱 只存在這台裝置", connecting: "", cloud: "", error: "⚠️ 同步失敗，請檢查網路或 Firebase 權限" }[state.sync];
+      : { local: ico("phone") + "只存在這台裝置", connecting: "", cloud: "", error: ico("alert") + "同步失敗，請檢查網路或 Firebase 權限" }[state.sync];
     $("dayRoute").href = routeUrl(items, d.travelmode);
-    $("dayRoute").textContent = d.routeLabel || (d.travelmode === "transit"
-      ? `🗺️ Google Maps 開啟 Day ${day} 起訖路線` : `🗺️ 用 Google Maps 開啟 Day ${day} 完整路線`);
+    $("dayRoute").innerHTML = ico("map") + esc(d.routeLabel || (d.travelmode === "transit"
+      ? `Google Maps 開啟 Day ${day} 起訖路線` : `用 Google Maps 開啟 Day ${day} 完整路線`));
 
     const miss = missingMeals(items);
     $("hints").innerHTML = miss.length ? `<div class="hints"><span>${ico("food")}還沒安排：</span>${miss.map(([n, , , t]) => `<button data-meal="${t}">＋ ${n}</button>`).join("")}</div>` : "";
@@ -260,7 +262,7 @@
         </div>
         <div class="card-foot">
           ${state.adjust === String(s.id) ? `<div class="chips"><button class="chip" data-edit="${esc(s.id)}">編輯</button><button class="chip" data-stop="${esc(s.id)}">取消行程</button></div>` : ""}
-          <div class="chips"><a class="chip nav" href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">${ico("pin")}地點</a>${index > 0 ? `<a class="chip nav" href="${esc(previousRouteUrl(items[index - 1], s))}" title="${esc(items[index - 1].title)} → ${esc(s.title)}" target="_blank" rel="noopener noreferrer">↗ 怎麼去</a>` : ""}${s.chips.map(([t, c]) => `<span class="chip ${c}">${tagHtml(t)}</span>`).join("")}</div>
+          <div class="chips"><a class="chip nav" href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">${ico("pin")}地點</a>${index > 0 ? `<a class="chip nav" href="${esc(previousRouteUrl(items[index - 1], s))}" title="${esc(items[index - 1].title)} → ${esc(s.title)}" target="_blank" rel="noopener noreferrer">${ico("go")}怎麼去</a>` : ""}${s.chips.map(([t, c]) => `<span class="chip ${c}">${tagHtml(t)}</span>`).join("")}</div>
         </div>
       </div></div>`).join("") + cancelledHtml(day) + (state.error ? `<p role="alert">${esc(state.error)}</p>` : "") + (f ? formHtml(day, f) : `<button class="add-btn" data-open>＋ 新增行程（午餐、下午茶、景點…）</button>`);
     // 說明預設只顯示 2 行；被截斷的才加「展開」提示
@@ -275,7 +277,7 @@
   function formHtml(day, f) {
     return `<div class="form">
       <h3>${f.id ? "編輯行程" : `新增到 Day ${day}`}</h3>
-      <div class="types">${Object.entries(TYPES).map(([k, v]) => `<button class="${f.type === k ? "on" : ""}" style="${f.type === k ? `background:${v.bg}` : ""}" data-type="${k}">${v.label}</button>`).join("")}</div>
+      <div class="types">${Object.entries(TYPES).map(([k, v]) => `<button class="${f.type === k ? "on" : ""}" style="${f.type === k ? `background:${v.bg}` : ""}" data-type="${k}">${ico(TYPE_ICON[k] || "pin")}${esc(v.label.replace(/^\S+\s*/, ""))}</button>`).join("")}</div>
       <div class="form-row"><input aria-label="行程時間" id="fTime" value="${esc(f.time)}" placeholder="12:30"><input aria-label="行程名稱" id="fTitle" value="${esc(f.title)}" placeholder="店名或景點名稱"></div>
       <label>地點名稱或地址（Google Maps）<input id="fPlace" value="${esc(f.q || "")}" placeholder="留空時使用行程名稱"></label>
       <textarea id="fDesc" rows="2" placeholder="想吃什麼、備註（選填）">${esc(f.desc)}</textarea>
@@ -379,7 +381,7 @@
   // 列印版：三天行程＋票券＋住宿一次攤開，手機可「列印 → 存成 PDF」
   function renderPrint() {
     const days = Object.keys(T.days).map(n => `<h2>Day ${n}・${esc(dayDate(n))}</h2>${dayItems(n).map(s =>
-      `<div class="p-item"><b>${esc(s.time)}</b><div><strong>${esc(s.title)}</strong><p>${esc(s.desc)}</p><small>📍 ${esc(s.q || s.title)}</small></div></div>`).join("")}`).join("");
+      `<div class="p-item"><b>${esc(s.time)}</b><div><strong>${esc(s.title)}</strong><p>${esc(s.desc)}</p><small>地點：${esc(s.q || s.title)}</small></div></div>`).join("")}`).join("");
     const ticketRows = tickets().map(t => `<tr><td>Day ${t.day}</td><td>${esc(t.leg)}</td><td>${esc(t.mode)}</td><td>${esc(t.time)}</td><td>${(STATUS[t.status] || STATUS.pending)[0]}${t.seat ? `・${esc(t.seat)}` : ""}</td></tr>`).join("");
     const stays = T.stays.map(s => `<p><b>${esc(s.day)}</b> ${esc(s.name)}・${esc(s.info)}</p>`).join("");
     $("printAll").innerHTML = `<h1>${T.title.replace(/<br>/g, " ")}</h1><p>${esc(T.badge)}</p>${days}<h2>票券</h2><table>${ticketRows}</table><h2>住宿</h2>${stays}`;

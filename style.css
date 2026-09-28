@@ -217,3 +217,5 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
 .card-foot .chip{font-size:12px;padding:4px 10px}
 .card-foot button.chip{min-height:32px}
 .chip{display:inline-flex;align-items:center;gap:4px}
+.day-route .ico{width:20px;height:20px}
+.chip.goto{display:inline-flex;align-items:center;gap:4px}
