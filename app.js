@@ -20,6 +20,14 @@
     if (s.type !== "transport") return esc(s.icon);
     return ico(/🚘|🚗/.test(s.icon) ? "car" : /🧳|🎒/.test(s.icon) ? "bag" : "train");
   }
+  // 行程標籤開頭的 emoji 換成對應的線條圖示（沒對應到的維持原字）
+  const TAG_ICON = { "🚆": "train", "🚉": "train", "🚗": "car", "🧳": "bag", "🏨": "bed-s", "🏡": "bed-s",
+    "☕": "cafe", "🍰": "cafe", "🍜": "food", "🍣": "food", "🍱": "food", "🍳": "food", "🥟": "food",
+    "⚓": "anchor", "⛪": "church", "🎨": "art", "🌿": "historic", "🌊": "beach", "🌅": "sunset", "⛰": "mountain" };
+  function tagHtml(t) {
+    const m = String(t).match(/^(\S+)\s+(.+)$/), key = m && m[1].replace(/\uFE0F/g, "");
+    return m && TAG_ICON[key] ? ico(TAG_ICON[key]) + esc(m[2]) : esc(t);
+  }
   const LOCAL_KEY = T.id + "-extra";
   const CACHE_KEY = T.id + "-extra-cache"; // 上次雲端同步的副本，離線時顯示
   const DB = T.dbUrl ? T.dbUrl.replace(/\/+$/, "") + "/" + T.id + "/extra" : "";
@@ -252,7 +260,7 @@
         </div>
         <div class="card-foot">
           ${state.adjust === String(s.id) ? `<div class="chips"><button class="chip" data-edit="${esc(s.id)}">編輯</button><button class="chip" data-stop="${esc(s.id)}">取消行程</button></div>` : ""}
-          <div class="chips"><a class="chip nav" href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">${ico("pin")}地點</a>${index > 0 ? `<a class="chip nav" href="${esc(previousRouteUrl(items[index - 1], s))}" title="${esc(items[index - 1].title)} → ${esc(s.title)}" target="_blank" rel="noopener noreferrer">↗ 怎麼去</a>` : ""}${s.chips.map(([t, c]) => `<span class="chip ${c}">${esc(t)}</span>`).join("")}</div>
+          <div class="chips"><a class="chip nav" href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">${ico("pin")}地點</a>${index > 0 ? `<a class="chip nav" href="${esc(previousRouteUrl(items[index - 1], s))}" title="${esc(items[index - 1].title)} → ${esc(s.title)}" target="_blank" rel="noopener noreferrer">↗ 怎麼去</a>` : ""}${s.chips.map(([t, c]) => `<span class="chip ${c}">${tagHtml(t)}</span>`).join("")}</div>
         </div>
       </div></div>`).join("") + cancelledHtml(day) + (state.error ? `<p role="alert">${esc(state.error)}</p>` : "") + (f ? formHtml(day, f) : `<button class="add-btn" data-open>＋ 新增行程（午餐、下午茶、景點…）</button>`);
     // 說明預設只顯示 2 行；被截斷的才加「展開」提示
