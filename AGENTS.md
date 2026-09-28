@@ -3,11 +3,12 @@
 > **這份是唯一規則來源。** Codex 直接讀本檔；Claude Code 讀 `CLAUDE.md`，那份只有一行把本檔匯入。
 > 要改規則請改這裡，**不要**在 `CLAUDE.md` 另外寫內容，否則兩邊規則會分岔。
 
-先讀 `README.md` 了解架構。
+開工前先讀本檔，再讀 `README.md` 了解架構。
 
 ## 專案位置
 - 網址：https://bird80081.github.io/sanpomap/
 - GitHub：`bird80081/sanpomap`（公開）；本機：`~/Projects/sanpomap/`
+- Claude／Codex 都直接在 `~/Projects/sanpomap/` 的 `main` 分支修改，維持此工作目錄與分支。
 - `main` 分支 push 後約 1 分鐘，GitHub Pages 自動更新上線。
 
 ## 程式規則
@@ -21,7 +22,7 @@
 - 介面文字使用繁體中文（台灣用語）。
 
 ## 工作流程
-1. **改之前**：`git pull`，另一方（Claude／Codex）可能剛推過。
+1. **每次改之前**：先確認位於 `~/Projects/sanpomap/` 的 `main` 分支，再執行 `git pull`；茶兒或另一方（Claude／Codex）可能剛推過多次更新。同步成功後才開始修改；若同步失敗，先處理原因並保留既有變更。
 2. **改完**：在本機預覽（`python3 -m http.server`，直接開 `file://` 時 JS 不一定會跑），用手機寬度 375px 檢查版面、三天分頁都點過。
 3. **commit**：訊息用繁體中文寫「改了什麼」。
 4. **push＝上線**：使用者說「改完 push」或「上線」才 push；沒說就先給預覽，問要不要上線。

@@ -268,14 +268,16 @@
     if (T.cover && T.cover.url) {
       $("cover").style.backgroundImage = `url("${encodeURI(T.cover.url)}")`;
       $("cover").classList.add("has-photo");
-      if (T.cover.credit) $("footer").insertAdjacentHTML("afterend", `<p class="credit">封面照片：${esc(T.cover.credit)}</p>`);
+      if (T.cover.credit) $("footer").insertAdjacentHTML("afterend", `<p class="credit">封面：${esc(T.cover.credit)}</p>`);
     }
     $("title").innerHTML = T.title;
+    $("journalSubtitle").textContent = T.subtitle || "";
+    $("journalNote").textContent = T.journalNote || "";
     $("stats").innerHTML = T.stats.map(([i, b, s]) => `<div><span>${ico(i)}</span><b>${b}</b><small>${s}</small></div>`).join("");
     $("ticketTip").innerHTML = T.ticketTip;
     $("ticketNote").innerHTML = T.ticketNote;
     $("prep").open = beforeTrip();
-    $("pack").open = beforeTrip();
+    $("pack").open = false;
     $("stays").innerHTML = T.stays.map(s => `<div class="stay"><span>${ico("bed")}</span><div><small>${s.day}</small><b>${s.name}</b><p>${s.info}</p><a href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">${ico("pin")}查看地圖</a></div></div>`).join("");
     $("footer").innerHTML = T.footer.map(f => `<div>${f}</div>`).join("");
   }

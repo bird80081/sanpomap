@@ -5,7 +5,8 @@
    ============================================================ */
 :root{
   /* 中性 */
-  --bg:#FFFFFF; --card:#FFFFFF; --ink:#23364A; --ink2:#566878; --muted:#8595A3; --line:#E4ECF3;
+  --bg:#FFFDF9; --card:#FFFFFF; --ink:#49382C; --ink2:#6C5B4B; --muted:#746354; --line:#E7DDD0;
+  --tea-50:#FFFAF2; --tea-100:#F7EAD9; --tea-200:#EFDCBE;
   /* 粉藍（moodboard 1） */
   --blue-50:#F2F7FC; --blue-100:#E3EFF9; --blue-200:#CFE6F7; --blue-300:#A8D5F2; --blue-ink:#2F6E9E;
   /* 粉黃（moodboard 1；--yellow-50 即 oklch(0.987 0.026 102.212) 附近） */
@@ -24,13 +25,12 @@ a{color:var(--blue-ink)}
 /* ---------- 裝飾色塊（moodboard 的柔和圓形與點點） ---------- */
 .wrap{position:relative;isolation:isolate}
 .wrap::before,.wrap::after{content:"";position:absolute;z-index:-1;border-radius:50%;pointer-events:none}
-.wrap::before{width:260px;height:260px;right:-120px;top:420px;background:var(--blue-100);filter:blur(2px)}
-.wrap::after{width:200px;height:200px;left:-110px;top:900px;background:var(--yellow-100)}
+.wrap::before,.wrap::after{display:none}
 .sec-head{position:relative}
 .sec-head::after{content:"";position:absolute;right:0;top:-6px;width:54px;height:30px;background:radial-gradient(circle,var(--blue-300) 1.4px,transparent 1.6px) 0 0/9px 9px;opacity:.7}
 
 /* ---------- 封面：主圖＋波浪＋細襯線標題 ---------- */
-.hero{background:var(--yellow-50);border:1px solid var(--yellow-200);border-radius:28px;box-shadow:var(--shadow)}
+.hero{background:var(--tea-50);border:1px solid var(--tea-200);border-radius:28px;box-shadow:none}
 .cover{position:relative;height:190px;background:
   radial-gradient(circle at 78% 34%,var(--yellow-300) 0 26px,var(--yellow-200) 27px 34px,transparent 35px),
   radial-gradient(ellipse at 20% 105%,var(--sage-200) 0 38%,transparent 39%),
@@ -38,7 +38,7 @@ a{color:var(--blue-ink)}
   background-size:cover;background-position:center}
 .cover.has-photo{background-repeat:no-repeat}
 .cover-wave{position:absolute;left:0;right:0;bottom:-1px;width:100%;height:34px}
-.cover-wave path{fill:var(--yellow-50)}
+.cover-wave path{fill:var(--tea-50)}
 .hero-top{padding:6px 20px 4px;gap:10px}
 .hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(26px,7.2vw,32px);line-height:1.35;color:var(--ink);letter-spacing:.04em;text-shadow:none}
 .badge{background:#fff;border:1px solid var(--yellow-200);color:var(--ink2);font-weight:600;font-size:13px;padding:6px 14px}
@@ -64,7 +64,7 @@ a{color:var(--blue-ink)}
 
 /* ---------- 按鈕：淡色小膠囊、深色字 ---------- */
 .tab{background:#fff;color:var(--ink2);border:1px solid var(--line)}
-.tab.on{background:var(--yellow-200);color:var(--ink);border-color:var(--yellow-300);box-shadow:none}
+.tab.on{background:var(--tea-100);color:var(--ink);border-color:#AD8356;box-shadow:none}
 .day-route{background:var(--blue-100);color:var(--ink);border:1px solid var(--blue-200);font-weight:700;font-size:15px;padding:12px}
 .day-route:hover{color:var(--ink);opacity:1;background:var(--blue-200)}
 .chip{background:#F4F6F8;color:var(--ink2)}
@@ -80,7 +80,7 @@ button.chip{border-color:var(--line)}
 .types button{border-color:var(--line);font-weight:600}.types button.on{border-color:var(--blue-300)}
 
 /* ---------- 行程卡片 ---------- */
-.item-card{background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
+.item-card{background:var(--card);border:1px solid var(--line);box-shadow:none}
 .item-card.mine{border-color:var(--sage-200)}
 .icon{color:var(--blue-ink)}
 .icon .ico{stroke-width:1.8}
@@ -139,7 +139,7 @@ button.chip{border-color:var(--line)}
 /* ---------- 底部分頁列 ---------- */
 .tabbar{background:rgba(255,255,255,.96);box-shadow:0 -8px 24px -16px rgba(35,54,74,.35)}
 .tabbar button{color:var(--muted);font-weight:700}
-.tabbar button.on{background:var(--yellow-100);color:var(--ink)}
+.tabbar button.on{background:var(--tea-100);color:var(--ink)}
 
 footer{color:var(--muted)}
 
@@ -152,3 +152,28 @@ html,body{overflow-x:clip}
 .icon.t-food,.icon.t-cafe{background:var(--yellow-100)!important;color:var(--yellow-ink)}
 .icon.t-sight{background:var(--sage-100)!important;color:var(--sage-ink)}
 .icon.t-stay{background:var(--blue-100)!important}
+
+/* 奶茶版日期列與原創紙感插畫 */
+#plan .tabs{background:var(--bg)}
+.cover.has-photo{background-position:center 60%}
+.credit{margin:0;line-height:1.7}
+
+/* 手帳色彩與字重：保持明亮紙色、深色文字。 */
+#top{background:transparent;box-shadow:none}
+#top .badge{background:transparent;color:var(--ink2);font-weight:600}
+#top h1{font-weight:500}
+.journal-subtitle{color:var(--ink);font-weight:600}
+.journal-note{color:var(--ink2)}
+#top .cover{border-color:#FFFFFF;box-shadow:0 5px 16px #49382C12;background-position:center}
+#top .cover::before{background:#EFDCBECC}
+#top .stats{background:transparent;border-color:var(--line)}
+#top .stats div{background:transparent}
+#top .stats b{font-weight:500;color:var(--ink2)}
+#top .stats span:first-child{color:var(--ink2)}
+.sec-head::after{display:none}
+.sec-head h2{font-weight:500}
+.sec-head i{background:var(--line)}
+.ov-day:nth-child(1){border-left-color:#A5804C}
+.ov-day:nth-child(2){border-left-color:#557D99}
+.ov-day:nth-child(3){border-left-color:#627D61}
+.ov-heading b{background:transparent;padding-left:0;color:var(--ink)}

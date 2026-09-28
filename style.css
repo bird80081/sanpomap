@@ -4,7 +4,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:Nunito,"Noto San
 html{scroll-behavior:smooth}
 a{color:var(--tan-d);text-decoration:none}a:hover{color:var(--ink)}
 button,input,textarea{font-family:inherit}
-.wrap{max-width:600px;margin:0 auto;padding:20px 16px 40px;display:flex;flex-direction:column;gap:44px}
+.wrap{max-width:600px;margin:0 auto;padding:16px 16px 32px;display:flex;flex-direction:column;gap:26px}
 section{display:flex;flex-direction:column;gap:18px;scroll-margin-top:68px}
 
 .hero{background:#F3E7D8;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px -24px rgba(90,60,30,.4);gap:0}
@@ -106,7 +106,7 @@ footer{text-align:center;font-size:13px;line-height:1.8;color:var(--muted)}
 button.chip{cursor:pointer;border:1px solid var(--line);min-height:36px}
 
 /* 卡片的編輯／取消收進「調整」 */
-.adjust{cursor:pointer;flex-shrink:0;border:0;background:transparent;color:var(--muted);font-size:13px;font-weight:800;padding:6px 4px;border-radius:999px}
+.adjust{cursor:pointer;flex-shrink:0;border:0;background:transparent;color:var(--muted);font-size:13px;font-weight:800;padding:6px 4px;border-radius:999px;min-width:44px;min-height:44px}
 .adjust.on{background:#EFE3D3;color:var(--tan-d);padding:6px 10px}
 
 /* 票券 */
@@ -215,7 +215,7 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
 .card-foot{grid-column:1/-1;display:flex;flex-direction:column;gap:6px}
 .card-foot .chips{margin-top:0;gap:6px}
 .card-foot .chip{font-size:12px;padding:4px 10px}
-.card-foot button.chip{min-height:32px}
+.card-foot button.chip,.card-foot a.chip{min-height:44px}
 .chip{display:inline-flex;align-items:center;gap:4px}
 .day-route .ico{width:20px;height:20px}
 .chip.goto{display:inline-flex;align-items:center;gap:4px}
@@ -254,3 +254,41 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
 /* 下一站卡片 */
 .item.next .item-card{background:var(--cream)}
 .item.next .desc.more::after{background:linear-gradient(90deg,transparent,var(--cream) 26px)}
+
+/* 明亮奶茶版：保留原功能與圖示，縮短清單前的空間。 */
+#plan .tabs{position:sticky;top:0;z-index:5;padding:10px 0}
+.item-card{grid-template-columns:36px minmax(0,1fr);padding:14px;gap:8px 10px}
+.icon{width:36px;height:36px;border-radius:12px}
+.timeline{padding-left:20px}
+.timeline::before{left:4px}
+.item::before{left:-22px}
+.ov-day{padding:16px}
+.ov-heading{margin-bottom:10px}
+.prep summary{min-height:44px;line-height:1.7}
+.prep summary small{display:block;margin-left:0}
+.day-route{line-height:1.6}
+@media(max-width:390px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.form-row{grid-template-columns:1fr}.prep-add{flex-wrap:wrap}.prep-add input{flex:1 1 140px}}
+
+/* 旅行手帳：文字扉頁、明信片插畫、行間註記。 */
+#top{overflow:visible;border:0;border-radius:0;gap:0}
+#top .hero-top{order:0;align-items:flex-start;text-align:left;padding:8px 4px 20px;gap:12px}
+#top .badge{border:0;border-radius:0;padding:0;flex-wrap:wrap;line-height:1.7;letter-spacing:.08em;font-size:12px}
+#top h1{font-size:clamp(30px,8vw,40px);line-height:1.4;letter-spacing:.04em}
+.journal-subtitle,.journal-note{margin:0;font-size:13px;line-height:1.8}
+#top .journal-note{margin-top:-6px}
+#top .cover{order:1;height:auto;aspect-ratio:3/2;border:6px solid;border-radius:3px;position:relative;margin:4px 4px 0;transform:rotate(-1deg)}
+#top .cover::before{content:"";position:absolute;width:72px;height:20px;top:-15px;left:calc(50% - 36px);transform:rotate(3deg)}
+#top .cover-wave{display:none}
+#top .stats{order:2;display:flex;flex-wrap:wrap;gap:10px 18px;margin:20px 4px 0;padding:0 0 20px;border-bottom:1px solid}
+#top .stats div{display:flex;flex-direction:row;align-items:center;gap:6px;padding:0;border:0!important;border-radius:0}
+#top .stats span:first-child{font-size:16px}
+#top .stats b{font-size:12px;white-space:normal}
+#top .stats small{display:none}
+.sec-head{gap:9px}
+.sec-head span{font-size:22px}
+.sec-head h2{font-size:22px}
+.sec-head i{height:1px}
+.ov-day{border-radius:5px;border-left:3px solid;padding:18px}
+.prep{border-radius:5px}
+.item-card{border-radius:9px}
+.stay{border-radius:9px}
