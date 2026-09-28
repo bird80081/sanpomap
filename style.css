@@ -1,4 +1,4 @@
-:root{--bg:#F6F3EE;--card:#FCFAF6;--ink:#3B2C20;--ink2:#6E5B4B;--muted:#9A8674;--tan:#C4A073;--tan-d:#8A6A48;--brown:#6A4E37;--line:#D9C3A5;--dash:#D2B592;--shadow:0 10px 26px -18px rgba(90,60,30,.35)}
+:root{--bg:#FFFFFF;--card:#FCFAF6;--ink:#3B2C20;--ink2:#6E5B4B;--muted:#9A8674;--tan:#C4A073;--tan-d:#8A6A48;--brown:#6A4E37;--line:#D9C3A5;--dash:#D2B592;--shadow:0 10px 26px -18px rgba(90,60,30,.35)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:Nunito,"Noto Sans TC",sans-serif}
 html{scroll-behavior:smooth}
