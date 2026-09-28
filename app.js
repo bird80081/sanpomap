@@ -11,9 +11,12 @@
   const STATUS = { reserved: ["已劃位", "ok", "check"], booked: ["已預約", "ok", "check"], open: ["無對號", "open", "ticket"], pending: ["待預約", "wait", "hourglass"] };
   // 通用線條圖示（index.html 的 <symbol id="i-xxx">）
   const ico = n => `<svg class="ico" aria-hidden="true"><use href="#i-${n}"/></svg>`;
-  // 交通與住宿卡片改用線條圖示；美食、咖啡、景點維持原本的專屬圖示
+  // 卡片圖示：有 sym 用指定線條圖示；美食、咖啡、交通、住宿用類別圖示（依 CNS 16282 改繪）；其餘景點用 emoji
   function cardIcon(s) {
+    if (s.sym) return ico(s.sym);
     if (s.type === "stay") return ico("bed");
+    if (s.type === "food" || s.type === "cafe") return ico(s.type);
+    if (s.type === "sight") return s.custom ? ico("pin") : esc(s.icon);
     if (s.type !== "transport") return esc(s.icon);
     return ico(/🚘|🚗/.test(s.icon) ? "car" : /🧳|🎒/.test(s.icon) ? "bag" : "train");
   }
@@ -170,7 +173,7 @@
     const base = T.days[day].spots.map(s => {
       const edit = extra.find(x => String(x.id) === s.id && x.kind === "override");
       const item = { ...s, ...edit, id: s.id, custom: false };
-      return { ...item, icon: item.type === s.type ? s.icon : ty(item.type).icon, chips: [[edit ? "已調整" : s.tag, ""], ...(item.tags || []).map(t => [t, "hot"])] };
+      return { ...item, icon: item.type === s.type ? s.icon : ty(item.type).icon, sym: item.type === s.type ? s.sym : undefined, chips: [[edit ? "已調整" : s.tag, ""], ...(item.tags || []).map(t => [t, "hot"])] };
     });
     const mine = extra.filter(c => c.kind !== "override" && c.kind !== "ticket").map(c => ({
       ...c, icon: ty(c.type).icon, q: c.q || c.title, desc: c.desc || "", custom: true,
