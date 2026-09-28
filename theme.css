@@ -1,0 +1,154 @@
+/* ============================================================
+   sanpomap 主題：粉藍＋粉黃，鼠尾草綠點綴（2026-09-28 改版）
+   依茶兒提供的兩張 moodboard 混搭；載入順序在 style.css 之後，覆蓋其顏色與字重。
+   原則：粉色只當底色與裝飾，文字與圖示一律用深色（對比 ≥ 4.5:1）；按鈕是淡色小膠囊。
+   ============================================================ */
+:root{
+  /* 中性 */
+  --bg:#FFFFFF; --card:#FFFFFF; --ink:#23364A; --ink2:#566878; --muted:#8595A3; --line:#E4ECF3;
+  /* 粉藍（moodboard 1） */
+  --blue-50:#F2F7FC; --blue-100:#E3EFF9; --blue-200:#CFE6F7; --blue-300:#A8D5F2; --blue-ink:#2F6E9E;
+  /* 粉黃（moodboard 1；--yellow-50 即 oklch(0.987 0.026 102.212) 附近） */
+  --yellow-50:#FFFBEA; --yellow-100:#FFF6D6; --yellow-200:#FFE9A8; --yellow-300:#FFD97A; --yellow-ink:#7A5B00;
+  /* 鼠尾草（moodboard 2，山林、自然類） */
+  --sage-50:#F1F6F2; --sage-100:#E7EFE8; --sage-200:#C7DCC9; --sage-300:#A8C5AE; --sage-ink:#3E6650;
+  /* 字體 */
+  --serif:"Noto Serif TC",serif; --sans:Nunito,"Noto Sans TC",sans-serif;
+  /* 沿用舊變數名，讓 style.css 內使用 var() 的地方一起換色 */
+  --tan:var(--blue-ink); --tan-d:var(--blue-ink); --brown:var(--ink); --dash:var(--blue-200); --cream:var(--yellow-100);
+  --shadow:0 10px 28px -20px rgba(35,54,74,.35);
+}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans)}
+a{color:var(--blue-ink)}
+
+/* ---------- 裝飾色塊（moodboard 的柔和圓形與點點） ---------- */
+.wrap{position:relative;isolation:isolate}
+.wrap::before,.wrap::after{content:"";position:absolute;z-index:-1;border-radius:50%;pointer-events:none}
+.wrap::before{width:260px;height:260px;right:-120px;top:420px;background:var(--blue-100);filter:blur(2px)}
+.wrap::after{width:200px;height:200px;left:-110px;top:900px;background:var(--yellow-100)}
+.sec-head{position:relative}
+.sec-head::after{content:"";position:absolute;right:0;top:-6px;width:54px;height:30px;background:radial-gradient(circle,var(--blue-300) 1.4px,transparent 1.6px) 0 0/9px 9px;opacity:.7}
+
+/* ---------- 封面：主圖＋波浪＋細襯線標題 ---------- */
+.hero{background:var(--yellow-50);border:1px solid var(--yellow-200);border-radius:28px;box-shadow:var(--shadow)}
+.cover{position:relative;height:190px;background:
+  radial-gradient(circle at 78% 34%,var(--yellow-300) 0 26px,var(--yellow-200) 27px 34px,transparent 35px),
+  radial-gradient(ellipse at 20% 105%,var(--sage-200) 0 38%,transparent 39%),
+  linear-gradient(180deg,var(--blue-300) 0%,var(--blue-200) 45%,var(--blue-100) 100%);
+  background-size:cover;background-position:center}
+.cover.has-photo{background-repeat:no-repeat}
+.cover-wave{position:absolute;left:0;right:0;bottom:-1px;width:100%;height:34px}
+.cover-wave path{fill:var(--yellow-50)}
+.hero-top{padding:6px 20px 4px;gap:10px}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(26px,7.2vw,32px);line-height:1.35;color:var(--ink);letter-spacing:.04em;text-shadow:none}
+.badge{background:#fff;border:1px solid var(--yellow-200);color:var(--ink2);font-weight:600;font-size:13px;padding:6px 14px}
+.stats{background:transparent;margin:14px 12px 14px;gap:8px;display:grid}
+.stats div{background:#fff;border:1px solid var(--yellow-200)!important;border-radius:16px;padding:10px 4px;gap:1px}
+.stats span:first-child{color:var(--blue-ink);font-size:20px}
+.stats b{color:var(--ink);font-weight:700;font-size:14px}
+.stats small{color:var(--muted);font-size:11px}
+.credit{margin:-30px 0 0;text-align:center;font-size:11px;color:var(--muted)}
+
+/* ---------- 標題與字重：全部調輕 ---------- */
+.sec-head span{color:var(--blue-ink)}
+.sec-head h2{font-family:var(--serif);font-weight:600;font-size:25px;letter-spacing:.04em;color:var(--ink)}
+.sec-head i{background:linear-gradient(90deg,var(--blue-200),transparent)}
+.title{font-weight:700;font-size:17px;color:var(--ink)}
+.desc{color:var(--ink2)}
+.time{color:var(--blue-ink);font-weight:700}
+.tab{font-weight:700;font-size:15px}
+.chip{font-weight:600}
+.transit-leg{font-weight:700}
+.pass-route strong{font-weight:800}
+.form h3{font-family:var(--serif);font-weight:600}
+
+/* ---------- 按鈕：淡色小膠囊、深色字 ---------- */
+.tab{background:#fff;color:var(--ink2);border:1px solid var(--line)}
+.tab.on{background:var(--yellow-200);color:var(--ink);border-color:var(--yellow-300);box-shadow:none}
+.day-route{background:var(--blue-100);color:var(--ink);border:1px solid var(--blue-200);font-weight:700;font-size:15px;padding:12px}
+.day-route:hover{color:var(--ink);opacity:1;background:var(--blue-200)}
+.chip{background:#F4F6F8;color:var(--ink2)}
+.chip.nav{background:var(--blue-100);color:var(--ink);border:1px solid var(--blue-200)}
+.chip.goto{background:#fff;color:var(--blue-ink);border:1px solid var(--blue-200)}
+button.chip{border-color:var(--line)}
+.chip.mine{background:var(--sage-100);color:var(--sage-ink)}.chip.hot{background:var(--yellow-100);color:var(--yellow-ink)}
+.btn{border-color:var(--line);color:var(--ink2);font-weight:700}
+.btn.primary{background:var(--yellow-200);color:var(--ink);border:1px solid var(--yellow-300)}
+.adjust{color:var(--muted);font-weight:600}.adjust.on{background:var(--blue-100);color:var(--ink)}
+.add-btn{border-color:var(--blue-200);color:var(--blue-ink);font-weight:700;background:var(--blue-50)}
+.backup-btn{border-color:var(--blue-200);color:var(--blue-ink);font-weight:700}
+.types button{border-color:var(--line);font-weight:600}.types button.on{border-color:var(--blue-300)}
+
+/* ---------- 行程卡片 ---------- */
+.item-card{background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
+.item-card.mine{border-color:var(--sage-200)}
+.icon{color:var(--blue-ink)}
+.icon .ico{stroke-width:1.8}
+.item.next .item-card{background:var(--yellow-50);border-color:var(--yellow-300)}
+.item.next::before{background:var(--yellow-300);box-shadow:0 0 0 4px var(--yellow-100)}
+.time .now{background:var(--yellow-200);color:var(--ink)}
+.timeline::before{background:var(--blue-100)}
+.item::before{background:var(--blue-300);border-color:#fff}
+.desc.more::after{color:var(--blue-ink);background:linear-gradient(90deg,transparent,var(--card) 26px)}
+.item.next .desc.more::after{background:linear-gradient(90deg,transparent,var(--yellow-50) 26px)}
+.hints{background:var(--yellow-100)}
+.hints>span{color:var(--yellow-ink)}
+.hints button{background:#fff;color:var(--ink);border-color:var(--yellow-300)}
+.route-line,.sync{color:var(--muted)}
+
+/* ---------- 每日路線：三天三色大色塊 ---------- */
+.ov-day{border-radius:24px}
+.ov-day:nth-child(1){--day-soft:var(--yellow-100)!important;--day-color:var(--yellow-300)!important}
+.ov-day:nth-child(2){--day-soft:var(--blue-100)!important;--day-color:var(--blue-300)!important}
+.ov-day:nth-child(3){--day-soft:var(--sage-100)!important;--day-color:var(--sage-300)!important}
+.ov-heading b{color:var(--ink);font-weight:700}
+.ov-stops>span{font-weight:600;color:var(--ink)}
+
+/* ---------- 行前待確認、行李清單 ---------- */
+.prep{background:#fff;border:1.5px solid var(--blue-200);border-style:solid}
+#prep{background:var(--blue-50)}
+#pack{background:var(--sage-50);border-color:var(--sage-200)}
+.prep summary{font-weight:700;color:var(--ink)}
+.prep summary .ico{color:var(--blue-ink)}
+#pack summary .ico,#pack .pack-group{color:var(--sage-ink)}
+.prep-list .check{border-color:var(--blue-300)}
+.prep-list li.done .check{background:var(--sage-100);border-color:var(--sage-300);color:var(--sage-ink)}
+
+/* ---------- 票券 ---------- */
+.tip{border:1.5px solid var(--yellow-200);background:var(--yellow-50)}
+.tip span{color:var(--yellow-ink)}
+.pass{border-color:var(--line);box-shadow:var(--shadow)}
+.pass-strip{background:var(--blue-100);border-right-color:var(--blue-200)}
+.pass-strip span{color:var(--blue-ink);font-weight:700}
+.pass.car .pass-strip{background:var(--sage-100);border-right-color:var(--sage-200)}
+.pass.car .pass-strip span{color:var(--sage-ink)}
+.pass-line::before{border-top-color:var(--blue-200)}
+.pass-line i{background:var(--blue-100);color:var(--blue-ink)}
+.pass.car .pass-line i{background:var(--sage-100);color:var(--sage-ink)}
+.status.ok{background:var(--sage-100);color:var(--sage-ink)}
+.status.open{background:var(--blue-100);color:var(--blue-ink)}
+.status.wait{background:var(--yellow-100);color:var(--yellow-ink)}
+.pass-foot{border-top-color:var(--line)}
+
+/* ---------- 住宿：淺色卡片 ---------- */
+.stay{background:linear-gradient(135deg,var(--blue-100),var(--sage-100));color:var(--ink);border:1px solid var(--blue-200)}
+.stay>span{color:var(--blue-ink)}
+.stay small{color:var(--ink2)}.stay b{color:var(--ink);font-family:var(--serif);font-weight:600}.stay p{color:var(--ink2)}
+.stay a{background:#fff;color:var(--ink);border:1px solid var(--blue-200)}
+
+/* ---------- 底部分頁列 ---------- */
+.tabbar{background:rgba(255,255,255,.96);box-shadow:0 -8px 24px -16px rgba(35,54,74,.35)}
+.tabbar button{color:var(--muted);font-weight:700}
+.tabbar button.on{background:var(--yellow-100);color:var(--ink)}
+
+footer{color:var(--muted)}
+
+/* ---------- 修正：裝飾色塊不可撐出橫向捲動；統計字級；卡片圖示依類別換底色 ---------- */
+html,body{overflow-x:clip}
+.stats{gap:6px;margin:12px 10px 12px}
+.stats div{padding:9px 2px}
+.stats b{font-size:12.5px;white-space:nowrap;letter-spacing:-.01em}
+.icon{background:var(--blue-50)!important}
+.icon.t-food,.icon.t-cafe{background:var(--yellow-100)!important;color:var(--yellow-ink)}
+.icon.t-sight{background:var(--sage-100)!important;color:var(--sage-ink)}
+.icon.t-stay{background:var(--blue-100)!important}

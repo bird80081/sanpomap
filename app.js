@@ -265,6 +265,11 @@
   // ---------- 畫面 ----------
   function renderStatic() {
     $("badge").innerHTML = ico("train") + esc(T.badge);
+    if (T.cover && T.cover.url) {
+      $("cover").style.backgroundImage = `url("${encodeURI(T.cover.url)}")`;
+      $("cover").classList.add("has-photo");
+      if (T.cover.credit) $("footer").insertAdjacentHTML("afterend", `<p class="credit">封面照片：${esc(T.cover.credit)}</p>`);
+    }
     $("title").innerHTML = T.title;
     $("stats").innerHTML = T.stats.map(([i, b, s]) => `<div><span>${ico(i)}</span><b>${b}</b><small>${s}</small></div>`).join("");
     $("ticketTip").innerHTML = T.ticketTip;
@@ -297,7 +302,7 @@
 
     $("timeline").innerHTML = items.map((s, index) => `
       <div class="item${next && next.item === s ? " next" : ""}" data-id="${esc(s.id)}"><div class="item-card${s.custom ? " mine" : ""}">
-        <div class="icon" style="background:${ty(s.type).bg}">${cardIcon(s)}</div>
+        <div class="icon t-${esc(s.type)}" style="background:${ty(s.type).bg}">${cardIcon(s)}</div>
         <div class="body">
           <div class="row"><span class="time">${ico("clock")}${esc(s.time)}${next && next.item === s ? `<em class="now">${next.label}</em>` : ""}</span><button class="adjust${state.adjust === String(s.id) ? " on" : ""}" data-adjust="${esc(s.id)}" aria-expanded="${state.adjust === String(s.id)}">${ico("pencil")}調整</button></div>
           <div class="title">${esc(s.title)}</div>

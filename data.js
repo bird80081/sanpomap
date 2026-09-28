@@ -6,6 +6,8 @@ window.TRIP = {
   id: "trip-gp-hl",                     // Firebase 資料路徑
   dbUrl: "https://taiwan-trival-default-rtdb.firebaseio.com",
   title: "高屏・南迴・花蓮<br>3天這樣玩！",
+  // 封面主圖：url 填圖片網址（例如 Unsplash 的 images.unsplash.com/photo-…?w=1200&q=75），credit 填攝影師出處；留空時顯示粉藍漸層佔位
+  cover: { url: "", credit: "" },
   badge: "雙人山海慢步・2026/10/8 – 10/10",       // 前面的火車線條圖示由 app.js 加上
   start: "2026-10-08",                  // Day 1 的日期；旅行當天打開網站會自動跳到當日行程
   stats: [                              // 第一欄是 index.html 內的線條圖示名稱（i-xxx）
