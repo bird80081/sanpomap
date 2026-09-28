@@ -12,7 +12,7 @@
 
 ## 程式規則
 - 保持純 HTML/CSS/JS，不要引入框架、打包工具或 npm 相依，除非使用者要求。
-- 行程內容只改 `data.js`；邏輯改 `app.js`；樣式改 `style.css`（優先用 `:root` 變數）。
+- 行程內容只改 `data.js`；邏輯改 `app.js`；顏色與字重改 `theme.css`，版面結構改 `style.css`。
 - 所有使用者輸入顯示前都要經過 `esc()`，避免 XSS。
 - 不要改變 Firebase 資料路徑 `/{TRIP.id}/extra/{day}/{id}` 的格式，否則雲端現有資料會讀不到；如需遷移請寫遷移步驟。
 - 視覺風格（2026-09-28 改版）：粉藍＋粉黃為主、鼠尾草綠點綴（依茶兒的兩張 moodboard 混搭）；標題用 Noto Serif TC、內文 Nunito + Noto Sans TC；按鈕是淡色膠囊配深色字；手機優先（max-width 600px）。
