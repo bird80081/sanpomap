@@ -232,3 +232,10 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
 .prep-list textarea,.prep-add input{font:inherit;font-size:16px;padding:10px 12px;border-radius:14px;border:1.5px solid #E2D3C0;background:#fff;color:var(--ink);width:100%}
 .prep-add{display:flex;gap:8px;margin-top:12px}
 .prep-add .btn{flex-shrink:0}
+
+/* 行李清單 */
+#pack .pack-group{margin:14px 0 0;font-size:13px;font-weight:900;color:var(--tan-d);letter-spacing:.05em}
+#pack .prep-list{margin-top:6px}
+.prep-add select,.prep-list select{font:inherit;font-size:15px;padding:10px 8px;border-radius:14px;border:1.5px solid #E2D3C0;background:#fff;color:var(--ink);flex-shrink:0}
+.prep-list li.editing input{font:inherit;font-size:16px;padding:10px 12px;border-radius:14px;border:1.5px solid #E2D3C0;background:#fff;color:var(--ink);width:100%}
+.prep-add input{min-width:0}

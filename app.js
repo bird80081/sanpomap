@@ -61,10 +61,10 @@
     return s ? { item: s, label: hr(s.time) <= h ? ico("hourglass") + "進行中" : ico("next") + "下一站" } : null;
   }
 
-  const state = { day: todayDay() || 1, form: null, tform: null, prepEdit: null, adjust: null, expanded: new Set(), extra: { 1: [], 2: [], 3: [] }, busy: false, error: "", sync: DB ? "connecting" : "local" };
+  const state = { day: todayDay() || 1, form: null, tform: null, prepEdit: null, packEdit: null, adjust: null, expanded: new Set(), extra: { 1: [], 2: [], 3: [] }, busy: false, error: "", sync: DB ? "connecting" : "local" };
 
   // 正在填行程或票券表單時，雲端同步與定時更新都不重畫，避免打到一半的字被清掉
-  const editing = () => state.form || state.tform || state.prepEdit || ["prepNew", "prepText"].includes(document.activeElement?.id);
+  const editing = () => state.form || state.tform || state.prepEdit || state.packEdit || ["prepNew", "prepText", "packNew", "packText"].includes(document.activeElement?.id);
 
   // ---------- 資料同步 ----------
   function normalize(v) {
@@ -194,6 +194,31 @@
     if (!ok) alert(state.error);
     return ok;
   }
+  // 行李清單：項目兩人共用（kind: "pack" 存 extra/1），打勾只記在這支手機（localStorage）
+  const PACK_KEY = T.id + "-packed";
+  const packedSet = () => { try { return new Set(JSON.parse(localStorage.getItem(PACK_KEY)) || []); } catch (e) { return new Set(); } };
+  function togglePacked(id) {
+    const set = packedSet(); set.has(id) ? set.delete(id) : set.add(id);
+    try { localStorage.setItem(PACK_KEY, JSON.stringify([...set])); } catch (e) {}
+  }
+  function packItems() {
+    const saved = (state.extra[1] || []).filter(x => x.kind === "pack");
+    const base = (T.packing || []).map(([group, text], i) => ({ id: `pack-${i + 1}`, group, text }));
+    return base.map(b => ({ ...b, ...saved.find(x => x.id === b.id) }))
+      .concat(saved.filter(x => x.created && !base.some(b => b.id === x.id)))
+      .filter(x => !x.deleted);
+  }
+  function renderPack() {
+    const items = packItems(), packed = packedSet(), groups = T.packGroups || [];
+    const done = items.filter(x => packed.has(x.id)).length, draft = $("packNew")?.value || "", draftGroup = $("packGroup")?.value || groups[groups.length - 1];
+    const opts = sel => groups.map(g => `<option${g === sel ? " selected" : ""}>${esc(g)}</option>`).join("");
+    const row = x => state.packEdit === x.id
+      ? `<li class="editing"><input id="packText" value="${esc(x.text)}"><select id="packTextGroup">${opts(x.group)}</select><div class="actions"><button class="btn" data-kdel="${esc(x.id)}">刪除</button><button class="btn" data-kcancel>取消</button><button class="btn primary" data-ksave="${esc(x.id)}">儲存</button></div></li>`
+      : `<li class="${packed.has(x.id) ? "done" : ""}"><button class="check" data-kcheck="${esc(x.id)}" aria-pressed="${packed.has(x.id)}" aria-label="${packed.has(x.id) ? "改回未打包" : "標記已打包"}">${packed.has(x.id) ? ico("check") : ""}</button><span>${esc(x.text)}</span><button class="adjust" data-kedit="${esc(x.id)}" aria-label="修改">${ico("pencil")}</button></li>`;
+    $("pack").innerHTML = `<summary>${ico("luggage")}行李清單（已打包 ${done}/${items.length}）<small>勾選只記在本機</small></summary>
+      ${groups.map(g => { const list = items.filter(x => (groups.includes(x.group) ? x.group : groups[groups.length - 1]) === g); return list.length ? `<h4 class="pack-group">${esc(g)}</h4><ul class="prep-list">${list.map(row).join("")}</ul>` : ""; }).join("")}
+      <div class="prep-add"><select id="packGroup" aria-label="分類">${opts(draftGroup)}</select><input id="packNew" placeholder="新增要帶的東西" value="${esc(draft)}"><button class="btn primary" data-kadd>新增</button></div>`;
+  }
   function readTicketForm() {
     if (state.tform && $("tSeat")) state.tform = { ...state.tform, seat: $("tSeat").value, note: $("tNote").value };
   }
@@ -206,7 +231,7 @@
       const item = { ...s, ...edit, id: s.id, custom: false };
       return { ...item, icon: item.type === s.type ? s.icon : ty(item.type).icon, sym: item.type === s.type ? s.sym : undefined, chips: [[edit ? "已調整" : s.tag, ""], ...(item.tags || []).map(t => [t, "hot"])] };
     });
-    const mine = extra.filter(c => !["override", "ticket", "prep"].includes(c.kind)).map(c => ({
+    const mine = extra.filter(c => !["override", "ticket", "prep", "pack"].includes(c.kind)).map(c => ({
       ...c, icon: ty(c.type).icon, q: c.q || c.title, desc: c.desc || "", custom: true,
       chips: [["我加的", "mine"], ...(c.tags || []).map(t => [t, "hot"])]
     }));
@@ -245,6 +270,7 @@
     $("ticketTip").innerHTML = T.ticketTip;
     $("ticketNote").innerHTML = T.ticketNote;
     $("prep").open = beforeTrip();
+    $("pack").open = beforeTrip();
     $("stays").innerHTML = T.stays.map(s => `<div class="stay"><span>${ico("bed")}</span><div><small>${s.day}</small><b>${s.name}</b><p>${s.info}</p><a href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">${ico("pin")}查看地圖</a></div></div>`).join("");
     $("footer").innerHTML = T.footer.map(f => `<div>${f}</div>`).join("");
   }
@@ -286,6 +312,7 @@
     document.querySelectorAll(".desc:not(.open)").forEach(p => p.classList.toggle("more", p.scrollHeight > p.clientHeight + 2));
     renderTickets();
     renderPrep();
+    renderPack();
   }
 
   function cancelledHtml(day) {
@@ -319,6 +346,23 @@
       state.expanded.has(id) ? state.expanded.delete(id) : state.expanded.add(id);
       descEl.classList.toggle("open"); descEl.classList.toggle("more", !descEl.classList.contains("open") && descEl.scrollHeight > descEl.clientHeight + 2);
       return;
+    }
+    const kEl = e.target.closest("[data-kcheck],[data-kedit],[data-ksave],[data-kcancel],[data-kdel],[data-kadd]");
+    if (kEl) {
+      if (state.busy) return;
+      const find = id => packItems().find(x => x.id === id), d = kEl.dataset;
+      const save = async item => { const ok = await saveItem(1, { kind: "pack", ...item }); if (!ok) alert(state.error); return ok; };
+      if (d.kcheck) togglePacked(d.kcheck);
+      else if (d.kedit) state.packEdit = d.kedit;
+      else if ("kcancel" in d) state.packEdit = null;
+      else if (d.ksave) { const text = $("packText").value.trim(); if (text && await save({ ...find(d.ksave), text, group: $("packTextGroup").value })) state.packEdit = null; }
+      else if (d.kdel) { if (confirm("確定從清單刪除？兩支手機都會一起刪掉。") && await save({ ...find(d.kdel), deleted: true })) state.packEdit = null; }
+      else if ("kadd" in d) {
+        const text = $("packNew").value.trim(); if (!text) return $("packNew").focus();
+        if (await save({ id: "pack-" + Date.now(), group: $("packGroup").value, text, created: true })) $("packNew").value = "";
+      }
+      document.activeElement?.blur();
+      return renderPack();
     }
     const pEl = e.target.closest("[data-pcheck],[data-pedit],[data-psave],[data-pcancel],[data-pdel],[data-padd]");
     if (pEl) {
@@ -411,7 +455,9 @@
     scrollTo({ top: 0, behavior: "instant" });
   }
   // 新增欄位按 Enter 直接新增
-  document.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.id === "prepNew" && !e.isComposing) { e.preventDefault(); document.querySelector("[data-padd]").click(); } });
+  document.addEventListener("keydown", e => { if (e.key !== "Enter" || e.isComposing) return;
+    if (e.target.id === "prepNew") { e.preventDefault(); document.querySelector("[data-padd]").click(); }
+    if (e.target.id === "packNew") { e.preventDefault(); document.querySelector("[data-kadd]").click(); } });
   addEventListener("popstate", () => showTab(location.hash.slice(1)));
 
   // ---------- 離線備份 ----------
