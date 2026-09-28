@@ -15,7 +15,9 @@
 - 行程內容只改 `data.js`；邏輯改 `app.js`；樣式改 `style.css`（優先用 `:root` 變數）。
 - 所有使用者輸入顯示前都要經過 `esc()`，避免 XSS。
 - 不要改變 Firebase 資料路徑 `/{TRIP.id}/extra/{day}/{id}` 的格式，否則雲端現有資料會讀不到；如需遷移請寫遷移步驟。
-- 視覺風格：奶茶色系、圓角大卡片、虛線膠囊按鈕、手機優先（max-width 600px）。字型 Nunito + Noto Sans TC。
+- 視覺風格（2026-09-28 改版）：粉藍＋粉黃為主、鼠尾草綠點綴（依茶兒的兩張 moodboard 混搭）；標題用 Noto Serif TC、內文 Nunito + Noto Sans TC；按鈕是淡色膠囊配深色字；手機優先（max-width 600px）。
+- **顏色與字重一律改 `theme.css`**（載入在 `style.css` 之後，所有色票是 `:root` 變數）；`style.css` 是版面結構與舊樣式，盡量不要在裡面加新顏色。粉色只當底色，文字與圖示用深色，對比要 ≥ 4.5:1。
+- 圖示是 `index.html` 內的 `<symbol id="i-xxx">` 線條圖（依 CNS 16282 改繪），新增圖示照同樣線寬 2、圓角畫法；封面主圖在 `data.js` 的 `cover.url`／`cover.credit`。
 - 介面文字使用繁體中文（台灣用語）。
 
 ## 工作流程
