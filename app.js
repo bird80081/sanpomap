@@ -61,10 +61,10 @@
     return s ? { item: s, label: hr(s.time) <= h ? ico("hourglass") + "進行中" : ico("next") + "下一站" } : null;
   }
 
-  const state = { day: todayDay() || 1, form: null, tform: null, adjust: null, expanded: new Set(), extra: { 1: [], 2: [], 3: [] }, busy: false, error: "", sync: DB ? "connecting" : "local" };
+  const state = { day: todayDay() || 1, form: null, tform: null, prepEdit: null, adjust: null, expanded: new Set(), extra: { 1: [], 2: [], 3: [] }, busy: false, error: "", sync: DB ? "connecting" : "local" };
 
   // 正在填行程或票券表單時，雲端同步與定時更新都不重畫，避免打到一半的字被清掉
-  const editing = () => state.form || state.tform;
+  const editing = () => state.form || state.tform || state.prepEdit || ["prepNew", "prepText"].includes(document.activeElement?.id);
 
   // ---------- 資料同步 ----------
   function normalize(v) {
@@ -173,6 +173,27 @@
       via: (round ? stops.slice(1) : stops.slice(1, -1)).join("・"), dep: times[0] || t.time, arr: times[1] || ""
     };
   }
+  // 行前待確認：data.js 為初始清單（prep-1、prep-2…），網頁上的勾選／修改／刪除／新增以 kind: "prep" 存在 extra/1
+  function prepItems() {
+    const saved = (state.extra[1] || []).filter(x => x.kind === "prep");
+    const base = T.prep.map((text, i) => ({ id: `prep-${i + 1}`, text, done: false }));
+    const all = base.map(b => ({ ...b, ...saved.find(x => x.id === b.id) }))
+      .concat(saved.filter(x => x.created && !base.some(b => b.id === x.id)));
+    return all.filter(x => !x.deleted).sort((a, b) => a.done - b.done);
+  }
+  function renderPrep() {
+    const items = prepItems(), left = items.filter(x => !x.done).length, draft = $("prepNew")?.value || "";
+    $("prep").innerHTML = `<summary>${ico("list")}行前待確認（${left ? `剩 ${left} 項` : "全部完成"}）<small>出發前處理</small></summary>
+      <ul class="prep-list">${items.map(x => state.prepEdit === x.id
+        ? `<li class="editing"><textarea id="prepText" rows="3">${esc(x.text)}</textarea><div class="actions"><button class="btn" data-pdel="${esc(x.id)}">刪除</button><button class="btn" data-pcancel>取消</button><button class="btn primary" data-psave="${esc(x.id)}">儲存</button></div></li>`
+        : `<li class="${x.done ? "done" : ""}"><button class="check" data-pcheck="${esc(x.id)}" aria-pressed="${!!x.done}" aria-label="${x.done ? "改回未完成" : "標記完成"}">${x.done ? ico("check") : ""}</button><span>${esc(x.text)}</span><button class="adjust" data-pedit="${esc(x.id)}" aria-label="修改">${ico("pencil")}</button></li>`).join("")}</ul>
+      <div class="prep-add"><input id="prepNew" placeholder="新增一項，例如：確認 iRent 預約" value="${esc(draft)}"><button class="btn primary" data-padd>新增</button></div>`;
+  }
+  async function savePrep(item) {
+    const ok = await saveItem(1, { kind: "prep", ...item });
+    if (!ok) alert(state.error);
+    return ok;
+  }
   function readTicketForm() {
     if (state.tform && $("tSeat")) state.tform = { ...state.tform, seat: $("tSeat").value, note: $("tNote").value };
   }
@@ -185,7 +206,7 @@
       const item = { ...s, ...edit, id: s.id, custom: false };
       return { ...item, icon: item.type === s.type ? s.icon : ty(item.type).icon, sym: item.type === s.type ? s.sym : undefined, chips: [[edit ? "已調整" : s.tag, ""], ...(item.tags || []).map(t => [t, "hot"])] };
     });
-    const mine = extra.filter(c => c.kind !== "override" && c.kind !== "ticket").map(c => ({
+    const mine = extra.filter(c => !["override", "ticket", "prep"].includes(c.kind)).map(c => ({
       ...c, icon: ty(c.type).icon, q: c.q || c.title, desc: c.desc || "", custom: true,
       chips: [["我加的", "mine"], ...(c.tags || []).map(t => [t, "hot"])]
     }));
@@ -223,11 +244,7 @@
     $("stats").innerHTML = T.stats.map(([i, b, s]) => `<div><span>${ico(i)}</span><b>${b}</b><small>${s}</small></div>`).join("");
     $("ticketTip").innerHTML = T.ticketTip;
     $("ticketNote").innerHTML = T.ticketNote;
-    if (!T.prep.length) $("prep").remove();
-    else {
-      $("prep").innerHTML = `<summary>${ico("list")}行前待確認（${T.prep.length}）<small>出發前處理</small></summary><ol>${T.prep.map(p => `<li>${esc(p)}</li>`).join("")}</ol>`;
-      $("prep").open = beforeTrip();
-    }
+    $("prep").open = beforeTrip();
     $("stays").innerHTML = T.stays.map(s => `<div class="stay"><span>${ico("bed")}</span><div><small>${s.day}</small><b>${s.name}</b><p>${s.info}</p><a href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">${ico("pin")}查看地圖</a></div></div>`).join("");
     $("footer").innerHTML = T.footer.map(f => `<div>${f}</div>`).join("");
   }
@@ -268,6 +285,7 @@
     // 說明預設只顯示 2 行；被截斷的才加「展開」提示
     document.querySelectorAll(".desc:not(.open)").forEach(p => p.classList.toggle("more", p.scrollHeight > p.clientHeight + 2));
     renderTickets();
+    renderPrep();
   }
 
   function cancelledHtml(day) {
@@ -301,6 +319,23 @@
       state.expanded.has(id) ? state.expanded.delete(id) : state.expanded.add(id);
       descEl.classList.toggle("open"); descEl.classList.toggle("more", !descEl.classList.contains("open") && descEl.scrollHeight > descEl.clientHeight + 2);
       return;
+    }
+    const pEl = e.target.closest("[data-pcheck],[data-pedit],[data-psave],[data-pcancel],[data-pdel],[data-padd]");
+    if (pEl) {
+      if (state.busy) return;
+      const find = id => prepItems().concat((state.extra[1] || []).filter(x => x.kind === "prep")).find(x => x.id === id);
+      const d = pEl.dataset;
+      if (d.pcheck) { const x = find(d.pcheck); await savePrep({ ...x, done: !x.done }); }
+      else if (d.pedit) state.prepEdit = d.pedit;
+      else if ("pcancel" in d) state.prepEdit = null;
+      else if (d.psave) { const text = $("prepText").value.trim(); if (text && await savePrep({ ...find(d.psave), text })) state.prepEdit = null; }
+      else if (d.pdel) { if (confirm("確定刪除這一項？") && await savePrep({ ...find(d.pdel), deleted: true })) state.prepEdit = null; }
+      else if ("padd" in d) {
+        const text = $("prepNew").value.trim(); if (!text) return $("prepNew").focus();
+        if (await savePrep({ id: "prep-" + Date.now(), text, done: false, created: true })) $("prepNew").value = "";
+      }
+      $("prepNew") && document.activeElement?.blur();
+      return renderPrep();
     }
     const tabBtn = e.target.closest("[data-tab]");
     if (tabBtn) return showTab(tabBtn.dataset.tab, true);
@@ -375,6 +410,8 @@
     if (push) history.pushState(null, "", url); else history.replaceState(null, "", url);
     scrollTo({ top: 0, behavior: "instant" });
   }
+  // 新增欄位按 Enter 直接新增
+  document.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.id === "prepNew" && !e.isComposing) { e.preventDefault(); document.querySelector("[data-padd]").click(); } });
   addEventListener("popstate", () => showTab(location.hash.slice(1)));
 
   // ---------- 離線備份 ----------
