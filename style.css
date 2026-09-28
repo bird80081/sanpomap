@@ -239,3 +239,18 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
 .prep-add select,.prep-list select{font:inherit;font-size:15px;padding:10px 8px;border-radius:14px;border:1.5px solid #E2D3C0;background:#fff;color:var(--ink);flex-shrink:0}
 .prep-list li.editing input{font:inherit;font-size:16px;padding:10px 12px;border-radius:14px;border:1.5px solid #E2D3C0;background:#fff;color:var(--ink);width:100%}
 .prep-add input{min-width:0}
+
+/* 奶油黃點綴 oklch(0.987 0.026 102.212)：封面與「下一站」卡片 */
+:root{--cream:#FEFCE8;--cream-2:#F8F1D2;--cream-line:#EDE2B8}
+@supports (color:oklch(0 0 0)){:root{--cream:oklch(0.987 0.026 102.212);--cream-2:oklch(0.96 0.045 95);--cream-line:oklch(0.91 0.06 92)}}
+/* 封面縮小 */
+.hero{background:var(--cream);border:1px solid var(--cream-line);box-shadow:0 14px 30px -24px rgba(120,95,30,.45)}
+.hero-top{padding:18px 18px 4px;gap:10px}
+.hero h1{font-size:clamp(26px,7.4vw,34px);line-height:1.25;text-shadow:none}
+.badge{font-size:13px;padding:6px 14px;background:#fff;border-color:var(--cream-line)}
+.stats{margin-top:14px;background:var(--cream-2)}
+.stats div{padding:10px 4px;border-right-color:var(--cream-line)}
+.stats span:first-child{font-size:20px}.stats b{font-size:14px}.stats small{font-size:11px}
+/* 下一站卡片 */
+.item.next .item-card{background:var(--cream)}
+.item.next .desc.more::after{background:linear-gradient(90deg,transparent,var(--cream) 26px)}
