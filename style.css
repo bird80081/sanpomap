@@ -292,3 +292,12 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
 .prep{border-radius:5px}
 .item-card{border-radius:9px}
 .stay{border-radius:9px}
+
+/* 手機按鈕尺寸：僅調整控制項大小，沿用既有配色與字體。 */
+.tabs .tab{min-height:48px;padding:12px 10px}
+.btn,.types button,.hints button,.backup-btn{min-height:44px;min-width:44px}
+.btn.primary,.day-route,.add-btn{min-height:48px}
+.card-foot button.chip,.card-foot a.chip{min-width:44px;padding:10px 14px;justify-content:center}
+.item-card .adjust{padding:10px 8px}
+.stay a,.chip.goto{min-height:44px;display:inline-flex;align-items:center;justify-content:center;padding:10px 14px}
+.tabbar button{min-height:48px}
