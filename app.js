@@ -306,15 +306,14 @@
       <div class="item${next && next.item === s ? " next" : ""}" data-id="${esc(s.id)}"><div class="item-card${s.custom ? " mine" : ""}">
         <div class="icon t-${esc(s.type)}" style="background:${ty(s.type).bg}">${cardIcon(s)}</div>
         <div class="body">
-          <div class="row"><span class="time">${ico("clock")}${esc(s.time)}${next && next.item === s ? `<em class="now">${next.label}</em>` : ""}</span><button class="adjust${state.adjust === String(s.id) ? " on" : ""}" data-adjust="${esc(s.id)}" aria-expanded="${state.adjust === String(s.id)}">${ico("pencil")}調整</button></div>
+          <div class="row"><span class="time">${ico("clock")}${esc(s.time)}${next && next.item === s ? `<em class="now">${next.label}</em>` : ""}</span><button class="adjust" data-edit="${esc(s.id)}" aria-expanded="${!!f && String(f.id) === String(s.id)}">${ico("pencil")}編輯</button></div>
           <div class="title">${esc(s.title)}</div>
           ${s.desc ? `<p class="desc${state.expanded.has(String(s.id)) ? " open" : ""}" data-desc="${esc(s.id)}">${esc(s.desc)}</p>` : ""}
         </div>
         <div class="card-foot">
-          ${state.adjust === String(s.id) ? `<div class="chips"><button class="chip" data-edit="${esc(s.id)}">編輯</button><button class="chip" data-stop="${esc(s.id)}">取消行程</button></div>` : ""}
           <div class="chips"><a class="chip nav" href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">${ico("pin")}地點</a>${index > 0 ? `<a class="chip nav" href="${esc(previousRouteUrl(items[index - 1], s))}" title="${esc(items[index - 1].title)} → ${esc(s.title)}" target="_blank" rel="noopener noreferrer">${ico("go")}怎麼去</a>` : ""}${s.chips.map(([t, c]) => `<span class="chip ${c}">${tagHtml(t)}</span>`).join("")}</div>
         </div>
-      </div></div>`).join("") + cancelledHtml(day) + (state.error ? `<p role="alert">${esc(state.error)}</p>` : "") + (f ? formHtml(day, f) : `<button class="add-btn" data-open>＋ 新增行程（午餐、下午茶、景點…）</button>`);
+      </div>${f && String(f.id) === String(s.id) ? formHtml(day, f) : ""}</div>`).join("") + cancelledHtml(day) + (state.error ? `<p role="alert">${esc(state.error)}</p>` : "") + (f ? (f.id ? "" : formHtml(day, f)) : `<button class="add-btn" data-open>＋ 新增行程（午餐、下午茶、景點…）</button>`);
     // 說明預設只顯示 2 行；被截斷的才加「展開」提示
     document.querySelectorAll(".desc:not(.open)").forEach(p => p.classList.toggle("more", p.scrollHeight > p.clientHeight + 2));
     renderTickets();
@@ -327,15 +326,16 @@
     return items.length ? `<details class="form"><summary>已取消行程（${items.length}）</summary>${items.map(s => `<p>${esc(s.time)} ${esc(s.title)} <button class="chip" data-restore="${esc(s.id)}">恢復行程</button></p>`).join("")}</details>` : "";
   }
   function formHtml(day, f) {
-    return `<div class="form">
+    return `<div class="form itinerary-form">
       <h3>${f.id ? "編輯行程" : `新增到 Day ${day}`}</h3>
       <div class="types">${Object.entries(TYPES).map(([k, v]) => `<button class="${f.type === k ? "on" : ""}" style="${f.type === k ? `background:${v.bg}` : ""}" data-type="${k}">${ico(TYPE_ICON[k] || "pin")}${esc(v.label.replace(/^\S+\s*/, ""))}</button>`).join("")}</div>
       <div class="form-row"><input aria-label="行程時間" id="fTime" value="${esc(f.time)}" placeholder="12:30"><input aria-label="行程名稱" id="fTitle" value="${esc(f.title)}" placeholder="店名或景點名稱"></div>
       <label>地點名稱或地址（Google Maps）<input id="fPlace" value="${esc(f.q || "")}" placeholder="留空時使用行程名稱"></label>
       <textarea id="fDesc" rows="2" placeholder="想吃什麼、備註（選填）">${esc(f.desc)}</textarea>
       <input id="fTags" value="${esc(f.tags)}" placeholder="標籤，用空格分開：必吃 排隊名店">
-      <div class="actions"><button class="btn" data-cancel>取消</button><button class="btn primary" data-add>${f.id ? "儲存修改" : "加入行程"}</button></div>
+      <div class="actions"><button class="btn" data-cancel>放棄修改</button><button class="btn primary" data-add>${f.id ? "儲存修改" : "加入行程"}</button></div>
       <small>會依時間自動排進行程。</small>
+      ${f.id ? `<div class="cancel-stop"><button class="btn" data-stop="${esc(f.id)}">取消這站</button><small>取消後仍可從「已取消行程」恢復。</small></div>` : ""}
     </div>`;
   }
 
@@ -437,6 +437,7 @@
       const id = el.dataset.stop || el.dataset.restore;
       const old = dayItems(day, true).find(s => String(s.id) === id);
       if (!old) return;
+      if (el.dataset.stop && !confirm(`確定取消「${old.title}」？未儲存的修改不會保留，之後可從「已取消行程」恢復。`)) return;
       readForm();
       const { chips, custom, ...item } = old;
       if (!custom) item.kind = "override";
@@ -447,7 +448,7 @@
       }
     }
     render();
-    if (state.form) document.querySelector(".form:last-child")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (state.form) document.querySelector(".itinerary-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   // ---------- 底部分頁 ----------

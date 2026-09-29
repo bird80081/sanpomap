@@ -176,4 +176,5 @@ html,body{overflow-x:clip}
 .ov-day:nth-child(1){border-left-color:#A5804C}
 .ov-day:nth-child(2){border-left-color:#557D99}
 .ov-day:nth-child(3){border-left-color:#627D61}
+.cancel-stop{border-top-color:var(--line)}
 .ov-heading b{background:transparent;padding-left:0;color:var(--ink)}

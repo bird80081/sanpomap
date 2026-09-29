@@ -301,3 +301,8 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
 .item-card .adjust{padding:10px 8px}
 .stay a,.chip.goto{min-height:44px;display:inline-flex;align-items:center;justify-content:center;padding:10px 14px}
 .tabbar button{min-height:48px}
+
+.item>.itinerary-form{margin-top:12px}
+.itinerary-form{scroll-margin-top:80px}
+.cancel-stop{margin-top:16px;padding-top:16px;border-top:1px solid;display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.itinerary-form .actions{flex-wrap:wrap}
