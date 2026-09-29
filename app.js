@@ -234,7 +234,7 @@
     });
     const mine = extra.filter(c => !["override", "ticket", "prep", "pack"].includes(c.kind)).map(c => ({
       ...c, icon: ty(c.type).icon, q: c.q || c.title, desc: c.desc || "", custom: true,
-      chips: (c.tags || []).map(t => [t, "hot"])
+      chips: [...(c.tag ? [[c.tag, ""]] : []), ...(c.tags || []).map(t => [t, "hot"])]
     }));
     return [...base, ...mine].filter(s => includeCancelled || !s.cancelled).sort((a, b) => hr(a.time) - hr(b.time));
   }
@@ -418,6 +418,7 @@
       <button type="button" class="btn" data-map-preview>開地圖確認位置</button>
       <p id="placeError" class="note" role="alert"></p>
       <textarea id="fDesc" rows="2" placeholder="想吃什麼、備註（選填）">${esc(f.desc)}</textarea>
+      ${!f.id || f.custom ? `<input id="fTag" value="${esc(f.tag || "")}" placeholder="一句話特色（選填）：在地銅板小吃">` : ""}
       <input id="fTags" value="${esc(f.tags)}" placeholder="標籤，用空格分開：必吃 排隊名店">
       <div class="actions"><button class="btn" data-cancel>放棄修改</button><button class="btn primary" data-add>${f.id ? "儲存修改" : "加入行程"}</button></div>
       <small>會依時間自動排進行程。</small>
@@ -428,7 +429,7 @@
   const blank = (time = "") => ({ type: "food", time, title: "", desc: "", tags: "" });
   function readForm() {
     if (!state.form) return;
-    state.form = { ...state.form, time: $("fTime").value, title: $("fTitle").value, q: $("fPlace").value, mapUrl: $("fMapUrl").value, desc: $("fDesc").value, tags: $("fTags").value };
+    state.form = { ...state.form, time: $("fTime").value, title: $("fTitle").value, q: $("fPlace").value, mapUrl: $("fMapUrl").value, desc: $("fDesc").value, tags: $("fTags").value, ...($("fTag") ? { tag: $("fTag").value } : {}) };
   }
 
   // ---------- 事件 ----------
@@ -530,7 +531,7 @@
       const old = f.id ? dayItems(day, true).find(s => String(s.id) === String(f.id)) : null;
       const item = { id: f.id || String(Date.now()), time: f.time.trim() || "未定", title: f.title.trim(), desc: f.desc.trim(), type: f.type,
         ...locationFields, tags: f.tags.split(/[\s,，、]+/).filter(Boolean), cancelled: false,
-        ...(old && !old.custom ? { kind: "override" } : {}) };
+        ...(old && !old.custom ? { kind: "override" } : { tag: (f.tag || "").trim() }) };
       if (await saveItem(day, item)) state.form = null;
     }
     else if (el.dataset.stop || el.dataset.restore) {
