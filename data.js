@@ -28,10 +28,10 @@ window.TRIP = {
       { id: "fixed-01", shortLabel: "臺北", time: "08:00", title: "臺北車站出發｜111 次", tag: "🚆 已購票・已劃位", icon: "🚉", type: "transport", desc: "111 次已購票並完成劃位，搭乘前往高雄，12:04 抵達；發車時間請以車票為準，提早到站候車。", q: "臺北車站", inDayRoute: false },
       { id: "fixed-02", shortLabel: "高雄", time: "12:04", title: "高雄車站（抵達）", tag: "🚆 臺鐵抵達", icon: "🚉", type: "transport", desc: "搭乘自強 111 次 12:04 準時抵達高雄，出站準備前往取車展開南部旅程。", q: "高雄車站" },
       { id: "fixed-03", shortLabel: "取汽車", time: "12:15–13:00", title: "高雄車站附近取 iRent", tag: "🚗 租車取件", icon: "🚘", type: "transport", desc: "以 App 實際可預約站點為準，行李放置後車廂，出發前確認 90 分鐘折抵券效期、車款與用車門檻；還車結帳時選券並確認折抵後再付款。取還車站點及預約尚待確認。", q: "高雄火車站 iRent" },
-      { id: "fixed-04", sym: "historic", shortLabel: "勝利星村", time: "14:30–15:30", title: "勝利星村創意生活園區", tag: "🌿 日式眷村", icon: "🍡", type: "sight", desc: "安排 45–60 分鐘漫步全台最大日式官舍建築群，逛特色獨立書店與文創選物店。", q: "勝利星村創意生活園區" },
-      { id: "fixed-05", sym: "beach", shortLabel: "大鵬灣・海上教堂", time: "16:20–17:45", title: "大鵬灣＆海上教堂咖啡", tag: "🌅 潟湖落日", icon: "🌊", type: "sight", desc: "先到海上教堂咖啡看海與稍作休息，再沿大鵬灣濱灣碼頭或單車道散步，欣賞潟湖夕陽。", q: "大鵬灣海上教堂咖啡" },
-      { id: "fixed-06", sym: "market", shortLabel: "東港", time: "18:05–20:15", title: "東港晚餐（華僑市場）", tag: "🍣 在地鮮味", icon: "🦐", type: "food", desc: "品嚐現切生魚片、旗魚黑輪與在地熱炒美食，約 20:15 啟程開車返回高雄還車。", q: "東港華僑市場" },
-      { id: "fixed-07", shortLabel: "喜迎旅店", time: "約 21:40", title: "入住喜迎旅店 Greet Inn", tag: "🏨 高雄夜宿", icon: "🛏️", type: "stay", desc: "完成還車手續後步行至旅店辦理入住，捷運前金站O4旁，翌日早晨不需再處理租車事宜。", q: "喜迎旅店 Greet Inn" }
+      { id: "fixed-04", sym: "historic", shortLabel: "勝利星村", time: "13:45–14:45", title: "勝利星村創意生活園區", tag: "🌿 日式眷村", icon: "🍡", type: "sight", desc: "安排 45–60 分鐘漫步全台最大日式官舍建築群，逛特色獨立書店與文創選物店。", q: "勝利星村創意生活園區" },
+      { id: "fixed-05", sym: "beach", shortLabel: "大鵬灣・海上教堂", time: "16:35–17:50", title: "大鵬灣＆海上教堂咖啡", tag: "🌅 潟湖落日", icon: "🌊", type: "sight", desc: "在海上教堂咖啡吃甜點看海，等 17:39 日落（咖啡 18:20 最後收客），再沿大鵬灣濱灣碼頭或單車道散步，之後開回高雄還車。", q: "大鵬灣海上教堂咖啡" },
+      { id: "fixed-06", sym: "market", shortLabel: "東港", time: "15:20–16:20", title: "東港華僑市場（吃個半飽）", tag: "🍣 在地鮮味", icon: "🦐", type: "food", desc: "品嚐現切生魚片、旗魚黑輪等在地小吃，吃個半飽、留胃給海上教堂的甜點；生鮮攤午後陸續收、熱門小吃常下午就賣完，看到想吃的先買。", q: "東港華僑市場" },
+      { id: "fixed-07", shortLabel: "喜迎旅店", time: "約 19:30", title: "入住喜迎旅店 Greet Inn", tag: "🏨 高雄夜宿", icon: "🛏️", type: "stay", desc: "完成還車手續後步行至旅店辦理入住，捷運前金站O4旁，翌日早晨不需再處理租車事宜。", q: "喜迎旅店 Greet Inn" }
     ]},
     2: { route: "喜迎旅店 ・ 鳳山 ・ 枋寮 ・ 金崙 ・ 臺東 ・ 花蓮", overview: "喜迎旅店 → 鳳山 → 枋寮 → 金崙 → 臺東 → 花蓮入住", color: "#6E9E9A", soft: "#E6F0EF", travelmode: "transit", spots: [
       { id: "fixed-08", shortLabel: "喜迎旅店", time: "建議 08:15", title: "喜迎旅店退房、出發", tag: "🏨 今日出發點", icon: "🧳", type: "transport", desc: "07:45 先空手到同一條路的興隆居買外帶早餐，08:15 回飯店帶齊行李退房，08:20 出發前往捷運前金站，搭橘線至捷運鳳山站，再步行至臺鐵鳳山站，預留 09:12 搭車的候車時間。", q: "喜迎旅店 Greet Inn" },
@@ -84,7 +84,7 @@ window.TRIP = {
   parking: {
     "fixed-04": { main: "kx", backup: "bo", backup2: "qd", note: "10/8 是平日，空翔區與博愛路都是每次 30 元。" },
     "fixed-05": { main: "church", walk: 5, backup: "dbnsa", note: "教堂與大鵬灣同一區，停一次就好。教堂 18:20 最後收客；教堂內只有一間廁所，附近有公廁。" },
-    "fixed-06": { main: "city", backup: "dgadm", note: "立體停車場走天橋直達市場上方；假日常滿。" },
+    "fixed-06": { main: "city", backup: "dgadm", note: "立體停車場走天橋直達市場上方；10/8 是平日下午，應該好停。" },
     "fixed-17": { main: "cdbeach", backup: "cdrest", note: "出發前確認 178.2K 入口與涵洞可通行。" },
     "fixed-18": { main: "xcchurch", backup: "xcschool", note: "停一次，步行逛完天主堂與老街。" },
     "fixed-19": { main: "jjf", walk: 3, backup: "jjfroad", note: "連假週六建議提早 30 分鐘到；用餐時段先抽號碼牌。" },
@@ -95,7 +95,7 @@ window.TRIP = {
   // spot 對應行程卡片 id，點票券可跳到那一站；seat 選填，填了就會顯示（例如 "5 車 12 號"）
   tickets: [
     { id: "ticket-01", day: 1, leg: "臺北 → 高雄", mode: "🚆 自強 111 次", time: "08:00–12:04", status: "reserved", note: "發車以車票為準", spot: "fixed-01", seat: "" },
-    { id: "ticket-02", day: 1, leg: "高雄 → 屏東 → 東港 → 高雄", mode: "🚗 iRent 汽車", time: "12:15–21:40", status: "pending", note: "取還車站點與預約待確認；使用第 1 張 90 分鐘折抵券", spot: "fixed-03" },
+    { id: "ticket-02", day: 1, leg: "高雄 → 屏東 → 東港 → 高雄", mode: "🚗 iRent 汽車", time: "12:15–19:00", status: "pending", note: "取還車站點與預約待確認；使用第 1 張 90 分鐘折抵券", spot: "fixed-03" },
     { id: "ticket-03", day: 2, leg: "鳳山 → 枋寮", mode: "🚆 3005 次 區間快", time: "09:12–10:10", status: "open", note: "無對號座，當日確認班表", spot: "fixed-09" },
     { id: "ticket-04", day: 2, leg: "枋寮 → 金崙（南迴）", mode: "🚆 莒光 727 次", time: "12:29–13:44", status: "reserved", note: "時間待對照票面", spot: "fixed-22", seat: "" },
     { id: "ticket-05", day: 2, leg: "金崙 → 臺東", mode: "🚆 EMU3000 441 次", time: "16:56–17:29", status: "reserved", note: "以車票為準", spot: "fixed-12", seat: "" },
@@ -118,7 +118,7 @@ window.TRIP = {
     "列車：111、727、441、445、285 次，網頁時間逐一對照票面；3005 次區間快確認當日班表。",
     "租車：高雄、花蓮 iRent 的取還車站點與預約；兩張折抵券的效期、連假適用與最低用車門檻。",
     "行李／住宿：枋寮寄物服務、金崙寄放備案、Have Fun 225 晚間入住方式；兩晚訂房資訊核對。",
-    "餐食／景點：華僑市場晚間攤商、鼎倫最後點餐、力卡與邊境的連假營業；崇德道路與海灘開放情況；早餐：Day 1 路上買小吃；Day 2 07:45 興隆居外帶、上臺鐵再吃（9/28–10/6 整修停業，10/7 恢復，前一天再看公告）。"
+    "餐食／景點：華僑市場下午攤商、鼎倫最後點餐、力卡與邊境的連假營業；崇德道路與海灘開放情況；早餐：Day 1 路上買小吃；Day 2 07:45 興隆居外帶、上臺鐵再吃（9/28–10/6 整修停業，10/7 恢復，前一天再看公告）。"
   ],
   stays: [
     { icon: "🛏️", day: "Day 1・高雄", name: "喜迎旅店 Greet Inn", info: "高雄市前金區六合二路161號・捷運前金站O4旁", q: "喜迎旅店 Greet Inn" },
