@@ -66,7 +66,7 @@
   }
   // Input is already sorted by itinerary time. Transport rows are not destinations.
   function dayStops(items) {
-    return items.filter(s => !s.cancelled && ['sight','food','cafe','stay'].includes(s.type));
+    return items.filter(s => !s.cancelled && s.inDayRoute !== false && ['sight','food','cafe','stay'].includes(s.type));
   }
   function dayRoute(items) { return directions(dayStops(items)); }
   const api = {safeUrl,parse,resolve,fields,directions,dayStops,dayRoute,isUrl};

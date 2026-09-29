@@ -26,7 +26,7 @@ test('URL pasted into address is normalized; unsafe or route URLs are rejected',
  assert.throws(()=>m.fields('91,121','','店'));
 });
 test('day overview includes only active destinations in itinerary order',()=>{
- const stops=[{q:'車站',type:'transport'},{q:'景點',type:'sight'},{q:'午餐',type:'food',custom:true},{q:'咖啡',type:'cafe'},{q:'飯店',type:'stay'},{q:'取消',type:'food',cancelled:true}];
+ const stops=[{q:'車站',type:'transport'},{q:'轉乘買晚餐',type:'food',inDayRoute:false},{q:'景點',type:'sight'},{q:'午餐',type:'food',custom:true},{q:'咖啡',type:'cafe'},{q:'飯店',type:'stay'},{q:'取消',type:'food',cancelled:true}];
  assert.deepEqual(m.dayStops(stops).map(s=>s.q),['景點','午餐','咖啡','飯店']);
  const p=new URL(m.dayRoute(stops)).searchParams;
  assert.equal(p.get('origin'),'景點'); assert.equal(p.get('destination'),'飯店');
