@@ -607,14 +607,34 @@
     return line("停車", lots[p.main]) + line("備案", lots[p.backup]);
   }
   addEventListener("beforeprint", renderPrint);
-  // iPhone 從主畫面圖示開啟時系統不支援列印，改成複製網址並提示到 Safari 存 PDF
+  // iPhone 從主畫面圖示開啟時系統不支援列印：改存一份離線備份網頁檔（分享選單 →「儲存到檔案」）
   const standalone = navigator.standalone || matchMedia("(display-mode: standalone)").matches;
+  function backupFile() {
+    renderPrint();
+    const d = new Date(), stamp = `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+    const html = `<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${esc(T.title.replace(/<br>/g, " "))} 離線備份</title><style>
+body{margin:0;padding:20px 16px 40px;font:15px/1.6 -apple-system,"PingFang TC","Noto Sans TC",sans-serif;color:#222;background:#fff}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:18px;margin:24px 0 8px;padding-bottom:4px;border-bottom:1px solid #ccc}
+.p-item{display:grid;grid-template-columns:68px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid #eee}
+.p-item p{margin:2px 0;color:#444}.p-item small{color:#666}.stamp{color:#888;font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:14px}td{border-bottom:1px solid #ddd;padding:6px 4px;vertical-align:top}
+</style></head><body>${$("printAll").innerHTML}<p class="stamp">備份時間：${stamp}（之後的修改請看網站）</p></body></html>`;
+    return new File([html], `旅行備份-${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}.html`, { type: "text/html" });
+  }
+  if (standalone) $("printBtn").innerHTML = ico("file") + "存離線備份檔（存到「檔案」）";
   $("printBtn").addEventListener("click", async () => {
     if (!standalone) { renderPrint(); print(); return; }
-    const url = location.origin + location.pathname;
-    let copied = false;
-    try { await navigator.clipboard.writeText(url); copied = true; } catch (e) {}
-    alert(`從主畫面圖示打開時，iPhone 不支援存 PDF。\n\n${copied ? "網址已複製，" : `網址：${url}\n`}請打開 Safari 貼上網址，再按一次「存成 PDF」。`);
+    const file = backupFile();
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: "旅行離線備份" }); } catch (e) { /* 使用者取消分享 */ }
+      return;
+    }
+    // 不支援分享檔案時直接下載
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(file); a.download = file.name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 10000);
   });
   addEventListener("online", () => { if (!editing()) render(); if (DB) pull(); loadWeather(); });
   addEventListener("offline", () => { if (!editing()) render(); });
