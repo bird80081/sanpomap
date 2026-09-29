@@ -234,7 +234,7 @@
     });
     const mine = extra.filter(c => !["override", "ticket", "prep", "pack"].includes(c.kind)).map(c => ({
       ...c, icon: ty(c.type).icon, q: c.q || c.title, desc: c.desc || "", custom: true,
-      chips: [["我加的", "mine"], ...(c.tags || []).map(t => [t, "hot"])]
+      chips: (c.tags || []).map(t => [t, "hot"])
     }));
     return [...base, ...mine].filter(s => includeCancelled || !s.cancelled).sort((a, b) => hr(a.time) - hr(b.time));
   }
