@@ -223,3 +223,5 @@ html,body{overflow-x:clip}
 .day-route{font-weight:600}
 
 .route-parts a{border-color:var(--line);color:var(--blue-ink)}.route-parts span{color:var(--ink2)}#placeError{color:var(--yellow-ink)}
+
+.route-parts .route-open{color:var(--blue-ink)}.route-parts small{color:var(--muted)}

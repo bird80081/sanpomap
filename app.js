@@ -251,9 +251,9 @@
     const parts = maps.segments(items, mode);
     $("dayRoute").hidden = !parts.length;
     if (!parts.length) { $("routeParts").innerHTML = ""; return; }
-    $("dayRoute").href = parts[0].url;
-    $("dayRoute").innerHTML = ico("map") + (parts.length > 1 ? `開啟第 1 段路線（共 ${parts.length} 段）` : "用 Google Maps 開啟當天路線");
-    $("routeParts").innerHTML = parts.length > 1 ? `<details class="route-parts"><summary>查看全部 ${parts.length} 段路線</summary><p class="note">${mode === "transit" ? "大眾運輸依相鄰兩站分段開啟。" : "依行程順序分段，每段最多 5 站；抵達末站後接下一段。"}</p>${parts.map((part,i)=>`<a href="${esc(part.url)}" target="_blank" rel="noopener noreferrer"><b>第 ${i+1} 段</b><span>${part.items.map(s=>esc(s.title)).join(" → ")}</span></a>`).join("")}</details>` : "";
+    if ($("dayRoute").dataset.day !== String(state.day)) $("dayRoute").open = false;
+    $("dayRoute").dataset.day = String(state.day);
+    $("routeParts").innerHTML = `<div class="route-parts"><p class="note">${parts.length > 1 ? (mode === "transit" ? "大眾運輸依相鄰兩站分段，選擇要前往的一段。" : "路線依行程順序分段，抵達末站後再接下一段。") : "選擇下方路線，在 Google Maps 查看。"}</p>${parts.map((part,i)=>`<a href="${esc(part.url)}" target="_blank" rel="noopener noreferrer"><small>${parts.length > 1 ? `第 ${i+1} 段，共 ${parts.length} 段` : "當天路線"}</small><b>${esc(part.items[0].title)}${part.items.length > 1 ? ` → ${esc(part.items[part.items.length-1].title)}` : ""}</b>${part.items.length > 2 ? `<span>途經：${part.items.slice(1,-1).map(s=>esc(s.title)).join("、")}</span>` : ""}<span class="route-open">在 Google Maps 開啟 ${ico("go")}</span></a>`).join("")}</div>`;
   }
   function previousRouteUrl(previous, current) {
     return maps.directions([previous,current]);
