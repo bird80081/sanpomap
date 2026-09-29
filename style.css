@@ -42,7 +42,9 @@ section{display:flex;flex-direction:column;gap:18px;scroll-margin-top:68px}
 .wx>div{display:grid;gap:2px;min-width:0}
 .wx-area{font-size:13px}
 .wx b{font-size:16px}
+.wx b em{font-size:13px;font-style:normal;font-weight:400}
 .wx small,.wx-none{font-size:13px}
+.wx-tip{margin:0 0 6px;padding:8px 10px;border-radius:8px;font-size:13px;line-height:1.6}
 
 .tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .tab{border:0;cursor:pointer;padding:12px 6px;border-radius:999px;font-weight:900;font-size:16px;white-space:nowrap;background:var(--card);color:var(--tan-d)}

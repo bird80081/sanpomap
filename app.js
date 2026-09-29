@@ -269,7 +269,7 @@
     [[51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82], "有雨", "rain"], [[95, 96, 99], "雷雨", "storm"]];
   const wx = code => WX.find(([codes]) => codes.includes(code)) || [[], "多雲", "cloud"];
   let weather = null, weatherState = "";
-  try { weather = JSON.parse(localStorage.getItem(WEATHER_KEY)); } catch { }
+  try { weather = JSON.parse(localStorage.getItem(WEATHER_KEY)); if (weather && weather.version !== 2) weather = null; } catch { }
   // 第 n 天的日期（YYYY-MM-DD）
   function dayISO(n) {
     const [y, m, dd] = T.start.split("-").map(Number), d = new Date(y, m - 1, dd + (+n - 1));
@@ -278,22 +278,23 @@
   async function loadWeather() {
     const days = Object.keys(T.weather || {});
     if (!days.length || !navigator.onLine) return;
+    if (weather && Date.now() - weather.at < 30 * 60 * 1000) return;
     const [y, m, dd] = T.start.split("-").map(Number);
     if ((new Date(y, m - 1, dd) - now()) / 864e5 > 15) { weatherState = "early"; return renderWeather(); }
     const spots = days.flatMap(n => T.weather[n].map(a => ({ n, ...a })));
     const url = "https://api.open-meteo.com/v1/forecast?latitude=" + spots.map(s => s.lat).join(",") + "&longitude=" + spots.map(s => s.lon).join(",") +
-      "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunset&timezone=Asia%2FTaipei" +
+      "&hourly=weather_code,temperature_2m,apparent_temperature,precipitation_probability,wind_speed_10m&daily=sunset&timezone=Asia%2FTaipei" +
       "&start_date=" + dayISO(days[0]) + "&end_date=" + dayISO(days[days.length - 1]);
     try {
       const res = await fetch(url);
       if (!res.ok) throw new Error(res.status);
       const json = await res.json(), list = Array.isArray(json) ? json : [json], data = {};
       spots.forEach((s, i) => {
-        const d = list[i].daily, k = d.time.indexOf(dayISO(s.n));
-        (data[s.n] = data[s.n] || []).push(k < 0 ? null : { code: d.weather_code[k], max: d.temperature_2m_max[k], min: d.temperature_2m_min[k],
-          rain: d.precipitation_probability_max[k], sunset: String(d.sunset[k] || "").slice(11, 16) });
+        const result = list[i], key = `${dayISO(s.n)}T${s.time}`, k = result.hourly.time.indexOf(key), dk = result.daily.time.indexOf(dayISO(s.n));
+        (data[s.n] = data[s.n] || []).push(k < 0 ? null : { code: result.hourly.weather_code[k], temp: result.hourly.temperature_2m[k], feel: result.hourly.apparent_temperature[k],
+          rain: result.hourly.precipitation_probability[k], wind: result.hourly.wind_speed_10m[k], sunset: s.sunset && dk >= 0 ? String(result.daily.sunset[dk] || "").slice(11, 16) : "" });
       });
-      weather = { at: Date.now(), data };
+      weather = { version: 2, at: Date.now(), data };
       try { localStorage.setItem(WEATHER_KEY, JSON.stringify(weather)); } catch { }
       weatherState = "";
     } catch { weatherState = "fail"; }
@@ -304,12 +305,16 @@
     $("map").hidden = !days.length;
     if (!days.length) return;
     const data = (weather && weather.data) || {};
-    $("overview").innerHTML = days.map(n => `<div class="ov-day"><div class="ov-heading"><b>Day ${n}</b><span>${esc(dayDate(n))}</span></div>${T.weather[n].map((a, i) => {
+    $("overview").innerHTML = days.map(n => {
+      const forecasts = (data[n] || []).filter(Boolean), maxRain = Math.max(0, ...forecasts.map(f => f.rain || 0)), maxWind = Math.max(0, ...forecasts.map(f => f.wind || 0)), maxFeel = Math.max(-99, ...forecasts.map(f => f.feel ?? -99));
+      const tips = []; if (maxRain >= 50) tips.push("可能下雨，帶折傘"); if (maxWind >= 25) tips.push("海邊風較強"); if (maxFeel >= 30) tips.push("注意防曬補水");
+      return `<div class="ov-day"><div class="ov-heading"><b>Day ${n}</b><span>${esc(dayDate(n))}</span></div>${tips.length ? `<p class="wx-tip">${esc(tips.join("・"))}</p>` : ""}${T.weather[n].map((a, i) => {
       const f = (data[n] || [])[i];
-      if (!f || f.code == null) return `<div class="wx"><span class="wx-ico">${ico("w-cloud")}</span><div><span class="wx-area">${esc(a.name)}</span><span class="wx-none">尚無預報</span></div></div>`;
+      if (!f || f.code == null) return `<div class="wx"><span class="wx-ico">${ico("w-cloud")}</span><div><span class="wx-area">${esc(a.time)}　${esc(a.name)}</span><span class="wx-none">尚無預報</span></div></div>`;
       const [, label, icon] = wx(f.code);
-      return `<div class="wx"><span class="wx-ico">${ico("w-" + icon)}</span><div><span class="wx-area">${esc(a.name)}</span><b>${label}　${Math.round(f.min)}–${Math.round(f.max)}°C</b><small>降雨機率 ${f.rain ?? "—"}%${f.sunset ? `・日落 ${esc(f.sunset)}` : ""}</small></div></div>`;
-    }).join("")}</div>`).join("");
+      return `<div class="wx"><span class="wx-ico">${ico("w-" + icon)}</span><div><span class="wx-area">${esc(a.time)}　${esc(a.name)}</span><b>${label}　${Math.round(f.temp)}°C <em>體感 ${Math.round(f.feel)}°</em></b><small>降雨 ${f.rain ?? "—"}%${a.coast ? `・風速 ${Math.round(f.wind)} km/h` : ""}${f.sunset ? `・日落 ${esc(f.sunset)}` : ""}</small></div></div>`;
+    }).join("")}</div>`;
+    }).join("");
     const at = weather && new Date(weather.at), src = "資料來源 Open-Meteo，出發前再看中央氣象署";
     $("weatherCap").textContent = !at
       ? (weatherState === "early" ? "出發前兩週內會出現預報" : weatherState === "fail" || !navigator.onLine ? "暫時抓不到預報，有網路時會自動更新" : "讀取預報中…")

@@ -107,6 +107,8 @@ button.chip{border-color:var(--line)}
 .wx-ico{background:#fff;color:var(--ink)}
 .wx-area,.wx small,.wx-none{color:var(--ink2)}
 .wx b{font-weight:600;color:var(--ink)}
+.wx b em{color:var(--ink2)}
+.wx-tip{background:#FFFFFFA8;color:var(--ink)}
 
 /* ---------- 行前待確認、行李清單 ---------- */
 .prep{background:#fff;border:1.5px solid var(--blue-200);border-style:solid}

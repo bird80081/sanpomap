@@ -16,12 +16,12 @@ window.TRIP = {
     ["cal", "3天2夜", "天數"], ["people", "雙人", "旅伴"],
     ["train", "臺鐵＋租車", "交通"], ["bed", "高雄・花蓮", "住宿"]
   ],
-  // 天氣預報：每天要看哪些地區（名稱、緯度、經度）；總覽頁會顯示天氣、溫度、降雨機率與日落時間
+  // 天氣預報：依實際行程時段顯示各地的小時預報
   weather: {
     // 座標取海邊平地（落在山區會抓到山上的氣溫）
-    1: [{ name: "高雄・屏東東港", lat: 22.466, lon: 120.449 }],
-    2: [{ name: "枋寮（上午）", lat: 22.366, lon: 120.594 }, { name: "金崙（下午）", lat: 22.532, lon: 120.968 }, { name: "花蓮（晚上）", lat: 23.976, lon: 121.604 }],
-    3: [{ name: "花蓮・崇德・新城", lat: 24.128, lon: 121.640 }]
+    1: [{ name: "高雄", time: "12:00", lat: 22.627, lon: 120.301 }, { name: "大鵬灣・海上教堂", time: "17:00", lat: 22.456, lon: 120.482, coast: true, sunset: true }],
+    2: [{ name: "枋寮", time: "10:00", lat: 22.366, lon: 120.594, coast: true }, { name: "金崙", time: "14:00", lat: 22.532, lon: 120.968, coast: true }, { name: "花蓮", time: "21:00", lat: 23.976, lon: 121.604 }],
+    3: [{ name: "崇德", time: "10:00", lat: 24.162, lon: 121.655, coast: true }, { name: "花蓮", time: "15:00", lat: 23.976, lon: 121.604 }]
   },
   days: {
     1: { route: "臺北 ・ 高雄車站 ・ 勝利星村 ・ 大鵬灣 ・ 東港", overview: "臺北 → 高雄 → 勝利星村 → 大鵬灣 → 東港 → 高雄", color: "#C4A073", soft: "#F4EBE0", travelmode: "driving", routeLabel: "Google Maps 開啟 Day 1 高雄起訖自駕路線", spots: [
@@ -29,7 +29,7 @@ window.TRIP = {
       { id: "fixed-02", shortLabel: "高雄", time: "12:04", title: "高雄車站（抵達）", tag: "🚆 臺鐵抵達", icon: "🚉", type: "transport", desc: "搭乘自強 111 次 12:04 準時抵達高雄，出站準備前往取車展開南部旅程。", q: "高雄車站" },
       { id: "fixed-03", shortLabel: "取汽車", time: "12:15–13:00", title: "高雄車站附近取 iRent", tag: "🚗 租車取件", icon: "🚘", type: "transport", desc: "以 App 實際可預約站點為準，行李放置後車廂，出發前確認 90 分鐘折抵券效期、車款與用車門檻；還車結帳時選券並確認折抵後再付款。取還車站點及預約尚待確認。", q: "高雄火車站 iRent" },
       { id: "fixed-04", sym: "historic", shortLabel: "勝利星村", time: "14:30–15:30", title: "勝利星村創意生活園區", tag: "🌿 日式眷村", icon: "🍡", type: "sight", desc: "安排 45–60 分鐘漫步全台最大日式官舍建築群，逛特色獨立書店與文創選物店。", q: "勝利星村創意生活園區" },
-      { id: "fixed-05", sym: "beach", shortLabel: "大鵬灣", time: "16:20–17:45", title: "大鵬灣看海與夕陽", tag: "🌅 潟湖落日", icon: "🌊", type: "sight", desc: "迎著海風漫步在濱灣碼頭或單車道，欣賞南台灣海天一色的金黃夕陽景緻。", q: "大鵬灣國家風景區" },
+      { id: "fixed-05", sym: "beach", shortLabel: "大鵬灣・海上教堂", time: "16:20–17:45", title: "大鵬灣＆海上教堂咖啡", tag: "🌅 潟湖落日", icon: "🌊", type: "sight", desc: "先到海上教堂咖啡看海與稍作休息，再沿大鵬灣濱灣碼頭或單車道散步，欣賞潟湖夕陽。", q: "大鵬灣海上教堂咖啡" },
       { id: "fixed-06", sym: "market", shortLabel: "東港", time: "18:05–20:15", title: "東港晚餐（華僑市場）", tag: "🍣 在地鮮味", icon: "🦐", type: "food", desc: "品嚐現切生魚片、旗魚黑輪與在地熱炒美食，約 20:15 啟程開車返回高雄還車。", q: "東港華僑市場" },
       { id: "fixed-07", shortLabel: "喜迎旅店", time: "約 21:40", title: "入住喜迎旅店 Greet Inn", tag: "🏨 高雄夜宿", icon: "🛏️", type: "stay", desc: "完成還車手續後步行至旅店辦理入住，捷運前金站O4旁，翌日早晨不需再處理租車事宜。", q: "喜迎旅店 Greet Inn" }
     ]},
