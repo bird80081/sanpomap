@@ -410,7 +410,7 @@ section{gap:20px}
 .pass-route span{font-size:13px;line-height:1.6}
 .pass-foot{padding-top:12px;gap:6px}
 .pass .chips{justify-content:space-between;gap:4px}
-.pass .chip.goto{font-size:12px;padding:8px 0}
+.pass .chip.goto{font-size:12px;padding:8px 14px}
 .stay{padding:20px;gap:14px;align-items:flex-start;border-radius:16px}
 .stay>span{padding-top:4px}
 .stay>span .ico{width:26px;height:26px}
