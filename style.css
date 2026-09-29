@@ -25,8 +25,10 @@ section{display:flex;flex-direction:column;gap:18px;scroll-margin-top:68px}
 .card{background:var(--card);border-radius:28px;box-shadow:var(--shadow)}
 /* 每日路線：精簡站點 */
 .overview{padding:0;background:transparent;box-shadow:none;gap:12px}
-#overview{display:grid;gap:14px}
+#overview{display:grid;grid-auto-flow:column;grid-auto-columns:88%;gap:14px;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:inline mandatory;scroll-padding-inline:2px;padding:2px 14px 8px 2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+#overview::-webkit-scrollbar{display:none}
 .ov-day{background:var(--day-soft);padding:20px;border-radius:24px}
+.ov-day{scroll-snap-align:start;scroll-snap-stop:always}
 .ov-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
 .ov-heading b{font-size:15px;background:var(--day-color);color:#fff;border-radius:999px;padding:5px 14px;white-space:nowrap}
 .ov-heading>span{font-size:13px;color:var(--ink2)}
@@ -44,7 +46,13 @@ section{display:flex;flex-direction:column;gap:18px;scroll-margin-top:68px}
 .wx b{font-size:16px}
 .wx b em{font-size:13px;font-style:normal;font-weight:400}
 .wx small,.wx-none{font-size:13px}
-.wx-tip{margin:0 0 6px;padding:8px 10px;border-radius:8px;font-size:13px;line-height:1.6}
+.swipe-hint{font-size:12px;white-space:nowrap}
+.wx-heading-meta{display:flex;flex-direction:column;align-items:flex-end;gap:1px}.wx-heading-meta strong{font-size:22px;line-height:1.1}.wx-heading-meta span{font-size:12px}
+.wx-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:12px 0}
+.wx-metrics>div{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:66px;padding:8px 3px;border-radius:10px;text-align:center}
+.wx-metrics b{font-size:14px;white-space:nowrap}.wx-metrics span{font-size:11px}
+.wx-advice{padding:10px 12px;border-radius:10px;margin-bottom:8px}.wx-advice b{font-size:11px;letter-spacing:.08em}.wx-advice p{margin:3px 0 0;font-size:13px;line-height:1.6}
+@media(min-width:520px){#overview{grid-auto-columns:72%}}
 
 .tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .tab{border:0;cursor:pointer;padding:12px 6px;border-radius:999px;font-weight:900;font-size:16px;white-space:nowrap;background:var(--card);color:var(--tan-d)}
