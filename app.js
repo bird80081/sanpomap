@@ -22,7 +22,7 @@
     return ico(/🚘|🚗/.test(s.icon) ? "car" : /🧳|🎒/.test(s.icon) ? "bag" : "train");
   }
   // 行程標籤開頭的 emoji 換成對應的線條圖示（沒對應到的維持原字）
-  const TAG_ICON = { "🚆": "train", "🚉": "train", "🚗": "car", "🧳": "bag", "🏨": "bed-s", "🏡": "bed-s",
+  const TAG_ICON = { "🚆": "train", "🚉": "train", "🚗": "car", "🧳": "bag", "🎒": "bag", "🏨": "bed-s", "🏡": "bed-s",
     "☕": "cafe", "🍰": "cafe", "🍜": "food", "🍣": "food", "🍱": "food", "🍳": "food", "🥟": "food",
     "⚓": "anchor", "⛪": "church", "🎨": "art", "🌿": "historic", "🌊": "beach", "🌅": "sunset", "⛰": "mountain" };
   function tagHtml(t) {

@@ -26,40 +26,40 @@ window.TRIP = {
   days: {
     1: { route: "臺北 ・ 高雄車站 ・ 勝利星村 ・ 大鵬灣 ・ 東港", overview: "臺北 → 高雄 → 勝利星村 → 大鵬灣 → 東港 → 高雄", color: "#C4A073", soft: "#F4EBE0", travelmode: "driving", routeLabel: "Google Maps 開啟 Day 1 高雄起訖自駕路線", spots: [
       { id: "fixed-01", shortLabel: "臺北", time: "08:00", title: "臺北車站出發｜111 次", tag: "🚆 已購票・已劃位", icon: "🚉", type: "transport", desc: "111 次已購票並完成劃位，搭乘前往高雄，12:04 抵達；發車時間請以車票為準，提早到站候車。", q: "臺北車站", inDayRoute: false },
-      { id: "fixed-02", shortLabel: "高雄", time: "12:04", title: "高雄車站（抵達）", tag: "🚆 臺鐵抵達", icon: "🚉", type: "transport", desc: "搭乘自強 111 次 12:04 準時抵達高雄，出站準備前往取車展開南部旅程。", q: "高雄車站" },
+      { id: "fixed-02", shortLabel: "高雄", time: "12:04", title: "高雄車站", tag: "🚆 臺鐵抵達", icon: "🚉", type: "transport", desc: "搭乘自強 111 次 12:04 準時抵達高雄，出站準備前往取車展開南部旅程。", q: "高雄車站" },
       { id: "fixed-03", shortLabel: "取汽車", time: "12:15–13:00", title: "高雄車站附近取 iRent", tag: "🚗 租車取件", icon: "🚘", type: "transport", desc: "以 App 實際可預約站點為準，行李放置後車廂，出發前確認 90 分鐘折抵券效期、車款與用車門檻；還車結帳時選券並確認折抵後再付款。取還車站點及預約尚待確認。", q: "高雄火車站 iRent" },
       { id: "fixed-04", sym: "historic", shortLabel: "勝利星村", time: "13:45–14:45", title: "勝利星村創意生活園區", tag: "🌿 日式眷村", icon: "🍡", type: "sight", desc: "安排 45–60 分鐘漫步全台最大日式官舍建築群，逛特色獨立書店與文創選物店。", q: "勝利星村創意生活園區" },
       { id: "fixed-05", sym: "beach", shortLabel: "大鵬灣・海上教堂", time: "16:35–17:50", title: "大鵬灣＆海上教堂咖啡", tag: "🌅 潟湖落日", icon: "🌊", type: "sight", desc: "在海上教堂咖啡吃甜點看海，等 17:39 日落（咖啡 18:20 最後收客），再沿大鵬灣濱灣碼頭或單車道散步，之後開回高雄還車。", q: "大鵬灣海上教堂咖啡" },
-      { id: "fixed-06", sym: "market", shortLabel: "東港", time: "15:20–16:20", title: "東港華僑市場（吃個半飽）", tag: "🍣 在地鮮味", icon: "🦐", type: "food", desc: "品嚐現切生魚片、旗魚黑輪等在地小吃，吃個半飽、留胃給海上教堂的甜點；生鮮攤午後陸續收、熱門小吃常下午就賣完，看到想吃的先買。", q: "東港華僑市場" },
+      { id: "fixed-06", sym: "market", shortLabel: "東港", time: "15:20–16:20", title: "東港華僑市場", tag: "🍣 在地鮮味", icon: "🦐", type: "food", desc: "品嚐現切生魚片、旗魚黑輪等在地小吃，吃個半飽、留胃給海上教堂的甜點；生鮮攤午後陸續收、熱門小吃常下午就賣完，看到想吃的先買。", q: "東港華僑市場" },
       { id: "fixed-07", shortLabel: "喜迎旅店", time: "約 19:30", title: "入住喜迎旅店 Greet Inn", tag: "🏨 高雄夜宿", icon: "🛏️", type: "stay", desc: "完成還車手續後步行至旅店辦理入住，捷運前金站O4旁，翌日早晨不需再處理租車事宜。", q: "喜迎旅店 Greet Inn" }
     ]},
     2: { route: "喜迎旅店 ・ 鳳山 ・ 枋寮 ・ 金崙 ・ 臺東 ・ 花蓮", overview: "喜迎旅店 → 鳳山 → 枋寮 → 金崙 → 臺東 → 花蓮入住", color: "#6E9E9A", soft: "#E6F0EF", travelmode: "transit", spots: [
-      { id: "fixed-08", shortLabel: "喜迎旅店", time: "建議 08:15", title: "喜迎旅店退房、出發", tag: "🏨 今日出發點", icon: "🧳", type: "transport", desc: "07:45 先空手到同一條路的興隆居買外帶早餐，08:15 回飯店帶齊行李退房，08:20 出發前往捷運前金站，搭橘線至捷運鳳山站，再步行至臺鐵鳳山站，預留 09:12 搭車的候車時間。", q: "喜迎旅店 Greet Inn" },
-      { id: "fixed-09", shortLabel: "鳳山", time: "09:12", title: "臺鐵鳳山站（出發）", tag: "🚆 3005次 區間快", icon: "🚉", type: "transport", desc: "自前金站搭橘線至捷運鳳山站，再步行至臺鐵鳳山站；搭乘 3005 次區間快，09:12 出發、10:10 抵達枋寮。上車後吃興隆居外帶早餐（捷運上不能吃喝）。", q: "鳳山火車站" },
-      { id: "fixed-10", shortLabel: "枋寮", time: "10:10–10:25", title: "抵達枋寮、寄放行李", tag: "🧳 寄放待確認", icon: "🎒", type: "transport", desc: "10:10 抵達枋寮，先確認車站當日寄物服務、受理時間與容量，再寄放登機箱；尚未確認可寄放，無法寄放時帶著走並縮短散步。貴重物品放入背包隨身攜帶。", q: "枋寮火車站" },
+      { id: "fixed-08", shortLabel: "喜迎旅店", time: "建議 08:15", title: "喜迎旅店退房", tag: "🏨 今日出發點", icon: "🧳", type: "transport", desc: "07:45 先空手到同一條路的興隆居買外帶早餐，08:15 回飯店帶齊行李退房，08:20 出發前往捷運前金站，搭橘線至捷運鳳山站，再步行至臺鐵鳳山站，預留 09:12 搭車的候車時間。", q: "喜迎旅店 Greet Inn" },
+      { id: "fixed-09", shortLabel: "鳳山", time: "09:12", title: "臺鐵鳳山站", tag: "🚆 3005次 區間快", icon: "🚉", type: "transport", desc: "自前金站搭橘線至捷運鳳山站，再步行至臺鐵鳳山站；搭乘 3005 次區間快，09:12 出發、10:10 抵達枋寮。上車後吃興隆居外帶早餐（捷運上不能吃喝）。", q: "鳳山火車站" },
+      { id: "fixed-10", shortLabel: "枋寮", time: "10:10–10:25", title: "枋寮車站", tag: "🧳 寄放行李（待確認）", icon: "🎒", type: "transport", desc: "10:10 抵達枋寮，先確認車站當日寄物服務、受理時間與容量，再寄放登機箱；尚未確認可寄放，無法寄放時帶著走並縮短散步。貴重物品放入背包隨身攜帶。", q: "枋寮火車站" },
       { id: "fixed-11", sym: "art", shortLabel: "枋寮", time: "10:25–10:55", title: "枋寮彩虹藝鐵", tag: "🎨 鐵道藝術聚落", icon: "🌈", type: "sight", desc: "從車站旁進入由舊臺鐵宿舍改造的園區，沿綠蔭步道欣賞彩繪、裝置藝術與老屋，停留約 30 分鐘。", q: "枋寮彩虹藝鐵" },
       { id: "fixed-24", shortLabel: "枋寮", time: "11:00–11:20", title: "枋寮韭菜盒子＆豬肉餡餅", tag: "🥟 在地銅板小吃", icon: "🥟", type: "food", meals: ["午餐"], desc: "買韭菜盒子或豬肉餡餅墊胃，建議吃約五、六分飽；店家可能排隊或提早售完，沒買到就直接前往漁港。", q: "枋寮韭菜盒子 豬肉餡餅" },
       { id: "fixed-25", sym: "anchor", shortLabel: "枋寮", time: "11:20–11:50", title: "枋寮漁港＆跨港情人橋", tag: "⚓ 漁村海風", icon: "⛵", type: "sight", desc: "沿中興路前往漁港，看看漁船與出海口，再走上跨港情人橋眺望港區；港邊遮蔭較少，記得防曬。", q: "枋寮漁港 跨港情人橋" },
-      { id: "fixed-26", shortLabel: "枋寮", time: "11:50–12:29", title: "返回枋寮站、領行李＆候車", tag: "🚉 12:29 莒光727次", icon: "🎒", type: "transport", desc: "11:50 開始返回車站，先領回登機箱，12:10 前完成候車準備，搭乘 12:29 的莒光 727 次。", q: "枋寮火車站" },
+      { id: "fixed-26", shortLabel: "枋寮", time: "11:50–12:29", title: "返回枋寮車站", tag: "🎒 領行李・12:29 莒光", icon: "🎒", type: "transport", desc: "11:50 開始返回車站，先領回登機箱，12:10 前完成候車準備，搭乘 12:29 的莒光 727 次。", q: "枋寮火車站" },
       { id: "fixed-22", shortLabel: "枋寮", time: "12:29–13:44", title: "莒光 727 次｜枋寮 → 金崙", tag: "🚆 已購票・已劃位", icon: "🚆", type: "transport", desc: "搭乘莒光 727 次前往金崙；暫依現行時刻 12:29 出發、13:44 抵達，已購票並完成劃位，時間以 10/9 票面為準。行李隨車帶往金崙。", q: "枋寮火車站" },
-      { id: "fixed-23", shortLabel: "金崙", time: "13:44–14:20", title: "鼎倫牛肉麵（無法點餐就啟動備案）", tag: "🍜 金崙人氣麵店", icon: "🍜", type: "food", meals: ["午餐"], desc: "下車後先前往鼎倫確認是否仍能點餐，推薦紅燒牛肉麵、手工水餃與滷味；若連假排隊、提早售完或停止收客，直接改到力卡珈琲吃輕食。", q: "鼎倫牛肉麵" },
+      { id: "fixed-23", shortLabel: "金崙", time: "13:44–14:20", title: "鼎倫牛肉麵", tag: "🍜 售完改力卡", icon: "🍜", type: "food", meals: ["午餐"], desc: "下車後先前往鼎倫確認是否仍能點餐，推薦紅燒牛肉麵、手工水餃與滷味；若連假排隊、提早售完或停止收客，直接改到力卡珈琲吃輕食。", q: "鼎倫牛肉麵" },
       { id: "fixed-27", sym: "church", shortLabel: "金崙", time: "14:20–14:45", title: "金崙聖若瑟天主堂", tag: "⛪ 排灣族信仰文化", icon: "⛪", type: "sight", desc: "欣賞黑色石板、陶甕外型與排灣族圖騰交織的教堂建築；這裡是地方信仰空間，入內請放低音量並避免打擾活動。", q: "金崙聖若瑟天主堂" },
       { id: "fixed-28", shortLabel: "金崙", time: "14:45–15:30", title: "LI.KA CAFE 力卡珈琲", tag: "☕ 部落風味午茶", icon: "☕", type: "cafe", desc: "品嚐刺蔥或馬告風味飲品、紅烏龍貝果、小米粽或小米酒粕甜點；抵達時可先詢問是否能暫放一個登機箱，寄放尚未確認；無法寄放時，海灘改為涵洞附近短停，兩人輪流看顧行李。", q: "LI.KA CAFE 力卡珈琲" },
       { id: "fixed-29", sym: "beach", shortLabel: "金崙", time: "15:30–16:15", title: "金崙涵洞＆金崙海灘", tag: "🌊 黑礫石海岸", icon: "🌊", type: "sight", desc: "穿過鐵道小涵洞抵達黑礫石海灘，看太平洋與金崙大橋；登機箱不要拖進礫石灘，若無處寄放，可在涵洞附近輪流看顧。", q: "金崙海灘" },
-      { id: "fixed-30", shortLabel: "金崙", time: "16:15–16:56", title: "返回金崙站、取行李＆候車", tag: "🚉 16:56 已劃位", icon: "🎒", type: "transport", desc: "16:15 離開海灘，若有寄放行李先取回，建議 16:30 抵達金崙站，準備搭乘已劃位的 441 次。", q: "金崙車站" },
-      { id: "fixed-12", shortLabel: "金崙", time: "16:56–17:29", title: "EMU3000 441 次｜金崙 → 臺東", tag: "🚆 已劃位", icon: "🚆", type: "transport", desc: "已確認劃位區間為金崙至臺東。暫依現行時刻 16:56 自金崙出發、17:29 抵達臺東；實際發車時間以 10/9 車票為準。", q: "金崙車站" },
-      { id: "fixed-13", inDayRoute: false, shortLabel: "臺東", time: "17:29–18:20", title: "臺東火車站（轉乘、買晚餐）", tag: "🍱 車站轉乘66分", icon: "🍙", type: "food", desc: "17:29 抵達臺東，兩車相隔 66 分鐘，在站內採買臺東鐵路便當與飲料，18:20 回月台。", q: "臺東火車站" },
+      { id: "fixed-30", shortLabel: "金崙", time: "16:15–16:56", title: "返回金崙車站", tag: "🎒 取行李・16:56 已劃位", icon: "🎒", type: "transport", desc: "16:15 離開海灘，若有寄放行李先取回，建議 16:30 抵達金崙站，準備搭乘已劃位的 441 次。", q: "金崙車站" },
+      { id: "fixed-12", shortLabel: "金崙", time: "16:56–17:29", title: "自強 441 次｜金崙 → 臺東", tag: "🚆 已劃位", icon: "🚆", type: "transport", desc: "已確認劃位區間為金崙至臺東。暫依現行時刻 16:56 自金崙出發、17:29 抵達臺東；實際發車時間以 10/9 車票為準。", q: "金崙車站" },
+      { id: "fixed-13", inDayRoute: false, shortLabel: "臺東", time: "17:29–18:20", title: "臺東火車站", tag: "🍱 轉乘 66 分・買晚餐", icon: "🍙", type: "food", desc: "17:29 抵達臺東，兩車相隔 66 分鐘，在站內採買臺東鐵路便當與飲料，18:20 回月台。", q: "臺東火車站" },
       { id: "fixed-31", shortLabel: "臺東", time: "18:35–20:33", title: "自強 445 次｜臺東 → 花蓮", tag: "🚆 已購票・已劃位", icon: "🚆", type: "transport", desc: "445 次已購票並完成劃位，暫排 18:35 自臺東站出發，車上吃先前買好的晚餐，20:33 抵達花蓮。實際時間以 10/9 車票及當日班表為準。", q: "臺東火車站" },
-      { id: "fixed-14", shortLabel: "花蓮住宿", time: "20:33–21:00", title: "抵達花蓮 ＆ 入住 Have Fun 225", tag: "🏡 花蓮夜宿", icon: "🌙", type: "stay", desc: "搭 445 次於 20:33 抵達花蓮站，前往民宿辦理入住，翌日退房後行李隨 iRent 汽車帶走。", q: "花蓮市國盛二街225號" },
+      { id: "fixed-14", shortLabel: "花蓮住宿", time: "20:33–21:00", title: "入住 Have Fun 225", tag: "🏡 花蓮夜宿", icon: "🌙", type: "stay", desc: "搭 445 次於 20:33 抵達花蓮站，前往民宿辦理入住，翌日退房後行李隨 iRent 汽車帶走。", q: "花蓮市國盛二街225號" },
     ]},
     3: { route: "Have Fun 225 ・ 崇德礫灘 ・ 新城老街 ・ 將軍府 ・ 花蓮站", overview: "Have Fun 225 → 取 iRent 汽車 → 崇德礫灘 → 新城 → 將軍府 → 花蓮站", color: "#86A474", soft: "#E9F0E2", travelmode: "driving", spots: [
-      { id: "fixed-15", shortLabel: "花蓮住宿", time: "建議 08:30", title: "Have Fun 225 退房、帶行李出發", tag: "🏡 今日出發點", icon: "🧳", type: "transport", desc: "退房時帶齊一個登機箱與一個背包，前往 iRent 取汽車；行李放後車廂，貴重物品隨身攜帶。預計 09:00 取車，實際站點與預約待確認，不需寄放或回民宿取行李。", q: "花蓮市國盛二街225號" },
+      { id: "fixed-15", shortLabel: "花蓮住宿", time: "建議 08:30", title: "Have Fun 225 退房", tag: "🏡 今日出發點", icon: "🧳", type: "transport", desc: "退房時帶齊一個登機箱與一個背包，前往 iRent 取汽車；行李放後車廂，貴重物品隨身攜帶。預計 09:00 取車，實際站點與預約待確認，不需寄放或回民宿取行李。", q: "花蓮市國盛二街225號" },
       { id: "fixed-16", shortLabel: "取 iRent", time: "09:00–09:20", title: "花蓮取 iRent 汽車", tag: "🚗 尚待預約", icon: "🚗", type: "transport", desc: "10/10 已決定租 iRent 汽車，預計 09:00 取車、16:20 前完成還車，規劃使用第 2 張 90 分鐘折抵券。尚待確認車源、取還車站點、預約與券的效期／門檻；以下導航暫以花蓮站為集合點，訂妥後改成實際取車位置。", q: "花蓮火車站" },
-      { id: "fixed-17", sym: "beach", shortLabel: "崇德", time: "10:10–10:40", title: "崇德礫灘（眺望清水斷崖）", tag: "⛰️ 峭壁海崖", icon: "🌊", type: "sight", desc: "預留約 50–60 分鐘車程前往崇德下台地，凝望太平洋海浪與蘇花斷崖鬼斧神工（出發前確認道路與海灘開放情況，視天氣、浪況彈性調整）。", q: "崇德礫灘" },
+      { id: "fixed-17", sym: "beach", shortLabel: "崇德", time: "10:10–10:40", title: "崇德礫灘", tag: "⛰️ 眺望清水斷崖", icon: "🌊", type: "sight", desc: "預留約 50–60 分鐘車程前往崇德下台地，凝望太平洋海浪與蘇花斷崖鬼斧神工（出發前確認道路與海灘開放情況，視天氣、浪況彈性調整）。", q: "崇德礫灘" },
       { id: "fixed-18", sym: "church", shortLabel: "新城", time: "11:00–12:00", title: "新城老街 ＆ 新城天主堂", tag: "⛪ 綠色方舟", icon: "🌿", type: "sight", desc: "造訪綠意盎然的聖母諾亞方舟船型教堂（原日式神社鳥居遺址），順遊老街照相館與佳興冰果室。", q: "新城天主堂" },
       { id: "fixed-19", shortLabel: "將軍府", time: "13:00–14:40", title: "定置漁場三代目 ＆ 將軍府1936", tag: "🍜 美食散步", icon: "🏡", type: "food", desc: "品嚐定置漁場鮮美魚白湯拉麵（備案家咖哩），隨後在美崙溪畔日式官舍聚落悠哉漫步。", q: "花蓮將軍府1936園區" },
       { id: "fixed-20", shortLabel: "邊境甜點", time: "15:00–15:40", title: "邊境法式點心坊", tag: "🍰 法式午茶", icon: "☕", type: "cafe", desc: "享用花蓮最道地的法式手工甜點作收尾（出發前確認雙十連假營業公告；滿座改外帶）。", q: "邊境法式點心坊" },
-      { id: "fixed-21", shortLabel: "花蓮站", time: "16:20–18:15", title: "iRent 還車、帶行李前往花蓮站 ＆ 285 次", tag: "🚆 已購票・已劃位", icon: "🚉", type: "transport", desc: "以 16:20 完成還車為目標，下車時帶齊登機箱、背包與隨身物品，再由還車站點前往花蓮站，17:15 前抵達，可買晚餐與伴手禮。285 次已購票並完成劃位，暫排 18:15 返臺北，發車時間以票面為準；iRent 還車付款前確認第 2 張 90 分鐘折抵券已套用。", q: "花蓮火車站" }
+      { id: "fixed-21", shortLabel: "花蓮站", time: "16:20–18:15", title: "iRent 還車＆自強 285 次返臺北", tag: "🚆 已購票・已劃位", icon: "🚉", type: "transport", desc: "以 16:20 完成還車為目標，下車時帶齊登機箱、背包與隨身物品，再由還車站點前往花蓮站，17:15 前抵達，可買晚餐與伴手禮。285 次已購票並完成劃位，暫排 18:15 返臺北，發車時間以票面為準；iRent 還車付款前確認第 2 張 90 分鐘折抵券已套用。", q: "花蓮火車站" }
     ]}
   },
   // 停車場：來源為 Notion「停車場」資料庫（2026-09-29 查證）；q 是 Google Maps 導航關鍵字
@@ -98,10 +98,10 @@ window.TRIP = {
     { id: "ticket-02", day: 1, leg: "高雄 → 屏東 → 東港 → 高雄", mode: "🚗 iRent 汽車", time: "12:15–19:00", status: "pending", note: "取還車站點與預約待確認；使用第 1 張 90 分鐘折抵券", spot: "fixed-03" },
     { id: "ticket-03", day: 2, leg: "鳳山 → 枋寮", mode: "🚆 3005 次 區間快", time: "09:12–10:10", status: "open", note: "無對號座，當日確認班表", spot: "fixed-09" },
     { id: "ticket-04", day: 2, leg: "枋寮 → 金崙（南迴）", mode: "🚆 莒光 727 次", time: "12:29–13:44", status: "reserved", note: "時間待對照票面", spot: "fixed-22", seat: "" },
-    { id: "ticket-05", day: 2, leg: "金崙 → 臺東", mode: "🚆 EMU3000 441 次", time: "16:56–17:29", status: "reserved", note: "以車票為準", spot: "fixed-12", seat: "" },
+    { id: "ticket-05", day: 2, leg: "金崙 → 臺東", mode: "🚆 自強 441 次", time: "16:56–17:29", status: "reserved", note: "以車票為準", spot: "fixed-12", seat: "" },
     { id: "ticket-06", day: 2, leg: "臺東 → 花蓮", mode: "🚆 自強 445 次", time: "18:35–20:33", status: "reserved", note: "臺東轉乘 66 分，18:20 回月台；便當售完改買站內其他餐食", spot: "fixed-31", seat: "" },
     { id: "ticket-07", day: 3, leg: "花蓮 ↔ 崇德・新城", mode: "🚗 iRent 汽車", time: "09:00–16:20", status: "pending", note: "待預約；使用第 2 張 90 分鐘折抵券", spot: "fixed-16" },
-    { id: "ticket-08", day: 3, leg: "花蓮 → 臺北", mode: "🚆 285 次", time: "18:15 發車", status: "reserved", note: "發車時間以票面為準", spot: "fixed-21", seat: "" }
+    { id: "ticket-08", day: 3, leg: "花蓮 → 臺北", mode: "🚆 自強 285 次", time: "18:15 發車", status: "reserved", note: "發車時間以票面為準", spot: "fixed-21", seat: "" }
   ],
   ticketNote: "<b>iRent 折抵券操作：</b>還車流程選券 → 核對租金折抵 → 還車付款；每筆訂單一張，里程及其他費用另計。",
   // 行前待確認：初始清單。網頁上可勾選、修改、刪除、新增（存 Firebase，以 prep-序號 對應，請勿調動既有順序）；出發前預設展開、旅途開始後自動收合
