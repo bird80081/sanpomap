@@ -64,21 +64,11 @@
     if (['driving','walking','bicycling','transit'].includes(mode)) p.set('travelmode',mode);
     return 'https://www.google.com/maps/dir/?'+p;
   }
-  function segments(items, mode) {
-    const stops = items.filter(s=>s.inDayRoute !== false), out = [], step = mode === 'transit' ? 1 : 4;
-    if (stops.length === 1) return [{items:stops,url:directions(stops,mode)}];
-    for(let i=0;i<stops.length-1;i+=step) {
-      let part = stops.slice(i,i+step+1);
-      // Do not lose a place ID in a mixed waypoint list: make that pin a segment endpoint.
-      const mixed = part.slice(1,-1).map(resolve);
-      const split = mixed.some(s=>s.placeId) && !mixed.every(s=>s.placeId) ? mixed.findIndex(s=>s.placeId)+1 : 0;
-      if(split) part=part.slice(0,split+1);
-      while(directions(part,mode).length>2000 && part.length>2) part=part.slice(0,-1);
-      out.push({items:part,url:directions(part,mode)});
-      i += part.length-1-step;
-    }
-    return out;
+  // Input is already sorted by itinerary time. Transport rows are not destinations.
+  function dayStops(items) {
+    return items.filter(s => !s.cancelled && ['sight','food','cafe','stay'].includes(s.type));
   }
-  const api = {safeUrl,parse,resolve,fields,directions,segments,isUrl};
+  function dayRoute(items) { return directions(dayStops(items)); }
+  const api = {safeUrl,parse,resolve,fields,directions,dayStops,dayRoute,isUrl};
   if(typeof module !== 'undefined') module.exports=api; else root.TripMaps=api;
 })(typeof window === 'undefined' ? this : window);

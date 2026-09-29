@@ -25,22 +25,21 @@ test('URL pasted into address is normalized; unsafe or route URLs are rejected',
  assert.throws(()=>m.fields('','https://www.google.com/maps/dir/?api=1&destination=Taipei','店'));
  assert.throws(()=>m.fields('91,121','','店'));
 });
-test('all stops remain in mobile-safe overlapping route segments',()=>{
- const stops=Array.from({length:14},(_,i)=>({title:'站'+i,q:'地址'+i}));
- const parts=m.segments(stops,'driving');
- assert.ok(parts.every(p=>p.items.length<=5));
- assert.deepEqual(parts.flatMap((p,i)=>i?p.items.slice(1):p.items),stops);
- assert.equal(m.segments(stops,'transit').length,13);
- assert.deepEqual(m.segments([{q:'a',inDayRoute:false},{q:'b'}],'driving')[0].items,[{q:'b'}]);
+test('day overview includes only active destinations in itinerary order',()=>{
+ const stops=[{q:'車站',type:'transport'},{q:'景點',type:'sight'},{q:'午餐',type:'food',custom:true},{q:'咖啡',type:'cafe'},{q:'飯店',type:'stay'},{q:'取消',type:'food',cancelled:true}];
+ assert.deepEqual(m.dayStops(stops).map(s=>s.q),['景點','午餐','咖啡','飯店']);
+ const p=new URL(m.dayRoute(stops)).searchParams;
+ assert.equal(p.get('origin'),'景點'); assert.equal(p.get('destination'),'飯店');
+ assert.equal(p.get('waypoints'),'午餐|咖啡'); assert.equal(p.has('travelmode'),false);
 });
-test('mixed waypoint IDs become endpoints without dropping any stops',()=>{
- const stops=[{q:'a'},{q:'b',mapUrl:'https://www.google.com/maps/search/?query=b&query_place_id=ChIJtest123'},{q:'c'},{q:'d'},{q:'e'}];
- const p=m.segments(stops,'driving');
- assert.equal(new URL(p[0].url).searchParams.get('destination_place_id'),'ChIJtest123');
- assert.deepEqual(p.flatMap((x,i)=>i?x.items.slice(1):x.items),stops);
+test('overview does not silently truncate destinations',()=>{
+ const stops=Array.from({length:14},(_,i)=>({type:'sight',q:'站'+i}));
+ assert.equal(new URL(m.dayRoute(stops)).searchParams.get('waypoints').split('|').length,12);
+ assert.equal(m.dayRoute([{type:'transport',q:'車站'}]),'');
+ assert.match(m.dayRoute([{type:'food',q:'餐廳'}]),/maps\/search/);
 });
 test('removing a saved link restores plain-text mapping and legacy rows work',()=>{
  assert.equal(m.fields('新地址','','新名稱').mapUrl,'');
  assert.match(m.resolve({q:'臺北車站'}).url,/query=/);
- assert.equal(m.segments([],'driving').length,0);
+ assert.equal(m.dayStops([]).length,0);
 });

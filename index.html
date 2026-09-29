@@ -6,8 +6,8 @@
 <title>高屏・南迴・花蓮 3日懶人包</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20260929-route-picker">
-<link rel="stylesheet" href="theme.css?v=20260929-route-picker">
+<link rel="stylesheet" href="style.css?v=20260929-day-places">
+<link rel="stylesheet" href="theme.css?v=20260929-day-places">
 </head>
 <body>
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
@@ -78,10 +78,8 @@
     <div class="sec-head"><span><svg class="ico"><use href="#i-cal"/></svg></span><h2>三天行程</h2><i></i></div>
     <div class="tabs" id="tabs"></div>
     <div class="route-line"><span id="route"></span><span class="sync" id="sync"></span></div>
-    <details id="dayRoute" class="day-routes">
-      <summary class="day-route"><svg class="ico" aria-hidden="true"><use href="#i-map"/></svg>查看當天路線</summary>
-      <div id="routeParts"></div>
-    </details>
+    <a id="dayRoute" class="day-route" target="_blank" rel="noopener noreferrer"></a>
+    <p id="routeLimit" class="note" hidden></p>
     <div id="hints"></div>
     <div class="timeline" id="timeline"></div>
   </section>
@@ -108,8 +106,8 @@
   <button data-tab="stay"><svg class="ico"><use href="#i-bed-s"/></svg>住宿</button>
 </nav>
 <div id="printAll" class="print-only"></div>
-<script src="data.js?v=20260929-route-picker"></script>
-<script src="maps.js?v=20260929-route-picker"></script>
-<script src="app.js?v=20260929-route-picker"></script>
+<script src="data.js?v=20260929-day-places"></script>
+<script src="maps.js?v=20260929-day-places"></script>
+<script src="app.js?v=20260929-day-places"></script>
 </body>
 </html>

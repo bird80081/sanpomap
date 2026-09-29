@@ -247,13 +247,13 @@
       (s.type === "food" && (([x, y]) => x <= b && y >= a)(span(s.time)));
     return MEALS.filter(([n, a, b]) => lo <= b && hi >= a && !items.some(s => covers(s, n, a, b)));
   }
-  function renderRoutes(items, mode) {
-    const parts = maps.segments(items, mode);
-    $("dayRoute").hidden = !parts.length;
-    if (!parts.length) { $("routeParts").innerHTML = ""; return; }
-    if ($("dayRoute").dataset.day !== String(state.day)) $("dayRoute").open = false;
-    $("dayRoute").dataset.day = String(state.day);
-    $("routeParts").innerHTML = `<div class="route-parts"><p class="note">${parts.length > 1 ? (mode === "transit" ? "大眾運輸依相鄰兩站分段，選擇要前往的一段。" : "路線依行程順序分段，抵達末站後再接下一段。") : "選擇下方路線，在 Google Maps 查看。"}</p>${parts.map((part,i)=>`<a href="${esc(part.url)}" target="_blank" rel="noopener noreferrer"><small>${parts.length > 1 ? `第 ${i+1} 段，共 ${parts.length} 段` : "當天路線"}</small><b>${esc(part.items[0].title)}${part.items.length > 1 ? ` → ${esc(part.items[part.items.length-1].title)}` : ""}</b>${part.items.length > 2 ? `<span>途經：${part.items.slice(1,-1).map(s=>esc(s.title)).join("、")}</span>` : ""}<span class="route-open">在 Google Maps 開啟 ${ico("go")}</span></a>`).join("")}</div>`;
+  function renderRoutes(items) {
+    const stops = maps.dayStops(items);
+    $("dayRoute").hidden = !stops.length;
+    $("dayRoute").href = maps.dayRoute(items);
+    $("dayRoute").innerHTML = ico("map") + `查看當天地點路線（${stops.length} 個地點）`;
+    $("routeLimit").hidden = stops.length <= 5;
+    $("routeLimit").textContent = "手機 Google Maps 可能無法顯示全部中途點；請對照行程卡確認。";
   }
   function previousRouteUrl(previous, current) {
     return maps.directions([previous,current]);
@@ -357,7 +357,7 @@
     $("dayRoute").hidden = !items.length;
     $("sync").innerHTML = !navigator.onLine && DB ? ico("offline") + "離線中，顯示上次同步的內容"
       : { local: ico("phone") + "只存在這台裝置", connecting: "", cloud: "", error: ico("alert") + "同步失敗，請檢查網路或 Firebase 權限" }[state.sync];
-    renderRoutes(items, d.travelmode);
+    renderRoutes(items);
 
     const miss = missingMeals(items);
     $("hints").innerHTML = miss.length ? `<div class="hints"><span>${ico("food")}還沒安排：</span>${miss.map(([n, , , t]) => `<button data-meal="${t}">＋ ${n}</button>`).join("")}</div>` : "";
