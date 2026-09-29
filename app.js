@@ -269,7 +269,7 @@
     [[51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82], "有雨", "rain"], [[95, 96, 99], "雷雨", "storm"]];
   const wx = code => WX.find(([codes]) => codes.includes(code)) || [[], "多雲", "cloud"];
   let weather = null, weatherState = "";
-  try { weather = JSON.parse(localStorage.getItem(WEATHER_KEY)); if (weather && weather.version !== 2) weather = null; } catch { }
+  try { weather = JSON.parse(localStorage.getItem(WEATHER_KEY)); if (weather && weather.version !== 3) weather = null; } catch { }
   // 第 n 天的日期（YYYY-MM-DD）
   function dayISO(n) {
     const [y, m, dd] = T.start.split("-").map(Number), d = new Date(y, m - 1, dd + (+n - 1));
@@ -292,36 +292,44 @@
       spots.forEach((s, i) => {
         const result = list[i], key = `${dayISO(s.n)}T${s.time}`, k = result.hourly.time.indexOf(key), dk = result.daily.time.indexOf(dayISO(s.n));
         (data[s.n] = data[s.n] || []).push(k < 0 ? null : { code: result.hourly.weather_code[k], temp: result.hourly.temperature_2m[k], feel: result.hourly.apparent_temperature[k],
-          rain: result.hourly.precipitation_probability[k], wind: result.hourly.wind_speed_10m[k], sunset: s.sunset && dk >= 0 ? String(result.daily.sunset[dk] || "").slice(11, 16) : "" });
+          hours: result.hourly.time.flatMap((t, j) => t.startsWith(dayISO(s.n)) ? [{time:t.slice(11,16),temp:result.hourly.temperature_2m[j],code:result.hourly.weather_code[j],rain:result.hourly.precipitation_probability[j]}] : []), rain: result.hourly.precipitation_probability[k], wind: result.hourly.wind_speed_10m[k], sunset: s.sunset && dk >= 0 ? String(result.daily.sunset[dk] || "").slice(11, 16) : "" });
       });
-      weather = { version: 2, at: Date.now(), data };
+      weather = { version: 3, at: Date.now(), data };
       try { localStorage.setItem(WEATHER_KEY, JSON.stringify(weather)); } catch { }
       weatherState = "";
     } catch { weatherState = "fail"; }
     renderWeather();
+    if (location.hash.startsWith("#weather/")) renderWeatherDetail();
   }
   function renderWeather() {
     const days = Object.keys(T.weather || {});
-    $("map").hidden = !days.length;
+    if (!days.length) $("map").hidden = true;
     if (!days.length) return;
     const data = (weather && weather.data) || {};
-    $("overview").innerHTML = days.map(n => {
-      const forecasts = (data[n] || []).filter(Boolean), maxRain = Math.max(0, ...forecasts.map(f => f.rain || 0)), maxWind = Math.max(0, ...forecasts.map(f => f.wind || 0)), maxFeel = Math.max(-99, ...forecasts.map(f => f.feel ?? -99));
-      const tips = []; if (maxRain >= 50) tips.push("可能下雨，帶折傘"); if (maxWind >= 25) tips.push("海邊風較強"); if (maxFeel >= 30) tips.push("注意防曬補水");
-      const temps = forecasts.map(f => f.temp).filter(Number.isFinite), minTemp = temps.length ? Math.round(Math.min(...temps)) : "—", maxTemp = temps.length ? Math.round(Math.max(...temps)) : "—";
-      const sunset = forecasts.find(f => f.sunset)?.sunset || "—", hasCoast = T.weather[n].some(a => a.coast);
-      const first = forecasts[0], firstWx = first ? wx(first.code) : [[], "等待預報", "cloud"];
-      return `<div class="ov-day"><div class="ov-heading"><div><b>Day ${n}</b><span>${esc(dayDate(n))}</span></div></div><div class="wx-summary"><span class="wx-summary-ico">${ico("w-" + firstWx[2])}</span><div><b>${esc(firstWx[1])}　${minTemp}–${maxTemp}°</b><small>${T.weather[n].length} 個行程地點</small></div></div><div class="wx-meta"><span>降雨 <b>${maxRain}%</b></span><span>${hasCoast ? "風速" : "體感"} <b>${hasCoast ? `${Math.round(maxWind)} km/h` : (maxFeel > -99 ? `${Math.round(maxFeel)}°` : "—")}</b></span>${sunset !== "—" ? `<span>日落 <b>${esc(sunset)}</b></span>` : ""}</div><p class="wx-advice"><span>✦</span>${esc(tips.length ? tips.join("，") : "天氣相對穩定，出發前再確認一次。")}</p><div class="wx-list">${T.weather[n].map((a, i) => {
-      const f = (data[n] || [])[i];
-      if (!f || f.code == null) return `<div class="wx"><span class="wx-ico">${ico("w-cloud")}</span><div><span class="wx-area">${esc(a.time)}　${esc(a.name)}</span><span class="wx-none">尚無預報</span></div></div>`;
-      const [, label, icon] = wx(f.code);
-      return `<div class="wx"><span class="wx-ico">${ico("w-" + icon)}</span><div><span class="wx-area">${esc(a.time)}　${esc(a.name)}</span><b>${label}　${Math.round(f.temp)}°C <em>體感 ${Math.round(f.feel)}°</em></b><small>降雨 ${f.rain ?? "—"}%${a.coast ? `・風速 ${Math.round(f.wind)} km/h` : ""}${f.sunset ? `・日落 ${esc(f.sunset)}` : ""}</small></div></div>`;
-    }).join("")}</div></div>`;
-    }).join("");
+    const left = $("overview").scrollLeft;
+    $("overview").innerHTML = days.flatMap(n => T.weather[n].map((a,i) => {
+      const f = data[n]?.[i], [,label,icon] = f ? wx(f.code) : [[],"尚無預報","cloud"];
+      return `<a class="weather-mini" href="#weather/${n}/${i}"><small>Day ${n} · ${esc(dayDate(n))} ${esc(a.time)}</small><b>${esc(a.name)}</b><span class="mini-condition">${ico("w-"+icon)} ${label}</span><strong>${weatherNumber(f?.temp)}<small>°C</small></strong><span class="mini-bottom">降雨 ${weatherNumber(f?.rain)}% <span>查看天氣 ›</span></span></a>`;
+    })).join("");
+    $("overview").scrollLeft = left;
     const at = weather && new Date(weather.at), src = "資料來源 Open-Meteo，出發前再看中央氣象署";
     $("weatherCap").textContent = !at
       ? (weatherState === "early" ? "出發前兩週內會出現預報" : weatherState === "fail" || !navigator.onLine ? "暫時抓不到預報，有網路時會自動更新" : "讀取預報中…")
       : `更新於 ${at.getMonth() + 1}/${at.getDate()} ${String(at.getHours()).padStart(2, "0")}:${String(at.getMinutes()).padStart(2, "0")}${weatherState === "fail" ? "（暫時抓不到最新的）" : ""}・${src}`;
+  }
+
+  function weatherNumber(value) { return Number.isFinite(value) ? Math.round(value) : "—"; }
+  function renderWeatherDetail(route = location.hash.slice(1)) {
+    const [,n,i] = route.split("/"), spot = T.weather?.[n]?.[i];
+    if (!spot) return false;
+    const f = weather?.data?.[n]?.[i], [,label,icon] = f ? wx(f.code) : [[],"尚無預報","cloud"];
+    const tips = [];
+    if (f?.rain >= 50) tips.push("帶把折傘，留意戶外行程");
+    if (f?.feel >= 30) tips.push("記得防曬與補水");
+    if (spot.coast && f?.wind >= 25) tips.push("海邊風較強，留意隨身物品");
+    $("weatherDetail").innerHTML = `<button class="weather-back" type="button">‹ 返回總覽</button><header><p>Day ${esc(n)} · ${esc(dayDate(n))} · ${esc(spot.time)} 行程預報</p><h1 tabindex="-1">${esc(spot.name)}</h1></header><div class="weather-main">${ico("w-"+icon)}<strong>${weatherNumber(f?.temp)}<small>°C</small></strong><span>${label}</span></div><div class="weather-facts">${[["體感",weatherNumber(f?.feel)+"°C"],["降雨機率",weatherNumber(f?.rain)+"%"],["風速",weatherNumber(f?.wind)+" km/h"],...(spot.sunset ? [["日落",f?.sunset || "—"]] : [])].map(([k,v])=>`<div><span>${k}</span><b>${esc(v)}</b></div>`).join("")}</div><h2>當天逐時預報</h2><div class="weather-hours" tabindex="0" aria-label="左右滑動查看逐時預報">${f?.hours?.length ? f.hours.map(h=>`<div><small>${esc(h.time)}</small>${ico("w-"+wx(h.code)[2])}<b>${weatherNumber(h.temp)}°</b><small>${weatherNumber(h.rain)}%</small></div>`).join("") : "目前尚無逐時資料"}</div><p class="weather-tip">${esc(!f ? "取得預報後會顯示出遊提醒。" : tips.join("；") || "出發前再確認天氣，依實際狀況調整行程。")}</p><small>${esc($("weatherCap").textContent)}</small>`;
+    $("weatherDetail").querySelector(".weather-back").onclick = () => history.state?.weatherFromMap ? history.back() : showTab("map", true);
+    return true;
   }
 
   // ---------- 畫面 ----------
@@ -511,13 +519,33 @@
   // ---------- 底部分頁 ----------
   // 一次只顯示一個分頁；網址帶 #分頁，返回鍵可回上一頁。出發前預設「總覽」，旅途中預設「行程」
   const TABS = ["map", "plan", "tickets", "stay"];
+  let weatherReturn = null;
+  document.addEventListener("click", e => {
+    const card = e.target.closest(".weather-mini");
+    if (!card) return;
+    e.preventDefault();
+    weatherReturn = {top:scrollY,left:$("overview").scrollLeft,href:card.getAttribute("href")};
+    history.pushState({weatherFromMap:true}, "", card.getAttribute("href"));
+    showTab(location.hash.slice(1));
+    $("weatherDetail").querySelector("h1")?.focus({preventScroll:true});
+  });
   function showTab(tab, push = false) {
+    if (tab.startsWith("weather/") && renderWeatherDetail(tab)) {
+      document.querySelectorAll("[data-panel]").forEach(el => { el.hidden = el.dataset.panel !== "weather"; });
+      document.querySelectorAll("[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === "map"));
+      scrollTo({top:0,behavior:"instant"});
+      return;
+    }
     if (!TABS.includes(tab)) tab = todayDay() ? "plan" : "map";
     document.querySelectorAll("[data-panel]").forEach(el => { el.hidden = el.dataset.panel !== tab; });
     document.querySelectorAll("[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
     const url = location.pathname + location.search + "#" + tab;
-    if (push) history.pushState(null, "", url); else history.replaceState(null, "", url);
-    scrollTo({ top: 0, behavior: "instant" });
+    if (push) history.pushState(null, "", url); else history.replaceState(history.state, "", url);
+    scrollTo({ top: tab === "map" && weatherReturn ? weatherReturn.top : 0, behavior: "instant" });
+    if (tab === "map" && weatherReturn) {
+      $("overview").scrollLeft = weatherReturn.left;
+      $("overview").querySelector(`a[href="${weatherReturn.href}"]`)?.focus({preventScroll:true});
+    }
   }
   // 新增欄位按 Enter 直接新增
   document.addEventListener("keydown", e => { if (e.key !== "Enter" || e.isComposing) return;

@@ -185,3 +185,11 @@ html,body{overflow-x:clip}
 .ov-day:nth-child(3){border-left-color:#627D61}
 .cancel-stop{border-top-color:var(--line)}
 .ov-heading b{background:transparent;padding-left:0;color:var(--ink)}
+
+.weather-mini,.weather-main{background:var(--yellow-100);color:var(--ink)}
+.weather-mini:hover{color:var(--ink);background:var(--yellow-100)}
+.weather-mini>small,.mini-bottom,#weatherDetail header p,.weather-facts span,#weatherDetail>small{color:var(--ink2)}
+.weather-mini>strong,.weather-main strong{font-weight:600}.weather-mini>b{font-weight:700}
+.weather-back,.weather-facts>div{background:var(--card);color:var(--ink)}
+.weather-tip{background:var(--blue-100);color:var(--ink)}
+.weather-mini:focus-visible,.weather-back:focus-visible,.weather-hours:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
