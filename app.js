@@ -7,6 +7,7 @@
   const span = t => { const m = [...String(t).matchAll(/(\d{1,2}):(\d{2})/g)].map(x => +x[1] + x[2] / 60); return m.length ? [m[0], m[m.length - 1]] : [99, 99]; };
   const ty = t => TYPES[t] || TYPES.sight; // 雲端資料若出現未知類型，不讓畫面壞掉
   const gmap = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
+  const maps = window.TripMaps;
   // 票券狀態：[文字, 樣式, 線條圖示]
   const STATUS = { reserved: ["已劃位", "ok", "check"], booked: ["已預約", "ok", "check"], open: ["無對號", "open", "ticket"], pending: ["待預約", "wait", "hourglass"] };
   // 通用線條圖示（index.html 的 <symbol id="i-xxx">）
@@ -246,20 +247,16 @@
       (s.type === "food" && (([x, y]) => x <= b && y >= a)(span(s.time)));
     return MEALS.filter(([n, a, b]) => lo <= b && hi >= a && !items.some(s => covers(s, n, a, b)));
   }
-  function routeUrl(items, mode) {
-    // Google 最多 9 個中途點；大眾運輸模式不支援中途點，只給起訖
-    const q = items.filter(s => s.inDayRoute !== false).map(s => s.q), w = mode === "transit" ? [] : q.slice(1, -1).slice(0, 9);
-    if (!q.length) return "";
-    if (q.length === 1) return gmap(q[0]);
-    return "https://www.google.com/maps/dir/?api=1&origin=" + encodeURIComponent(q[0]) +
-      "&destination=" + encodeURIComponent(q[q.length - 1]) +
-      (w.length ? "&waypoints=" + w.map(encodeURIComponent).join("%7C") : "") + "&travelmode=" + mode;
+  function renderRoutes(items, mode) {
+    const parts = maps.segments(items, mode);
+    $("dayRoute").hidden = !parts.length;
+    if (!parts.length) { $("routeParts").innerHTML = ""; return; }
+    $("dayRoute").href = parts[0].url;
+    $("dayRoute").innerHTML = ico("map") + (parts.length > 1 ? `開啟第 1 段路線（共 ${parts.length} 段）` : "用 Google Maps 開啟當天路線");
+    $("routeParts").innerHTML = parts.length > 1 ? `<details class="route-parts"><summary>查看全部 ${parts.length} 段路線</summary><p class="note">${mode === "transit" ? "大眾運輸依相鄰兩站分段開啟。" : "依行程順序分段，每段最多 5 站；抵達末站後接下一段。"}</p>${parts.map((part,i)=>`<a href="${esc(part.url)}" target="_blank" rel="noopener noreferrer"><b>第 ${i+1} 段</b><span>${part.items.map(s=>esc(s.title)).join(" → ")}</span></a>`).join("")}</details>` : "";
   }
-
-  // 單段路線依畫面排序取上一站；交通方式交由 Google Maps 選擇，避免混合交通日被固定成開車。
   function previousRouteUrl(previous, current) {
-    return "https://www.google.com/maps/dir/?api=1&origin=" + encodeURIComponent(previous.q || previous.title) +
-      "&destination=" + encodeURIComponent(current.q || current.title);
+    return maps.directions([previous,current]);
   }
 
   // ---------- 天氣預報 ----------
@@ -360,9 +357,7 @@
     $("dayRoute").hidden = !items.length;
     $("sync").innerHTML = !navigator.onLine && DB ? ico("offline") + "離線中，顯示上次同步的內容"
       : { local: ico("phone") + "只存在這台裝置", connecting: "", cloud: "", error: ico("alert") + "同步失敗，請檢查網路或 Firebase 權限" }[state.sync];
-    $("dayRoute").href = routeUrl(items, d.travelmode);
-    $("dayRoute").innerHTML = ico("map") + esc(d.routeLabel || (d.travelmode === "transit"
-      ? `Google Maps 開啟 Day ${day} 起訖路線` : `用 Google Maps 開啟 Day ${day} 完整路線`));
+    renderRoutes(items, d.travelmode);
 
     const miss = missingMeals(items);
     $("hints").innerHTML = miss.length ? `<div class="hints"><span>${ico("food")}還沒安排：</span>${miss.map(([n, , , t]) => `<button data-meal="${t}">＋ ${n}</button>`).join("")}</div>` : "";
@@ -377,7 +372,7 @@
         </div>
         <div class="card-foot">
           ${s.chips.length ? `<div class="spot-tags">${s.chips.map(([t, c]) => `<span class="chip ${c}">${tagHtml(t)}</span>`).join("")}</div>` : ""}
-          <div class="chips spot-actions"><a class="chip nav" href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">${ico("pin")}查看地圖</a>${index > 0 ? `<a class="chip nav" href="${esc(previousRouteUrl(items[index - 1], s))}" title="${esc(items[index - 1].title)} → ${esc(s.title)}" target="_blank" rel="noopener noreferrer">${ico("go")}前往這一站</a>` : ""}</div>
+          <div class="chips spot-actions"><a class="chip nav" href="${esc(maps.resolve(s).url)}" target="_blank" rel="noopener noreferrer">${ico("pin")}查看地圖</a>${index > 0 ? `<a class="chip nav" href="${esc(previousRouteUrl(items[index - 1], s))}" title="${esc(items[index - 1].title)} → ${esc(s.title)}" target="_blank" rel="noopener noreferrer">${ico("go")}前往這一站</a>` : ""}</div>
           ${s.custom ? "" : parkingHtml(s)}
         </div>
       </div>${f && String(f.id) === String(s.id) ? formHtml(day, f) : ""}</div>`).join("") + cancelledHtml(day) + (state.error ? `<p role="alert">${esc(state.error)}</p>` : "") + (f ? (f.id ? "" : formHtml(day, f)) : `<button class="add-btn" data-open>＋ 新增行程（午餐、下午茶、景點…）</button>`);
@@ -416,7 +411,11 @@
       <h3>${f.id ? "編輯行程" : `新增到 Day ${day}`}</h3>
       <div class="types">${Object.entries(TYPES).map(([k, v]) => `<button class="${f.type === k ? "on" : ""}" style="${f.type === k ? `background:${v.bg}` : ""}" data-type="${k}">${ico(TYPE_ICON[k] || "pin")}${esc(v.label.replace(/^\S+\s*/, ""))}</button>`).join("")}</div>
       <div class="form-row"><input aria-label="行程時間" id="fTime" value="${esc(f.time)}" placeholder="12:30"><input aria-label="行程名稱" id="fTitle" value="${esc(f.title)}" placeholder="店名或景點名稱"></div>
-      <label>地點名稱或地址（Google Maps）<input id="fPlace" value="${esc(f.q || "")}" placeholder="留空時使用行程名稱"></label>
+      <label>地點名稱、完整地址或座標<input id="fPlace" value="${esc(f.q || "")}" placeholder="例如：高雄市＋店名，或緯度,經度" aria-describedby="placeHelp"></label>
+      <label>Google Maps 地點連結（選填）<input id="fMapUrl" type="url" value="${esc(f.mapUrl || "")}" placeholder="貼上 Google Maps 分享連結" aria-describedby="placeHelp"></label>
+      <small id="placeHelp">查看地圖會直接開啟連結；若使用短連結，請另填完整地址或座標供路線使用。只填名稱時仍會以名稱搜尋。更換地點時請一併更新或清除連結。</small>
+      <button type="button" class="btn" data-map-preview>開地圖確認位置</button>
+      <p id="placeError" class="note" role="alert"></p>
       <textarea id="fDesc" rows="2" placeholder="想吃什麼、備註（選填）">${esc(f.desc)}</textarea>
       <input id="fTags" value="${esc(f.tags)}" placeholder="標籤，用空格分開：必吃 排隊名店">
       <div class="actions"><button class="btn" data-cancel>放棄修改</button><button class="btn primary" data-add>${f.id ? "儲存修改" : "加入行程"}</button></div>
@@ -428,11 +427,22 @@
   const blank = (time = "") => ({ type: "food", time, title: "", desc: "", tags: "" });
   function readForm() {
     if (!state.form) return;
-    state.form = { ...state.form, time: $("fTime").value, title: $("fTitle").value, q: $("fPlace").value, desc: $("fDesc").value, tags: $("fTags").value };
+    state.form = { ...state.form, time: $("fTime").value, title: $("fTitle").value, q: $("fPlace").value, mapUrl: $("fMapUrl").value, desc: $("fDesc").value, tags: $("fTags").value };
   }
 
   // ---------- 事件 ----------
   document.addEventListener("click", async e => {
+    if (e.target.closest("[data-map-preview]")) {
+      readForm();
+      try {
+        const f = state.form, raw = f.mapUrl.trim() || (maps.isUrl(f.q) ? f.q.trim() : "");
+        if (raw && !maps.safeUrl(raw)) throw Error("請貼上有效的 Google Maps 地點連結。");
+        if (!raw && !f.q.trim() && !f.title.trim()) throw Error("請先填入地點名稱或連結。");
+        $("placeError").textContent = "";
+        window.open(raw || gmap(f.q.trim() || f.title.trim()), "_blank", "noopener,noreferrer");
+      } catch (error) { $("placeError").textContent = error.message; }
+      return;
+    }
     const descEl = e.target.closest("[data-desc]");
     if (descEl) {
       const id = descEl.dataset.desc;
@@ -513,9 +523,12 @@
     }
     else if ("add" in el.dataset) {
       readForm(); const f = state.form; if (!f.title.trim()) return $("fTitle").focus();
+      let locationFields;
+      try { locationFields = maps.fields(f.q, f.mapUrl, f.title); }
+      catch (error) { $("placeError").textContent = error.message; $("fPlace").focus(); return; }
       const old = f.id ? dayItems(day, true).find(s => String(s.id) === String(f.id)) : null;
       const item = { id: f.id || String(Date.now()), time: f.time.trim() || "未定", title: f.title.trim(), desc: f.desc.trim(), type: f.type,
-        q: f.q.trim() || f.title.trim(), tags: f.tags.split(/[\s,，、]+/).filter(Boolean), cancelled: false,
+        ...locationFields, tags: f.tags.split(/[\s,，、]+/).filter(Boolean), cancelled: false,
         ...(old && !old.custom ? { kind: "override" } : {}) };
       if (await saveItem(day, item)) state.form = null;
     }

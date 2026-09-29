@@ -221,3 +221,5 @@ html,body{overflow-x:clip}
 .stay a{background:var(--blue-50);color:var(--blue-ink)}
 .hints{background:var(--yellow-50)}
 .day-route{font-weight:600}
+
+.route-parts a{border-color:var(--line);color:var(--blue-ink)}.route-parts span{color:var(--ink2)}#placeError{color:var(--yellow-ink)}
