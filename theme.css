@@ -202,3 +202,22 @@ html,body{overflow-x:clip}
 .park-more summary{color:var(--blue-ink);font-weight:700}
 .park-lot{border-color:var(--blue-200)}
 .park-lot>small{color:var(--muted);font-weight:700}
+
+/* 統一四分頁色彩：色塊留給主要操作，附屬資訊用分隔線。 */
+.spot-tags .chip{background:transparent;color:var(--muted);font-weight:500}
+.spot-actions .chip.nav{background:var(--blue-50);border-color:var(--blue-100);color:var(--blue-ink)}
+.spot-actions .chip.nav:first-child{background:transparent;border-color:var(--line);color:var(--ink2)}
+.park{background:transparent;border:0;border-top:1px solid var(--line)}
+.park-main b{font-weight:600}
+.park-main .chip.nav{background:transparent;border-color:transparent;color:var(--blue-ink)}
+.park-more summary{font-weight:500;color:var(--ink2)}
+.park-lot{border-color:var(--line)}
+#prep,#pack{background:var(--card);border:1px solid var(--line)}
+.prep-list li{border-color:var(--line)}
+.prep summary small{font-weight:500}
+.pass{box-shadow:none;background:var(--card)}
+.pass-route strong{font-weight:700}
+.stay{background:var(--card);border-color:var(--line)}
+.stay a{background:var(--blue-50);color:var(--blue-ink)}
+.hints{background:var(--yellow-50)}
+.day-route{font-weight:600}

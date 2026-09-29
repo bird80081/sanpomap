@@ -376,7 +376,8 @@
           ${s.desc ? `<p class="desc${state.expanded.has(String(s.id)) ? " open" : ""}" data-desc="${esc(s.id)}">${esc(s.desc)}</p>` : ""}
         </div>
         <div class="card-foot">
-          <div class="chips"><a class="chip nav" href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">${ico("pin")}地點</a>${index > 0 ? `<a class="chip nav" href="${esc(previousRouteUrl(items[index - 1], s))}" title="${esc(items[index - 1].title)} → ${esc(s.title)}" target="_blank" rel="noopener noreferrer">${ico("go")}怎麼去</a>` : ""}${s.chips.map(([t, c]) => `<span class="chip ${c}">${tagHtml(t)}</span>`).join("")}</div>
+          ${s.chips.length ? `<div class="spot-tags">${s.chips.map(([t, c]) => `<span class="chip ${c}">${tagHtml(t)}</span>`).join("")}</div>` : ""}
+          <div class="chips spot-actions"><a class="chip nav" href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">${ico("pin")}查看地圖</a>${index > 0 ? `<a class="chip nav" href="${esc(previousRouteUrl(items[index - 1], s))}" title="${esc(items[index - 1].title)} → ${esc(s.title)}" target="_blank" rel="noopener noreferrer">${ico("go")}前往這一站</a>` : ""}</div>
           ${s.custom ? "" : parkingHtml(s)}
         </div>
       </div>${f && String(f.id) === String(s.id) ? formHtml(day, f) : ""}</div>`).join("") + cancelledHtml(day) + (state.error ? `<p role="alert">${esc(state.error)}</p>` : "") + (f ? (f.id ? "" : formHtml(day, f)) : `<button class="add-btn" data-open>＋ 新增行程（午餐、下午茶、景點…）</button>`);
@@ -387,7 +388,7 @@
     renderPack();
   }
 
-  // 停車資訊：主要停車場＋步行時間＋導航；「客滿？看備案」展開備用停車場與費用提醒（資料在 data.js 的 parking／parkingLots）
+  // 停車資訊：主要停車場＋步行時間＋導航；展開備用停車場與費用提醒（資料在 data.js 的 parking／parkingLots）
   function parkingHtml(s) {
     const p = (T.parking || {})[s.id], lots = T.parkingLots || {}, main = p && lots[p.main];
     if (!main) return "";
@@ -396,9 +397,9 @@
     const lotInfo = (lot, m) => `<p>${[lot.fee, walk(m), lot.info].filter(Boolean).map(esc).join("・")}</p>${lot.warn ? `<p class="park-warn">${ico("alert")}${esc(lot.warn)}</p>` : ""}`;
     const backup = lots[p.backup];
     return `<div class="park">
-      <div class="park-main">${ico("parking")}<div><b>${esc(main.name)}</b>${p.walk ? `<small>${walk(p.walk)}</small>` : ""}</div>${nav(main, "導航")}</div>
+      <div class="park-main">${ico("parking")}<div><b>${esc(main.name)}</b>${p.walk ? `<small>${walk(p.walk)}</small>` : ""}</div>${nav(main, "停車導航")}</div>
       ${main.warn ? `<p class="park-warn">${ico("alert")}${esc(main.warn)}</p>` : ""}
-      <details class="park-more" data-park="${esc(s.id)}"${state.parkOpen.has(String(s.id)) ? " open" : ""}><summary>${backup ? "客滿？看備案" : "停車細節"}</summary>
+      <details class="park-more" data-park="${esc(s.id)}"${state.parkOpen.has(String(s.id)) ? " open" : ""}><summary>${backup ? "費用與備用停車場" : "停車費用與提醒"}</summary>
         <div class="park-lot"><small>主要</small>${lotInfo({ ...main, warn: "" }, p.walk)}</div>
         ${backup ? `<div class="park-lot"><small>備案</small><div class="park-main"><div><b>${esc(backup.name)}</b></div>${nav(backup, "導航")}</div>${lotInfo(backup, p.backupWalk)}</div>` : ""}
         ${p.note ? `<p class="park-note">${esc(p.note)}</p>` : ""}

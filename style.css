@@ -346,3 +346,78 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
 .park-lot>small{font-size:11px;letter-spacing:.08em}
 .park-note{padding-top:6px}
 @media print{.park{display:none}}
+
+/* 四分頁一致的閱讀層級：內容、操作、附屬資訊。 */
+.wrap{gap:28px;padding-top:24px}
+section{gap:20px}
+.sec-head{min-height:36px}
+.sec-head h2{font-size:24px}
+#plan{gap:14px}
+#plan .tabs{padding:8px 0}
+.route-line{font-size:13px}
+.day-route{font-size:13px;border-radius:12px;padding:10px 14px}
+.hints{border-radius:12px;padding:8px 12px;gap:6px}
+.hints>span,.hints button{font-size:12px}
+.timeline{gap:18px;padding-left:16px}
+.timeline::before{width:1px;left:3px}
+.item::before{width:9px;height:9px;left:-17px;top:31px;border-width:2px}
+.item-card{padding:16px;grid-template-columns:30px minmax(0,1fr);gap:10px;border-radius:16px}
+.icon{width:30px;height:30px;border-radius:10px;margin-top:6px}
+.icon .ico{width:19px;height:19px}
+.title{font-size:18px;line-height:1.55}
+.body{gap:6px}
+.desc{line-height:1.8}
+.time{font-size:13px}
+.card-foot{gap:10px}
+.spot-tags{display:flex;flex-wrap:wrap;gap:6px;padding-left:40px}
+.spot-tags .chip{padding:0;font-size:11px;gap:4px}
+.spot-tags .chip+.chip{margin-left:6px}
+.card-foot .spot-actions{gap:8px}
+.card-foot .spot-actions a{flex:1;border-radius:10px;padding:8px;font-size:12px}
+.park{padding:12px 0 0;border-radius:0;gap:4px;border-width:1px 0 0}
+.park-main{gap:7px;align-items:flex-start}
+.park-main>.ico{width:16px;height:16px;margin-top:5px}
+.park-main>div{gap:3px;padding-top:3px}
+.park-main b{font-size:13px;line-height:1.65;overflow-wrap:anywhere}
+.park-main small{font-size:11px}
+.card-foot .park-main .chip{padding:8px;min-height:44px;font-size:11px;border-radius:8px;white-space:nowrap}
+.park-warn{font-size:12px!important;padding:4px 0}
+.park-more summary{min-height:44px;justify-content:space-between;font-size:12px;list-style:none}
+.park-more summary::-webkit-details-marker{display:none}
+.park-more summary::after{content:"＋";font-size:18px}
+.park-more[open] summary::after{content:"－"}
+.park-lot{padding:12px 0;gap:6px}
+.park-note{padding-bottom:8px}
+.prep{border-radius:16px;padding:16px}
+.prep-list{gap:0}
+.prep-list li{padding:12px 0;border-bottom:1px solid}
+.prep-list li:last-child{border-bottom:0}
+.prep summary{font-size:16px}
+.overview-cap{text-align:left;font-size:11px;line-height:1.7}
+.tip{border-radius:12px;padding:14px;gap:10px}
+.tip p{font-size:13px;line-height:1.8}
+.tip span .ico{width:20px;height:20px}
+.table{gap:26px}
+.transit-day{gap:12px}
+.transit-day h3{font-size:16px}
+.pass{border-radius:16px;grid-template-columns:28px minmax(0,1fr)}
+.pass-strip span{font-size:11px;letter-spacing:.16em}
+.pass-body{padding:16px 14px;gap:16px}
+.pass-head{flex-wrap:wrap;gap:8px}
+.pass-head b{font-size:13px}
+.pass-route{gap:6px;grid-template-columns:minmax(0,1fr) 56px minmax(0,1fr)}
+.pass-route strong{font-size:23px}
+.pass-route span{font-size:13px;line-height:1.6}
+.pass-foot{padding-top:12px;gap:6px}
+.pass .chips{justify-content:space-between;gap:4px}
+.pass .chip.goto{font-size:12px;padding:8px 0}
+.stay{padding:20px;gap:14px;align-items:flex-start;border-radius:16px}
+.stay>span{padding-top:4px}
+.stay>span .ico{width:26px;height:26px}
+.stay div{gap:10px;flex:1}
+.stay b{font-size:21px;line-height:1.5}
+.stay p{font-size:14px;line-height:1.8}
+.stay a{margin-top:4px;border-radius:10px;font-size:13px}
+footer{font-size:11px;line-height:1.8}
+.tabbar{border-radius:20px 20px 0 0;padding-top:8px}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
