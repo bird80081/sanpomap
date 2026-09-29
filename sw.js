@@ -1,6 +1,6 @@
 // 離線用：網頁檔案走「網路優先、失敗讀快取」，有網路時永遠拿最新版；
 // Google 字型與封面照片（Unsplash）走「快取優先」。Firebase 等其他網域不攔截，交給 app.js 自己處理。
-const CACHE = "sanpomap-v26";
+const CACHE = "sanpomap-v27";
 const CORE = ["./", "index.html", "style.css", "theme.css", "data.js", "app.js", "maps.js", "assets/coastal-train-editorial.png"];
 
 self.addEventListener("install", e => {

@@ -390,13 +390,14 @@
     const nav = (lot, label) => `<a class="chip nav" href="${gmap(lot.q || lot.name)}" target="_blank" rel="noopener noreferrer">${ico("go")}${label}</a>`;
     const walk = m => m ? `步行約 ${esc(m)} 分` : "";
     const lotInfo = (lot, m) => `<p>${[lot.fee, walk(m), lot.info].filter(Boolean).map(esc).join("・")}</p>${lot.warn ? `<p class="park-warn">${ico("alert")}${esc(lot.warn)}</p>` : ""}`;
-    const backup = lots[p.backup];
+    const backup = lots[p.backup], backup2 = lots[p.backup2];
     return `<div class="park">
       <div class="park-main">${ico("parking")}<div><b>${esc(main.name)}</b>${p.walk ? `<small>${walk(p.walk)}</small>` : ""}</div>${nav(main, "停車導航")}</div>
       ${main.warn ? `<p class="park-warn">${ico("alert")}${esc(main.warn)}</p>` : ""}
       <details class="park-more" data-park="${esc(s.id)}"${state.parkOpen.has(String(s.id)) ? " open" : ""}><summary>${backup ? "費用與備用停車場" : "停車費用與提醒"}</summary>
         <div class="park-lot"><small>主要</small>${lotInfo({ ...main, warn: "" }, p.walk)}</div>
         ${backup ? `<div class="park-lot"><small>備案</small><div class="park-main"><div><b>${esc(backup.name)}</b></div>${nav(backup, "導航")}</div>${lotInfo(backup, p.backupWalk)}</div>` : ""}
+        ${backup2 ? `<div class="park-lot"><small>再不行</small><div class="park-main"><div><b>${esc(backup2.name)}</b></div>${nav(backup2, "導航")}</div>${lotInfo(backup2)}</div>` : ""}
         ${p.note ? `<p class="park-note">${esc(p.note)}</p>` : ""}
       </details>
     </div>`;
