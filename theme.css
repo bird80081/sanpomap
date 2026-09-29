@@ -193,3 +193,12 @@ html,body{overflow-x:clip}
 .weather-back,.weather-facts>div{background:var(--card);color:var(--ink)}
 .weather-tip{background:var(--blue-100);color:var(--ink)}
 .weather-mini:focus-visible,.weather-back:focus-visible,.weather-hours:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+
+/* ---------- 停車資訊 ---------- */
+.park{background:var(--blue-50);border:1px solid var(--blue-100)}
+.park-main>.ico{color:var(--blue-ink)}
+.park-main b{color:var(--ink);font-weight:700}.park-main small,.park p{color:var(--ink2)}
+.park-warn{color:var(--yellow-ink)!important}
+.park-more summary{color:var(--blue-ink);font-weight:700}
+.park-lot{border-color:var(--blue-200)}
+.park-lot>small{color:var(--muted);font-weight:700}

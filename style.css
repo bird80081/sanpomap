@@ -331,3 +331,18 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
 .weather-mini{flex:0 0 200px;display:flex;flex-direction:column;gap:10px;padding:20px;border-radius:24px;scroll-snap-align:start;min-width:0}
 .weather-mini>small{font-size:11px}.weather-mini>b{font-size:16px;min-height:44px;line-height:1.4}.mini-condition{display:flex;align-items:center;gap:8px;font-size:13px}.mini-condition .ico{width:32px;height:32px}.weather-mini>strong{font-size:44px;line-height:1.2}.weather-mini strong small{font-size:16px;margin-left:4px}.mini-bottom{display:flex;justify-content:space-between;font-size:11px;gap:8px}
 #weatherDetail{gap:20px;padding-bottom:20px}.weather-back{align-self:flex-start;min-height:44px;padding:10px 16px;border:0;border-radius:24px;font-size:15px;cursor:pointer}#weatherDetail header p{font-size:13px;margin:0 0 8px}#weatherDetail h1{font-size:28px;margin:0}#weatherDetail h2{font-size:19px;margin:8px 0 0}.weather-main{display:flex;align-items:center;gap:16px;padding:26px 20px;border-radius:24px;flex-wrap:wrap}.weather-main>.ico{width:54px;height:54px}.weather-main strong{font-size:52px}.weather-main strong small{font-size:20px}.weather-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.weather-facts>div{display:grid;gap:8px;padding:18px;border-radius:18px}.weather-facts span{font-size:13px}.weather-facts b{font-size:21px}.weather-hours{display:flex;overflow-x:auto;gap:20px;padding:12px 0;min-width:0}.weather-hours>div{display:flex;flex:0 0 48px;flex-direction:column;align-items:center;gap:12px}.weather-hours small{font-size:12px}.weather-tip{padding:16px;border-radius:18px;line-height:1.7;margin:0}
+
+/* 停車資訊：主要停車場一行＋「客滿？看備案」展開 */
+.park{display:flex;flex-direction:column;gap:6px;padding:10px 12px;border-radius:16px}
+.park-main{display:flex;align-items:center;gap:8px}
+.park-main>.ico{width:20px;height:20px;flex:none}
+.park-main>div{flex:1;min-width:0;display:grid;line-height:1.4}
+.park-main b{font-size:14px}.park-main small{font-size:12px}
+.park-main .chip{flex:none;min-height:44px;font-size:12px;padding:4px 12px}
+.park p{margin:0;font-size:13px;line-height:1.6}
+.park-warn{display:flex;gap:6px;align-items:flex-start}.park-warn .ico{width:15px;height:15px;flex:none;margin-top:3px}
+.park-more summary{cursor:pointer;min-height:36px;display:flex;align-items:center;font-size:13px}
+.park-lot{display:grid;gap:4px;padding:8px 0;border-top:1px dashed}
+.park-lot>small{font-size:11px;letter-spacing:.08em}
+.park-note{padding-top:6px}
+@media print{.park{display:none}}

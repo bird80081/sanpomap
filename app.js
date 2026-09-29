@@ -61,7 +61,7 @@
     return s ? { item: s, label: hr(s.time) <= h ? ico("hourglass") + "進行中" : ico("next") + "下一站" } : null;
   }
 
-  const state = { day: todayDay() || 1, form: null, tform: null, prepEdit: null, packEdit: null, adjust: null, expanded: new Set(), extra: { 1: [], 2: [], 3: [] }, busy: false, error: "", sync: DB ? "connecting" : "local" };
+  const state = { day: todayDay() || 1, form: null, tform: null, prepEdit: null, packEdit: null, adjust: null, expanded: new Set(), parkOpen: new Set(), extra: { 1: [], 2: [], 3: [] }, busy: false, error: "", sync: DB ? "connecting" : "local" };
 
   // 正在填行程或票券表單時，雲端同步與定時更新都不重畫，避免打到一半的字被清掉
   const editing = () => state.form || state.tform || state.prepEdit || state.packEdit || ["prepNew", "prepText", "packNew", "packText"].includes(document.activeElement?.id);
@@ -377,6 +377,7 @@
         </div>
         <div class="card-foot">
           <div class="chips"><a class="chip nav" href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">${ico("pin")}地點</a>${index > 0 ? `<a class="chip nav" href="${esc(previousRouteUrl(items[index - 1], s))}" title="${esc(items[index - 1].title)} → ${esc(s.title)}" target="_blank" rel="noopener noreferrer">${ico("go")}怎麼去</a>` : ""}${s.chips.map(([t, c]) => `<span class="chip ${c}">${tagHtml(t)}</span>`).join("")}</div>
+          ${s.custom ? "" : parkingHtml(s)}
         </div>
       </div>${f && String(f.id) === String(s.id) ? formHtml(day, f) : ""}</div>`).join("") + cancelledHtml(day) + (state.error ? `<p role="alert">${esc(state.error)}</p>` : "") + (f ? (f.id ? "" : formHtml(day, f)) : `<button class="add-btn" data-open>＋ 新增行程（午餐、下午茶、景點…）</button>`);
     // 說明預設只顯示 2 行；被截斷的才加「展開」提示
@@ -384,6 +385,25 @@
     renderTickets();
     renderPrep();
     renderPack();
+  }
+
+  // 停車資訊：主要停車場＋步行時間＋導航；「客滿？看備案」展開備用停車場與費用提醒（資料在 data.js 的 parking／parkingLots）
+  function parkingHtml(s) {
+    const p = (T.parking || {})[s.id], lots = T.parkingLots || {}, main = p && lots[p.main];
+    if (!main) return "";
+    const nav = (lot, label) => `<a class="chip nav" href="${gmap(lot.q || lot.name)}" target="_blank" rel="noopener noreferrer">${ico("go")}${label}</a>`;
+    const walk = m => m ? `步行約 ${esc(m)} 分` : "";
+    const lotInfo = (lot, m) => `<p>${[lot.fee, walk(m), lot.info].filter(Boolean).map(esc).join("・")}</p>${lot.warn ? `<p class="park-warn">${ico("alert")}${esc(lot.warn)}</p>` : ""}`;
+    const backup = lots[p.backup];
+    return `<div class="park">
+      <div class="park-main">${ico("parking")}<div><b>${esc(main.name)}</b>${p.walk ? `<small>${walk(p.walk)}</small>` : ""}</div>${nav(main, "導航")}</div>
+      ${main.warn ? `<p class="park-warn">${ico("alert")}${esc(main.warn)}</p>` : ""}
+      <details class="park-more" data-park="${esc(s.id)}"${state.parkOpen.has(String(s.id)) ? " open" : ""}><summary>${backup ? "客滿？看備案" : "停車細節"}</summary>
+        <div class="park-lot"><small>主要</small>${lotInfo({ ...main, warn: "" }, p.walk)}</div>
+        ${backup ? `<div class="park-lot"><small>備案</small><div class="park-main"><div><b>${esc(backup.name)}</b></div>${nav(backup, "導航")}</div>${lotInfo(backup, p.backupWalk)}</div>` : ""}
+        ${p.note ? `<p class="park-note">${esc(p.note)}</p>` : ""}
+      </details>
+    </div>`;
   }
 
   function cancelledHtml(day) {
@@ -547,6 +567,8 @@
       $("overview").querySelector(`a[href="${weatherReturn.href}"]`)?.focus({preventScroll:true});
     }
   }
+  // 停車備案展開狀態：每分鐘重畫時保持展開
+  document.addEventListener("toggle", e => { const id = e.target.dataset?.park; if (id) e.target.open ? state.parkOpen.add(id) : state.parkOpen.delete(id); }, true);
   // 新增欄位按 Enter 直接新增
   document.addEventListener("keydown", e => { if (e.key !== "Enter" || e.isComposing) return;
     if (e.target.id === "prepNew") { e.preventDefault(); document.querySelector("[data-padd]").click(); }
@@ -557,10 +579,16 @@
   // 列印版：三天行程＋票券＋住宿一次攤開，手機可「列印 → 存成 PDF」
   function renderPrint() {
     const days = Object.keys(T.days).map(n => `<h2>Day ${n}・${esc(dayDate(n))}</h2>${dayItems(n).map(s =>
-      `<div class="p-item"><b>${esc(s.time)}</b><div><strong>${esc(s.title)}</strong><p>${esc(s.desc)}</p><small>地點：${esc(s.q || s.title)}</small></div></div>`).join("")}`).join("");
+      `<div class="p-item"><b>${esc(s.time)}</b><div><strong>${esc(s.title)}</strong><p>${esc(s.desc)}</p><small>地點：${esc(s.q || s.title)}</small>${printParking(s)}</div></div>`).join("")}`).join("");
     const ticketRows = tickets().map(t => `<tr><td>Day ${t.day}</td><td>${esc(t.leg)}</td><td>${esc(t.mode)}</td><td>${esc(t.time)}</td><td>${(STATUS[t.status] || STATUS.pending)[0]}${t.seat ? `・${esc(t.seat)}` : ""}</td></tr>`).join("");
     const stays = T.stays.map(s => `<p><b>${esc(s.day)}</b> ${esc(s.name)}・${esc(s.info)}</p>`).join("");
     $("printAll").innerHTML = `<h1>${T.title.replace(/<br>/g, " ")}</h1><p>${esc(T.badge)}</p>${days}<h2>票券</h2><table>${ticketRows}</table><h2>住宿</h2>${stays}`;
+  }
+  function printParking(s) {
+    const p = (T.parking || {})[s.id], lots = T.parkingLots || {};
+    if (s.custom || !p || !lots[p.main]) return "";
+    const line = (label, lot) => lot ? `<br><small>${label}：${esc(lot.name)}（${esc(lot.fee)}）</small>` : "";
+    return line("停車", lots[p.main]) + line("備案", lots[p.backup]);
   }
   addEventListener("beforeprint", renderPrint);
   $("printBtn").addEventListener("click", () => { renderPrint(); print(); });
