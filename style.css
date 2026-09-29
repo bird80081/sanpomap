@@ -5,7 +5,7 @@ html{scroll-behavior:smooth}
 a{color:var(--tan-d);text-decoration:none}a:hover{color:var(--ink)}
 button,input,textarea{font-family:inherit}
 .wrap{max-width:600px;margin:0 auto;padding:16px 16px 32px;display:flex;flex-direction:column;gap:26px}
-section{display:flex;flex-direction:column;gap:18px;scroll-margin-top:68px}
+section{display:flex;min-width:0;flex-direction:column;gap:18px;scroll-margin-top:68px}
 
 .hero{background:#F3E7D8;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px -24px rgba(90,60,30,.4);gap:0}
 .hero-top{padding:28px 22px 0;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
@@ -24,12 +24,14 @@ section{display:flex;flex-direction:column;gap:18px;scroll-margin-top:68px}
 
 .card{background:var(--card);border-radius:28px;box-shadow:var(--shadow)}
 /* 每日路線：精簡站點 */
-.overview{padding:0;background:transparent;box-shadow:none;gap:12px}
-#overview{display:grid;grid-auto-flow:column;grid-auto-columns:88%;gap:14px;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:inline mandatory;scroll-padding-inline:2px;padding:2px 14px 8px 2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.overview{padding:0;background:transparent;box-shadow:none;gap:12px;min-width:0}
+#overview{display:flex;width:100%;min-width:0;align-items:flex-start;gap:12px;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:inline mandatory;scroll-padding-inline:2px;padding:2px 26px 8px 2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 #overview::-webkit-scrollbar{display:none}
-.ov-day{background:var(--day-soft);padding:20px;border-radius:24px}
+.ov-day{flex:0 0 calc(100% - 28px);min-width:0;background:var(--day-soft);padding:18px;border-radius:24px;overflow:hidden}
 .ov-day{scroll-snap-align:start;scroll-snap-stop:always}
-.ov-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.ov-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.ov-heading>div{display:flex;align-items:center;gap:9px}.ov-heading>div>span{font-size:12px;color:var(--ink2)}
+.ov-heading>strong{font-size:24px;line-height:1;color:var(--ink);white-space:nowrap}
 .ov-heading b{font-size:15px;background:var(--day-color);color:#fff;border-radius:999px;padding:5px 14px;white-space:nowrap}
 .ov-heading>span{font-size:13px;color:var(--ink2)}
 .ov-stops{display:flex;flex-wrap:wrap;gap:8px 0;line-height:1.7}
@@ -37,22 +39,20 @@ section{display:flex;flex-direction:column;gap:18px;scroll-margin-top:68px}
 .ov-stops>span:not(:last-child)::after{content:"›";padding:0 9px;color:var(--ink2);font-weight:400}
 .overview-cap{text-align:center;font-size:13px;color:var(--ink2)}
 /* 三天天氣（沿用每日路線的三色卡片） */
-.wx{display:flex;align-items:center;gap:12px;padding:8px 0}
+.wx-list{margin-top:8px}.wx{display:flex;align-items:center;gap:10px;padding:9px 0}
 .wx+.wx{border-top:1px dashed}
-.wx-ico{width:42px;height:42px;flex:none;display:grid;place-items:center;border-radius:50%}
-.wx-ico .ico{width:24px;height:24px}
+.wx-ico{width:34px;height:34px;flex:none;display:grid;place-items:center;border-radius:50%}
+.wx-ico .ico{width:20px;height:20px}
 .wx>div{display:grid;gap:2px;min-width:0}
 .wx-area{font-size:13px}
-.wx b{font-size:16px}
+.wx b{font-size:14px}
 .wx b em{font-size:13px;font-style:normal;font-weight:400}
-.wx small,.wx-none{font-size:13px}
+.wx small,.wx-none{font-size:12px}
 .swipe-hint{font-size:12px;white-space:nowrap}
-.wx-heading-meta{display:flex;flex-direction:column;align-items:flex-end;gap:1px}.wx-heading-meta strong{font-size:22px;line-height:1.1}.wx-heading-meta span{font-size:12px}
-.wx-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:12px 0}
-.wx-metrics>div{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:66px;padding:8px 3px;border-radius:10px;text-align:center}
-.wx-metrics b{font-size:14px;white-space:nowrap}.wx-metrics span{font-size:11px}
-.wx-advice{padding:10px 12px;border-radius:10px;margin-bottom:8px}.wx-advice b{font-size:11px;letter-spacing:.08em}.wx-advice p{margin:3px 0 0;font-size:13px;line-height:1.6}
-@media(min-width:520px){#overview{grid-auto-columns:72%}}
+.wx-summary{display:flex;align-items:center;gap:10px}.wx-summary-ico{width:48px;height:48px;display:grid;place-items:center;border-radius:15px;background:#FFFFFFB8}.wx-summary-ico .ico{width:28px;height:28px}.wx-summary>div{display:grid;gap:1px}.wx-summary b{font-size:18px}.wx-summary small{font-size:12px;color:var(--ink2)}
+.wx-meta{display:flex;gap:7px;overflow-x:auto;margin:12px 0 10px;scrollbar-width:none}.wx-meta::-webkit-scrollbar{display:none}.wx-meta span{flex:none;padding:6px 9px;border-radius:999px;background:#FFFFFFB8;font-size:11px;color:var(--ink2)}.wx-meta b{color:var(--ink);font-size:12px}
+.wx-advice{display:flex;align-items:flex-start;gap:7px;margin:0;padding:9px 11px;border-radius:12px;font-size:12px;line-height:1.55}.wx-advice span{color:var(--day-color)}
+@media(min-width:520px){.ov-day{flex-basis:68%}}
 
 .tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .tab{border:0;cursor:pointer;padding:12px 6px;border-radius:999px;font-weight:900;font-size:16px;white-space:nowrap;background:var(--card);color:var(--tan-d)}

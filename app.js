@@ -309,13 +309,14 @@
       const forecasts = (data[n] || []).filter(Boolean), maxRain = Math.max(0, ...forecasts.map(f => f.rain || 0)), maxWind = Math.max(0, ...forecasts.map(f => f.wind || 0)), maxFeel = Math.max(-99, ...forecasts.map(f => f.feel ?? -99));
       const tips = []; if (maxRain >= 50) tips.push("可能下雨，帶折傘"); if (maxWind >= 25) tips.push("海邊風較強"); if (maxFeel >= 30) tips.push("注意防曬補水");
       const temps = forecasts.map(f => f.temp).filter(Number.isFinite), minTemp = temps.length ? Math.round(Math.min(...temps)) : "—", maxTemp = temps.length ? Math.round(Math.max(...temps)) : "—";
-      const sunset = forecasts.find(f => f.sunset)?.sunset || "—", hasCoast = T.weather[n].some(a => a.coast), thirdValue = sunset !== "—" ? sunset : (maxFeel > -99 ? `${Math.round(maxFeel)}°` : "—"), thirdLabel = sunset !== "—" ? "日落" : "體感最高";
-      return `<div class="ov-day"><div class="ov-heading"><b>Day ${n}</b><div class="wx-heading-meta"><strong>${minTemp}–${maxTemp}°</strong><span>${esc(dayDate(n))}</span></div></div><div class="wx-metrics"><div><b>${maxRain}%</b><span>降雨最高</span></div><div><b>${hasCoast ? `${Math.round(maxWind)} km/h` : (maxFeel > -99 ? `${Math.round(maxFeel)}°` : "—")}</b><span>${hasCoast ? "海邊風速" : "體感最高"}</span></div><div><b>${esc(thirdValue)}</b><span>${thirdLabel}</span></div></div><div class="wx-advice"><b>行程建議</b><p>${esc(tips.length ? tips.join("，") : "天氣相對穩定，出發前再確認一次。")}</p></div>${T.weather[n].map((a, i) => {
+      const sunset = forecasts.find(f => f.sunset)?.sunset || "—", hasCoast = T.weather[n].some(a => a.coast);
+      const first = forecasts[0], firstWx = first ? wx(first.code) : [[], "等待預報", "cloud"];
+      return `<div class="ov-day"><div class="ov-heading"><div><b>Day ${n}</b><span>${esc(dayDate(n))}</span></div></div><div class="wx-summary"><span class="wx-summary-ico">${ico("w-" + firstWx[2])}</span><div><b>${esc(firstWx[1])}　${minTemp}–${maxTemp}°</b><small>${T.weather[n].length} 個行程地點</small></div></div><div class="wx-meta"><span>降雨 <b>${maxRain}%</b></span><span>${hasCoast ? "風速" : "體感"} <b>${hasCoast ? `${Math.round(maxWind)} km/h` : (maxFeel > -99 ? `${Math.round(maxFeel)}°` : "—")}</b></span>${sunset !== "—" ? `<span>日落 <b>${esc(sunset)}</b></span>` : ""}</div><p class="wx-advice"><span>✦</span>${esc(tips.length ? tips.join("，") : "天氣相對穩定，出發前再確認一次。")}</p><div class="wx-list">${T.weather[n].map((a, i) => {
       const f = (data[n] || [])[i];
       if (!f || f.code == null) return `<div class="wx"><span class="wx-ico">${ico("w-cloud")}</span><div><span class="wx-area">${esc(a.time)}　${esc(a.name)}</span><span class="wx-none">尚無預報</span></div></div>`;
       const [, label, icon] = wx(f.code);
       return `<div class="wx"><span class="wx-ico">${ico("w-" + icon)}</span><div><span class="wx-area">${esc(a.time)}　${esc(a.name)}</span><b>${label}　${Math.round(f.temp)}°C <em>體感 ${Math.round(f.feel)}°</em></b><small>降雨 ${f.rain ?? "—"}%${a.coast ? `・風速 ${Math.round(f.wind)} km/h` : ""}${f.sunset ? `・日落 ${esc(f.sunset)}` : ""}</small></div></div>`;
-    }).join("")}</div>`;
+    }).join("")}</div></div>`;
     }).join("");
     const at = weather && new Date(weather.at), src = "資料來源 Open-Meteo，出發前再看中央氣象署";
     $("weatherCap").textContent = !at
