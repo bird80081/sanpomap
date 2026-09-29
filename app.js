@@ -607,7 +607,15 @@
     return line("停車", lots[p.main]) + line("備案", lots[p.backup]);
   }
   addEventListener("beforeprint", renderPrint);
-  $("printBtn").addEventListener("click", () => { renderPrint(); print(); });
+  // iPhone 從主畫面圖示開啟時系統不支援列印，改成複製網址並提示到 Safari 存 PDF
+  const standalone = navigator.standalone || matchMedia("(display-mode: standalone)").matches;
+  $("printBtn").addEventListener("click", async () => {
+    if (!standalone) { renderPrint(); print(); return; }
+    const url = location.origin + location.pathname;
+    let copied = false;
+    try { await navigator.clipboard.writeText(url); copied = true; } catch (e) {}
+    alert(`從主畫面圖示打開時，iPhone 不支援存 PDF。\n\n${copied ? "網址已複製，" : `網址：${url}\n`}請打開 Safari 貼上網址，再按一次「存成 PDF」。`);
+  });
   addEventListener("online", () => { if (!editing()) render(); if (DB) pull(); loadWeather(); });
   addEventListener("offline", () => { if (!editing()) render(); });
   // Service Worker：開過一次後，沒網路也能打開網頁
