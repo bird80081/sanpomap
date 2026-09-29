@@ -6,8 +6,8 @@
 <title>高屏・南迴・花蓮 3日懶人包</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=theme-20260928">
-<link rel="stylesheet" href="theme.css?v=theme-20260928">
+<link rel="stylesheet" href="style.css?v=20260929-weather">
+<link rel="stylesheet" href="theme.css?v=20260929-weather">
 </head>
 <body>
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
@@ -45,6 +45,11 @@
   <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></symbol>
   <symbol id="i-go" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></symbol>
   <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
+  <symbol id="i-w-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/></symbol>
+  <symbol id="i-w-partly" viewBox="0 0 24 24"><path d="M8.5 3v1.5M3 8.5h1.5M4.6 4.6l1 1M12.4 4.6l-1 1"/><path d="M5.5 11.3a3.5 3.5 0 1 1 6.2-3.4"/><path d="M8.5 20h9a3.5 3.5 0 0 0 .4-7 5 5 0 0 0-9.6 1.2A2.9 2.9 0 0 0 8.5 20z"/></symbol>
+  <symbol id="i-w-cloud" viewBox="0 0 24 24"><path d="M7 18.5h10.5a4 4 0 0 0 .4-8A6 6 0 0 0 6.4 11.6 3.5 3.5 0 0 0 7 18.5z"/></symbol>
+  <symbol id="i-w-rain" viewBox="0 0 24 24"><path d="M7 14.5h10.5a3.8 3.8 0 0 0 .4-7.5A5.8 5.8 0 0 0 6.4 8.2 3.2 3.2 0 0 0 7 14.5z"/><path d="m8.5 17.5-1 2.5M12.5 17.5l-1 2.5M16.5 17.5l-1 2.5"/></symbol>
+  <symbol id="i-w-storm" viewBox="0 0 24 24"><path d="M7 14.5h10.5a3.8 3.8 0 0 0 .4-7.5A5.8 5.8 0 0 0 6.4 8.2 3.2 3.2 0 0 0 7 14.5z"/><path d="m12.5 14.5-2 3.5h3l-2 3.5"/></symbol>
   <symbol id="i-luggage" viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12.5" rx="2.5"/><path d="M9 7V5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5v2M4 12.5h16M10.5 12.5v1.5h3v-1.5"/></symbol>
 </svg>
 <div class="wrap">
@@ -60,8 +65,8 @@
   </section>
 
   <section id="map" data-panel="map">
-    <div class="sec-head"><span><svg class="ico"><use href="#i-map"/></svg></span><h2>每日路線</h2><i></i></div>
-    <div class="card overview"><div id="overview"></div><div class="overview-cap">每天去哪裡，一眼看懂</div></div>
+    <div class="sec-head"><span><svg class="ico"><use href="#i-w-partly"/></svg></span><h2>三天天氣</h2><i></i></div>
+    <div class="card overview"><div id="overview"></div><div class="overview-cap" id="weatherCap"></div></div>
   </section>
 
   <details class="prep" id="prep" data-panel="map"></details>
@@ -98,7 +103,7 @@
   <button data-tab="stay"><svg class="ico"><use href="#i-bed-s"/></svg>住宿</button>
 </nav>
 <div id="printAll" class="print-only"></div>
-<script src="data.js?v=theme-20260928"></script>
-<script src="app.js?v=theme-20260928"></script>
+<script src="data.js?v=20260929-weather"></script>
+<script src="app.js?v=20260929-weather"></script>
 </body>
 </html>

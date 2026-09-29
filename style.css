@@ -34,6 +34,15 @@ section{display:flex;flex-direction:column;gap:18px;scroll-margin-top:68px}
 .ov-stops>span{font-size:16px;font-weight:700;overflow-wrap:anywhere}
 .ov-stops>span:not(:last-child)::after{content:"›";padding:0 9px;color:var(--ink2);font-weight:400}
 .overview-cap{text-align:center;font-size:13px;color:var(--ink2)}
+/* 三天天氣（沿用每日路線的三色卡片） */
+.wx{display:flex;align-items:center;gap:12px;padding:8px 0}
+.wx+.wx{border-top:1px dashed}
+.wx-ico{width:42px;height:42px;flex:none;display:grid;place-items:center;border-radius:50%}
+.wx-ico .ico{width:24px;height:24px}
+.wx>div{display:grid;gap:2px;min-width:0}
+.wx-area{font-size:13px}
+.wx b{font-size:16px}
+.wx small,.wx-none{font-size:13px}
 
 .tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .tab{border:0;cursor:pointer;padding:12px 6px;border-radius:999px;font-weight:900;font-size:16px;white-space:nowrap;background:var(--card);color:var(--tan-d)}

@@ -103,6 +103,10 @@ button.chip{border-color:var(--line)}
 .ov-day:nth-child(3){--day-soft:var(--sage-100)!important;--day-color:var(--sage-300)!important}
 .ov-heading b{color:var(--ink);font-weight:700}
 .ov-stops>span{font-weight:600;color:var(--ink)}
+.wx+.wx{border-top-color:var(--line)}
+.wx-ico{background:#fff;color:var(--ink)}
+.wx-area,.wx small,.wx-none{color:var(--ink2)}
+.wx b{font-weight:600;color:var(--ink)}
 
 /* ---------- 行前待確認、行李清單 ---------- */
 .prep{background:#fff;border:1.5px solid var(--blue-200);border-style:solid}
