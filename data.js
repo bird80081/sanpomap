@@ -41,7 +41,7 @@ window.TRIP = {
       { id: "fixed-24", shortLabel: "枋寮", time: "11:00–11:20", title: "枋寮韭菜盒子＆豬肉餡餅", tag: "🥟 在地銅板小吃", icon: "🥟", type: "food", meals: ["午餐"], desc: "買韭菜盒子或豬肉餡餅墊胃，建議吃約五、六分飽；店家可能排隊或提早售完，沒買到就直接前往漁港。", q: "枋寮韭菜盒子 豬肉餡餅" },
       { id: "fixed-25", sym: "anchor", shortLabel: "枋寮", time: "11:20–11:50", title: "枋寮漁港＆跨港情人橋", tag: "⚓ 漁村海風", icon: "⛵", type: "sight", desc: "沿中興路前往漁港，看看漁船與出海口，再走上跨港情人橋眺望港區；港邊遮蔭較少，記得防曬。", q: "枋寮漁港 跨港情人橋" },
       { id: "fixed-26", shortLabel: "枋寮", time: "11:50–12:29", title: "返回枋寮車站", tag: "🎒 領行李・12:29 莒光", icon: "🎒", type: "transport", desc: "11:50 開始返回車站，先領回登機箱，12:10 前完成候車準備，搭乘 12:29 的莒光 727 次。", q: "枋寮火車站" },
-      { id: "fixed-22", shortLabel: "枋寮", time: "12:29–13:44", title: "莒光 727 次｜枋寮 → 金崙", tag: "🚆 已購票・已劃位", icon: "🚆", type: "transport", desc: "搭乘莒光 727 次前往金崙；暫依現行時刻 12:29 出發、13:44 抵達，已購票並完成劃位，時間以 10/9 票面為準。行李隨車帶往金崙。", q: "枋寮火車站" },
+      { id: "fixed-22", shortLabel: "枋寮", time: "12:29–13:44", title: "莒光 727 次｜枋寮 → 金崙", tag: "🚆 已購票・無座位", icon: "🚆", type: "transport", desc: "搭乘莒光 727 次前往金崙；暫依現行時刻 12:29 出發、13:44 抵達，已購票但沒有座位（約 75 分鐘），時間以 10/9 票面為準。行李隨車帶往金崙。", q: "枋寮火車站" },
       { id: "fixed-23", shortLabel: "金崙", time: "13:44–14:20", title: "鼎倫牛肉麵", tag: "🍜 售完改力卡", icon: "🍜", type: "food", meals: ["午餐"], desc: "下車後先前往鼎倫確認是否仍能點餐，推薦紅燒牛肉麵、手工水餃與滷味；若連假排隊、提早售完或停止收客，直接改到力卡珈琲吃輕食。", q: "鼎倫牛肉麵" },
       { id: "fixed-27", sym: "church", shortLabel: "金崙", time: "14:20–14:45", title: "金崙聖若瑟天主堂", tag: "⛪ 排灣族信仰文化", icon: "⛪", type: "sight", desc: "欣賞黑色石板、陶甕外型與排灣族圖騰交織的教堂建築；這裡是地方信仰空間，入內請放低音量並避免打擾活動。", q: "金崙聖若瑟天主堂" },
       { id: "fixed-28", shortLabel: "金崙", time: "14:45–15:30", title: "LI.KA CAFE 力卡珈琲", tag: "☕ 部落風味午茶", icon: "☕", type: "cafe", desc: "品嚐刺蔥或馬告風味飲品、紅烏龍貝果、小米粽或小米酒粕甜點；抵達時可先詢問是否能暫放一個登機箱，寄放尚未確認；無法寄放時，海灘改為涵洞附近短停，兩人輪流看顧行李。", q: "LI.KA CAFE 力卡珈琲" },
@@ -91,13 +91,13 @@ window.TRIP = {
     "fixed-20": { main: "mz", walk: 1, backup: "mx", backupWalk: 4, note: "店門正對面另有國安里「國 13」公有停車場（Google Maps 查無地標，到現場看）。" }
   },
   ticketTip: "<b>連假車流多</b>，自駕段預留車程與停車緩衝。",
-  // 票券：id 固定不可改（網頁上的調整以 id 對應）；status = reserved（已劃位）| booked（已預約）| open（無對號）| pending（待預約）
+  // 票券：id 固定不可改（網頁上的調整以 id 對應）；status = reserved（已劃位）| noseat（已購票無座位）| booked（已預約）| open（無對號）| pending（待預約）
   // spot 對應行程卡片 id，點票券可跳到那一站；seat 選填，填了就會顯示（例如 "5 車 12 號"）
   tickets: [
     { id: "ticket-01", day: 1, leg: "臺北 → 高雄", mode: "🚆 自強 111 次", time: "08:00–12:04", status: "reserved", note: "發車以車票為準", spot: "fixed-01", seat: "" },
     { id: "ticket-02", day: 1, leg: "高雄 → 屏東 → 東港 → 高雄", mode: "🚗 iRent 汽車", time: "12:15–19:00", status: "pending", note: "取還車站點與預約待確認；使用第 1 張 90 分鐘折抵券", spot: "fixed-03" },
     { id: "ticket-03", day: 2, leg: "鳳山 → 枋寮", mode: "🚆 3005 次 區間快", time: "09:12–10:10", status: "open", note: "無對號座，當日確認班表", spot: "fixed-09" },
-    { id: "ticket-04", day: 2, leg: "枋寮 → 金崙（南迴）", mode: "🚆 莒光 727 次", time: "12:29–13:44", status: "reserved", note: "時間待對照票面", spot: "fixed-22", seat: "" },
+    { id: "ticket-04", day: 2, leg: "枋寮 → 金崙（南迴）", mode: "🚆 莒光 727 次", time: "12:29–13:44", status: "noseat", note: "時間待對照票面", spot: "fixed-22", seat: "" },
     { id: "ticket-05", day: 2, leg: "金崙 → 臺東", mode: "🚆 自強 441 次", time: "16:56–17:29", status: "reserved", note: "以車票為準", spot: "fixed-12", seat: "" },
     { id: "ticket-06", day: 2, leg: "臺東 → 花蓮", mode: "🚆 自強 445 次", time: "18:35–20:33", status: "reserved", note: "臺東轉乘 66 分，18:20 回月台；便當售完改買站內其他餐食", spot: "fixed-31", seat: "" },
     { id: "ticket-07", day: 3, leg: "花蓮 ↔ 崇德・新城", mode: "🚗 iRent 汽車", time: "09:00–16:20", status: "pending", note: "待預約；使用第 2 張 90 分鐘折抵券", spot: "fixed-16" },
@@ -122,7 +122,7 @@ window.TRIP = {
   ],
   stays: [
     { icon: "🛏️", day: "Day 1・高雄", name: "喜迎旅店 Greet Inn", info: "高雄市前金區六合二路161號・捷運前金站O4旁", q: "喜迎旅店 Greet Inn" },
-    { icon: "🌙", day: "Day 2・花蓮", name: "Have Fun 225", info: "花蓮縣花蓮市國盛二街225號・Day 3 退房後行李隨車帶走", q: "花蓮市國盛二街225號" }
+    { icon: "🌙", day: "Day 2・花蓮", name: "Have Fun 225", info: "花蓮縣花蓮市國盛二街225號・花蓮站步行約 10 分鐘・入住 15:00 起，民宿營業時間 08:00–21:30（20:33 到站，約 21:00 抵達，請先 LINE 告知晚到並確認自助入住方式）・電話／LINE 0956-120-225・有專屬停車場", q: "花蓮市國盛二街225號" }
   ],
   footer: ["部分圖示依 CNS 16282 台灣公共圖標（經濟部標準檢驗局，CC BY 4.0）改繪"]
 };

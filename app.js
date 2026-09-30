@@ -9,7 +9,7 @@
   const gmap = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
   const maps = window.TripMaps;
   // 票券狀態：[文字, 樣式, 線條圖示]
-  const STATUS = { reserved: ["已劃位", "ok", "check"], booked: ["已預約", "ok", "check"], open: ["無對號", "open", "ticket"], pending: ["待預約", "wait", "hourglass"] };
+  const STATUS = { reserved: ["已劃位", "ok", "check"], noseat: ["無座位", "open", "ticket"], booked: ["已預約", "ok", "check"], open: ["無對號", "open", "ticket"], pending: ["待預約", "wait", "hourglass"] };
   // 通用線條圖示（index.html 的 <symbol id="i-xxx">）
   const ico = n => `<svg class="ico" aria-hidden="true"><use href="#i-${n}"/></svg>`;
   // 卡片圖示：有 sym 用指定線條圖示；美食、咖啡、交通、住宿用類別圖示（依 CNS 16282 改繪）；其餘景點用 emoji
