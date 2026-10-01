@@ -118,6 +118,7 @@ button.chip{border-color:var(--line)}
 .prep summary{font-weight:700;color:var(--ink)}
 .prep summary .ico{color:var(--blue-ink)}
 #pack summary .ico,#pack .pack-group{color:var(--sage-ink)}
+#pack .pack-note{color:var(--ink2)}
 .prep-list .check{border-color:var(--blue-300)}
 .prep-list li.done .check{background:var(--sage-100);border-color:var(--sage-300);color:var(--sage-ink)}
 
