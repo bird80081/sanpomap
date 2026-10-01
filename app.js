@@ -383,7 +383,7 @@
     renderPack();
   }
 
-  // 導航按鈕：「前往這一站」到景點；有停車場的行程再多一顆「前往停車場」（開車的人按這顆）
+  // 導航按鈕：「前往這一站」到景點；有停車場的行程再多一顆「前往停車場」（開車的人按這顆，起點＝手機當下位置）
   function mainLot(s) {
     const p = !s.custom && (T.parking || {})[s.id];
     return p ? (T.parkingLots || {})[p.main] : null;
@@ -393,8 +393,8 @@
     const link = (href, title, icon, label) => `<a class="chip nav" href="${esc(href)}" title="${esc(title)}" target="_blank" rel="noopener noreferrer">${ico(icon)}${label}</a>`;
     const toSpot = prev ? link(previousRouteUrl(prev, s), `${prev.title} → ${s.title}`, "go", "前往這一站") : "";
     if (!lot) return toSpot;
-    const dest = { q: lot.q || lot.name, title: lot.name };
-    return toSpot + (prev ? link(previousRouteUrl(prev, dest), `${prev.title} → ${lot.name}`, "parking", "前往停車場") : link(gmap(dest.q), lot.name, "parking", "前往停車場"));
+    const fromHere = "https://www.google.com/maps/dir/?" + new URLSearchParams({ api: "1", destination: lot.q || lot.name, travelmode: "driving" });
+    return toSpot + link(fromHere, `目前位置 → ${lot.name}`, "parking", "前往停車場");
   }
 
   // 停車資訊：主要停車場＋步行時間（主要停車場的導航在上方「前往停車場」）；展開備用停車場與費用提醒（資料在 data.js 的 parking／parkingLots）
