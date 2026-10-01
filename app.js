@@ -217,8 +217,8 @@
       ? `<li class="editing"><input id="packText" value="${esc(x.text)}"><select id="packTextGroup">${opts(x.group)}</select><div class="actions"><button class="btn" data-kdel="${esc(x.id)}">刪除</button><button class="btn" data-kcancel>取消</button><button class="btn primary" data-ksave="${esc(x.id)}">儲存</button></div></li>`
       : `<li class="${packed.has(x.id) ? "done" : ""}"><button class="check" data-kcheck="${esc(x.id)}" aria-pressed="${packed.has(x.id)}" aria-label="${packed.has(x.id) ? "改回未打包" : "標記已打包"}">${packed.has(x.id) ? ico("check") : ""}</button><span>${esc(x.text)}</span><button class="adjust" data-kedit="${esc(x.id)}" aria-label="修改">${ico("pencil")}</button></li>`;
     $("pack").innerHTML = `<summary>${ico("luggage")}行李清單（已打包 ${done}/${items.length}）</summary>
-      ${groups.map(g => { const list = items.filter(x => (groups.includes(x.group) ? x.group : groups[groups.length - 1]) === g); return list.length ? `<h4 class="pack-group">${esc(g)}</h4><ul class="prep-list">${list.map(row).join("")}</ul>` : ""; }).join("")}
       <p class="pack-note">勾選只存在這支手機，同行的人看不到</p>
+      ${groups.map(g => { const list = items.filter(x => (groups.includes(x.group) ? x.group : groups[groups.length - 1]) === g); return list.length ? `<h4 class="pack-group">${esc(g)}</h4><ul class="prep-list">${list.map(row).join("")}</ul>` : ""; }).join("")}
       <div class="prep-add"><select id="packGroup" aria-label="分類">${opts(draftGroup)}</select><input id="packNew" placeholder="新增要帶的東西" value="${esc(draft)}"><button class="btn primary" data-kadd>新增</button></div>`;
   }
   function readTicketForm() {
