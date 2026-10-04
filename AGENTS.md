@@ -20,6 +20,13 @@
 - **顏色與字重一律改 `theme.css`**（載入在 `style.css` 之後，所有色票是 `:root` 變數）；`style.css` 是版面結構與舊樣式，盡量不要在裡面加新顏色。粉色只當底色，文字與圖示用深色，對比要 ≥ 4.5:1。
 - 圖示是 `index.html` 內的 `<symbol id="i-xxx">` 線條圖（依 CNS 16282 改繪），新增圖示照同樣線寬 2、圓角畫法；封面主圖在 `data.js` 的 `cover.url`／`cover.credit`。
 - 介面文字使用繁體中文（台灣用語）。
+- 行程名稱只放地點；補充說明放標籤（`tag`）或說明欄。
+
+## 改之前要知道的陷阱
+- **網頁上的調整存在 Firebase，會蓋過 `data.js` 的同一張卡。** 有 override 的卡要改 Firebase 那筆；不要直接刪使用者的 override。
+- **停車資料的正本在 Notion「停車場」資料庫**，`data.js` 的 `parkingLots`／`parking` 是手抄版；Notion 改了要同步改 `data.js`。
+- **手機看不到新版＝service worker 舊快取**：請使用者關掉重開；本機預覽要清掉 service worker 與 caches。
+- **不要改 repo 可見度**：改成私人會讓 GitHub Pages 下線。
 
 ## 工作流程
 1. **每次改之前**：先確認位於 `~/Projects/sanpomap/` 的 `main` 分支，再執行 `git pull`；茶兒或另一方（Claude／Codex）可能剛推過多次更新。同步成功後才開始修改；若同步失敗，先處理原因並保留既有變更。
