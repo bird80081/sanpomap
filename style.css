@@ -416,6 +416,7 @@ section{gap:20px}
 .stay>span{padding-top:4px}
 .stay>span .ico{width:26px;height:26px}
 .stay div{gap:10px;flex:1}
+.stay .stay-actions{flex-direction:row;flex-wrap:wrap;gap:8px;flex:none}
 .stay b{font-size:21px;line-height:1.5}
 .stay p{font-size:14px;line-height:1.8}
 .stay a{margin-top:4px;border-radius:10px;font-size:13px}

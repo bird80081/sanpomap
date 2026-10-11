@@ -187,7 +187,7 @@
     $("prep").innerHTML = `<summary>${ico("list")}行前待確認（${left ? `剩 ${left} 項` : "全部完成"}）<small>出發前處理</small></summary>
       <ul class="prep-list">${items.map(x => state.prepEdit === x.id
         ? `<li class="editing"><textarea id="prepText" rows="3">${esc(x.text)}</textarea><div class="actions"><button class="btn" data-pdel="${esc(x.id)}">刪除</button><button class="btn" data-pcancel>取消</button><button class="btn primary" data-psave="${esc(x.id)}">儲存</button></div></li>`
-        : `<li class="${x.done ? "done" : ""}"><button class="check" data-pcheck="${esc(x.id)}" aria-pressed="${!!x.done}" aria-label="${x.done ? "改回未完成" : "標記完成"}">${x.done ? ico("check") : ""}</button><span>${esc(x.text)}</span><button class="adjust" data-pedit="${esc(x.id)}" aria-label="修改">${ico("pencil")}</button></li>`).join("")}</ul>
+        : `<li class="${x.done ? "done" : ""}"><button class="check" data-pcheck="${esc(x.id)}" aria-pressed="${!!x.done}" aria-label="${x.done ? "改回未完成" : "標記完成"}：${esc(x.text)}">${x.done ? ico("check") : ""}</button><span>${esc(x.text)}</span><button class="adjust" data-pedit="${esc(x.id)}" aria-label="修改：${esc(x.text)}">${ico("pencil")}</button></li>`).join("")}</ul>
       <div class="prep-add"><input id="prepNew" placeholder="新增一項，例如：確認 iRent 預約" value="${esc(draft)}"><button class="btn primary" data-padd>新增</button></div>`;
   }
   async function savePrep(item) {
@@ -215,7 +215,7 @@
     const opts = sel => groups.map(g => `<option${g === sel ? " selected" : ""}>${esc(g)}</option>`).join("");
     const row = x => state.packEdit === x.id
       ? `<li class="editing"><input id="packText" value="${esc(x.text)}"><select id="packTextGroup">${opts(x.group)}</select><div class="actions"><button class="btn" data-kdel="${esc(x.id)}">刪除</button><button class="btn" data-kcancel>取消</button><button class="btn primary" data-ksave="${esc(x.id)}">儲存</button></div></li>`
-      : `<li class="${packed.has(x.id) ? "done" : ""}"><button class="check" data-kcheck="${esc(x.id)}" aria-pressed="${packed.has(x.id)}" aria-label="${packed.has(x.id) ? "改回未打包" : "標記已打包"}">${packed.has(x.id) ? ico("check") : ""}</button><span>${esc(x.text)}</span><button class="adjust" data-kedit="${esc(x.id)}" aria-label="修改">${ico("pencil")}</button></li>`;
+      : `<li class="${packed.has(x.id) ? "done" : ""}"><button class="check" data-kcheck="${esc(x.id)}" aria-pressed="${packed.has(x.id)}" aria-label="${packed.has(x.id) ? "改回未打包" : "標記已打包"}：${esc(x.text)}">${packed.has(x.id) ? ico("check") : ""}</button><span>${esc(x.text)}</span><button class="adjust" data-kedit="${esc(x.id)}" aria-label="修改：${esc(x.text)}">${ico("pencil")}</button></li>`;
     $("pack").innerHTML = `<summary>${ico("luggage")}行李清單（已打包 ${done}/${items.length}）</summary>
       <p class="pack-note">勾選只存在這支手機，同行的人看不到</p>
       ${groups.map(g => { const list = items.filter(x => (groups.includes(x.group) ? x.group : groups[groups.length - 1]) === g); return list.length ? `<h4 class="pack-group">${esc(g)}</h4><ul class="prep-list">${list.map(row).join("")}</ul>` : ""; }).join("")}
@@ -322,7 +322,7 @@
     if (!spot) return false;
     const f = weather?.data?.[n]?.[i], [,label,icon] = f ? wx(f.code) : [[],"尚無預報","cloud"];
     const tips = [];
-    if (f?.rain >= 50) tips.push("帶把折傘，留意戶外行程");
+    if (f?.rain >= 50 || icon === "rain" || icon === "storm") tips.push("帶把折傘，留意戶外行程");
     if (f?.feel >= 30) tips.push("記得防曬與補水");
     if (spot.coast && f?.wind >= 25) tips.push("海邊風較強，留意隨身物品");
     $("weatherDetail").innerHTML = `<button class="weather-back" type="button">‹ 返回總覽</button><header><p>Day ${esc(n)} · ${esc(dayDate(n))} · ${esc(spot.time)} 行程預報</p><h1 tabindex="-1">${esc(spot.name)}</h1></header><div class="weather-main">${ico("w-"+icon)}<strong>${weatherNumber(f?.temp)}<small>°C</small></strong><span>${label}</span></div><div class="weather-facts">${[["體感",weatherNumber(f?.feel)+"°C"],["降雨機率",weatherNumber(f?.rain)+"%"],["風速",weatherNumber(f?.wind)+" km/h"],...(spot.sunset ? [["日落",f?.sunset || "—"]] : [])].map(([k,v])=>`<div><span>${k}</span><b>${esc(v)}</b></div>`).join("")}</div><h2>當天逐時預報</h2><div class="weather-hours" tabindex="0" aria-label="左右滑動查看逐時預報">${f?.hours?.length ? f.hours.map(h=>`<div><small>${esc(h.time)}</small>${ico("w-"+wx(h.code)[2])}<b>${weatherNumber(h.temp)}°</b><small>${weatherNumber(h.rain)}%</small></div>`).join("") : "目前尚無逐時資料"}</div><p class="weather-tip">${esc(!f ? "取得預報後會顯示出遊提醒。" : tips.join("；") || "出發前再確認天氣，依實際狀況調整行程。")}</p><small>${esc($("weatherCap").textContent)}</small>`;
@@ -346,7 +346,7 @@
     $("ticketNote").innerHTML = T.ticketNote;
     $("prep").open = beforeTrip();
     $("pack").open = false;
-    $("stays").innerHTML = T.stays.map(s => `<div class="stay"><span>${ico("bed")}</span><div><small>${s.day}</small><b>${s.name}</b><p>${s.info}</p><a href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">${ico("pin")}查看地圖</a></div></div>`).join("");
+    $("stays").innerHTML = T.stays.map(s => `<div class="stay"><span>${ico("bed")}</span><div><small>${s.day}</small><b>${s.name}</b><p>${s.info}</p><div class="stay-actions"><a href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">${ico("pin")}查看地圖</a>${s.tel ? `<a href="tel:${esc(s.tel)}">${ico("phone")}撥打電話</a>` : ""}</div></div></div>`).join("");
     $("footer").innerHTML = T.footer.map(f => `<div>${f}</div>`).join("");
   }
 
@@ -426,15 +426,15 @@
     return `<div class="form itinerary-form">
       <h3>${f.id ? "編輯行程" : `新增到 Day ${day}`}</h3>
       <div class="types">${Object.entries(TYPES).map(([k, v]) => `<button class="${f.type === k ? "on" : ""}" style="${f.type === k ? `background:${v.bg}` : ""}" data-type="${k}">${ico(TYPE_ICON[k] || "pin")}${esc(v.label.replace(/^\S+\s*/, ""))}</button>`).join("")}</div>
-      <div class="form-row"><input aria-label="行程時間" id="fTime" value="${esc(f.time)}" placeholder="12:30"><input aria-label="行程名稱" id="fTitle" value="${esc(f.title)}" placeholder="店名或景點名稱"></div>
+      <div class="form-row"><label>時間<input id="fTime" value="${esc(f.time)}" placeholder="12:30"></label><label>名稱<input id="fTitle" value="${esc(f.title)}" placeholder="店名或景點名稱"></label></div>
       <label>地點名稱、完整地址或座標<input id="fPlace" value="${esc(f.q || "")}" placeholder="例如：高雄市＋店名，或緯度,經度" aria-describedby="placeHelp"></label>
       <label>Google Maps 地點連結（選填）<input id="fMapUrl" type="url" value="${esc(f.mapUrl || "")}" placeholder="貼上 Google Maps 分享連結" aria-describedby="placeHelp"></label>
       <small id="placeHelp">查看地圖會直接開啟連結；若使用短連結，請另填完整地址或座標供路線使用。只填名稱時仍會以名稱搜尋。更換地點時請一併更新或清除連結。</small>
       <button type="button" class="btn" data-map-preview>開地圖確認位置</button>
       <p id="placeError" class="note" role="alert"></p>
-      <textarea id="fDesc" rows="2" placeholder="想吃什麼、備註（選填）">${esc(f.desc)}</textarea>
-      ${!f.id || f.custom ? `<input id="fTag" value="${esc(f.tag || "")}" placeholder="一句話特色（選填）：在地銅板小吃">` : ""}
-      <input id="fTags" value="${esc(f.tags)}" placeholder="標籤，用空格分開：必吃 排隊名店">
+      <label>說明（選填）<textarea id="fDesc" rows="2" placeholder="想吃什麼、備註">${esc(f.desc)}</textarea></label>
+      ${!f.id || f.custom ? `<label>一句話特色（選填）<input id="fTag" value="${esc(f.tag || "")}" placeholder="例：在地銅板小吃"></label>` : ""}
+      <label>標籤（選填）<input id="fTags" value="${esc(f.tags)}" placeholder="用空格分開：必吃 排隊名店"></label>
       <div class="actions"><button class="btn" data-cancel>放棄修改</button><button class="btn primary" data-add>${f.id ? "儲存修改" : "加入行程"}</button></div>
       <small>會依時間自動排進行程。</small>
       ${f.id ? `<div class="cancel-stop"><button class="btn" data-stop="${esc(f.id)}">取消這站</button><small>取消後仍可從「已取消行程」恢復。</small></div>` : ""}
