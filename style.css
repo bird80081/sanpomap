@@ -427,3 +427,5 @@ footer{font-size:11px;line-height:1.8}
 
 
 #placeError:empty{display:none}
+/* 旅程結束後隱藏行前用的區塊（body.trip-over 由 app.js 依日期切換） */
+.trip-over .trip-prep{display:none!important}

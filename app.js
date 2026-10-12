@@ -50,6 +50,11 @@
     const diff = Math.round((new Date(n.getFullYear(), n.getMonth(), n.getDate()) - new Date(y, m - 1, dd)) / 864e5) + 1;
     return T.days[diff] ? diff : 0;
   }
+  // 旅程已結束（今天晚於最後一天）：行前用的區塊與提醒自動隱藏，資料保留
+  function afterTrip() {
+    const [y, m, dd] = T.start.split("-").map(Number), n = now(), last = Object.keys(T.days).length;
+    return new Date(n.getFullYear(), n.getMonth(), n.getDate()) > new Date(y, m - 1, dd + last - 1);
+  }
   // 還沒出發（今天早於 Day 1）
   function beforeTrip() {
     const [y, m, dd] = T.start.split("-").map(Number), n = now();
@@ -157,7 +162,7 @@
       const p = passParts(t);
       return `<article class="pass ${p.car ? "car" : "train"}"><div class="pass-strip"><span>${p.car ? "租車" : "臺鐵"}</span></div><div class="pass-body">
         <div class="pass-head"><b>${esc(p.name)}</b><span class="status ${cls}">${label}</span></div>
-        <div class="pass-route"><div><strong>${esc(p.dep)}</strong><span>${esc(p.from)}</span></div><div class="pass-line"><i>${ico(p.car ? "car" : "train")}</i>${p.via ? `<small>經 ${esc(p.via)}</small>` : ""}</div><div class="to">${p.arr ? `<strong>${esc(p.arr)}</strong>` : `<em>以票面為準</em>`}<span>${esc(p.to)}</span></div></div>
+        <div class="pass-route"><div><strong>${esc(p.dep)}</strong><span>${esc(p.from)}</span></div><div class="pass-line"><i>${ico(p.car ? "car" : "train")}</i>${p.via ? `<small>經 ${esc(p.via)}</small>` : ""}</div><div class="to">${p.arr ? `<strong>${esc(p.arr)}</strong>` : afterTrip() ? "" : `<em>以票面為準</em>`}<span>${esc(p.to)}</span></div></div>
         ${t.seat || t.note ? `<div class="pass-foot">${t.seat ? `<div class="seat">💺 ${esc(t.seat)}</div>` : ""}${t.note ? `<small>${esc(t.note)}</small>` : ""}</div>` : ""}
         <div class="chips">${t.spot ? `<button class="chip goto" data-goto="${day}:${esc(t.spot)}">${ico("up")}看行程這一站</button>` : ""}<button class="adjust" data-tadjust="${esc(t.id)}">${ico("pencil")}調整</button>${t.edited ? `<span class="chip">已調整</span>` : ""}</div>
       </div></article>`;
@@ -310,7 +315,7 @@
       return `<a class="weather-mini" href="#weather/${n}/${i}"><small>Day ${n} · ${esc(dayDate(n))} ${esc(a.time)}</small><b>${esc(a.name)}</b><span class="mini-condition">${ico("w-"+icon)} ${label}</span><strong>${weatherNumber(f?.temp)}<small>°C</small></strong><span class="mini-bottom">降雨 ${weatherNumber(f?.rain)}% <span>查看天氣 ›</span></span></a>`;
     })).join("");
     $("overview").scrollLeft = left;
-    const at = weather && new Date(weather.at), src = "資料來源 Open-Meteo，出發前再看中央氣象署";
+    const at = weather && new Date(weather.at), src = "資料來源 Open-Meteo" + (afterTrip() ? "" : "，出發前再看中央氣象署");
     $("weatherCap").textContent = !at
       ? (weatherState === "early" ? "出發前兩週內會出現預報" : weatherState === "fail" || !navigator.onLine ? "暫時抓不到預報，有網路時會自動更新" : "讀取預報中…")
       : `更新於 ${at.getMonth() + 1}/${at.getDate()} ${String(at.getHours()).padStart(2, "0")}:${String(at.getMinutes()).padStart(2, "0")}${weatherState === "fail" ? "（暫時抓不到最新的）" : ""}・${src}`;
@@ -345,6 +350,7 @@
     $("ticketTip").innerHTML = T.ticketTip;
     $("ticketNote").innerHTML = T.ticketNote;
     $("prep").open = beforeTrip();
+    document.body.classList.toggle("trip-over", afterTrip());
     $("pack").open = false;
     $("stays").innerHTML = T.stays.map(s => `<div class="stay"><span>${ico("bed")}</span><div><small>${s.day}</small><b>${s.name}</b><p>${s.info}</p><div class="stay-actions"><a href="${gmap(s.q)}" target="_blank" rel="noopener noreferrer">${ico("pin")}查看地圖</a>${s.tel ? `<a href="tel:${esc(s.tel)}">${ico("phone")}撥打電話</a>` : ""}</div></div></div>`).join("");
     $("footer").innerHTML = T.footer.map(f => `<div>${f}</div>`).join("");
